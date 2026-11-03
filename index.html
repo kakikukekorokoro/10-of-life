@@ -1,0 +1,1775 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{color-scheme:light}html,body{margin:0}[hidden]{display:none!important}img{max-width:100%}</style>
+<title>10％の人生</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DotGothic16&family=Shippori+Mincho+B1:wght@500;700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
+<style>
+/* Layout: one narrow column like a 手帳 page. A tactile-paving yellow band tops the page; yellow is used only for the band, the 10-person mark and active controls. */
+:root{
+  --bg:#E8ECEE; --card:#F7F9FA; --ink:#16202A; --ink2:#52606C; --line:#C3CDD3;
+  --tile:#F2C300; --tileink:#16202A; --ok:#2B7A57; --ng:#A8392F; --soft:#DDE3E7;
+  --f-d:'Shippori Mincho B1','Hiragino Mincho ProN','Yu Mincho',serif;
+  --f-b:'Zen Kaku Gothic New','Hiragino Sans','Yu Gothic',sans-serif;
+  --f-m:'DotGothic16','Hiragino Sans','Yu Gothic',monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0F151B; --card:#18212A; --ink:#E8EDF0; --ink2:#9DABB6; --line:#2B3844;
+    --ok:#59C08F; --ng:#E5776D; --soft:#222E39; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0F151B; --card:#18212A; --ink:#E8EDF0; --ink2:#9DABB6; --line:#2B3844;
+  --ok:#59C08F; --ng:#E5776D; --soft:#222E39; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:16px/1.8 var(--f-b);padding-block:0 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.band{height:26px;margin-inline:calc(-1 * max(16px,env(safe-area-inset-left,0px))) ;margin-right:calc(-1 * max(16px,env(safe-area-inset-right,0px)));background-color:var(--tile);background-image:radial-gradient(circle at 50% 50%,rgba(22,32,42,.34) 0 3px,transparent 3.6px);background-size:20px 20px;background-position:10px 3px}
+.wrap{max-width:700px;margin:0 auto;padding-top:26px;display:flex;flex-direction:column;gap:20px;min-width:0}
+h1,h2,h3{font-family:var(--f-d);margin:0;text-wrap:balance;line-height:1.35}
+p{margin:0}
+.mono{font-family:var(--f-m);letter-spacing:.04em}
+.muted{color:var(--ink2)}
+.small{font-size:13px;line-height:1.7}
+/* title */
+.hero{display:flex;flex-direction:column;gap:18px}
+.hero h1{font-size:clamp(52px,16vw,96px);font-weight:800;letter-spacing:-.02em;line-height:1.05}
+.hero .lead{font-size:17px;max-width:34em}
+.ten{width:100%;max-width:330px;height:auto}
+.ten circle.o{fill:none;stroke:var(--ink);stroke-width:2}
+.ten circle.h{fill:var(--tile);stroke:var(--ink);stroke-width:2.5}
+.ten circle.d{fill:var(--ink)}
+/* cards */
+.card{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:22px 20px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.kicker{font:12px/1.4 var(--f-m);letter-spacing:.12em;color:var(--ink2);text-transform:none}
+.card h2{font-size:clamp(22px,5.6vw,30px);font-weight:700}
+.body{display:flex;flex-direction:column;gap:12px;max-width:36em}
+.data{border:1px dashed var(--ink2);border-radius:4px;padding:10px 12px;font-size:13px;line-height:1.7;color:var(--ink2)}
+.data b{font:12px var(--f-m);letter-spacing:.08em;color:var(--ink);margin-right:.5em}
+.choices{display:flex;flex-direction:column;gap:10px;margin-top:4px}
+button{font:inherit;color:inherit;cursor:pointer}
+.choice{text-align:left;background:transparent;border:1.5px solid var(--ink);border-radius:4px;padding:12px 14px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.choice .l{font-weight:700}
+.choice .h{font-size:13px;color:var(--ink2)}
+.choice:hover,.choice:focus-visible{background:var(--tile);border-color:var(--tileink);color:var(--tileink);outline:none}
+.choice:hover .h,.choice:focus-visible .h{color:var(--tileink)}
+.btn{background:var(--tile);color:var(--tileink);border:1.5px solid var(--tileink);border-radius:4px;padding:12px 20px;font-weight:700;align-self:flex-start}
+.btn:hover,.btn:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--ink)}
+.seg{display:flex;flex-wrap:wrap;gap:8px}
+.seg button{background:transparent;border:1.5px solid var(--ink);border-radius:4px;padding:8px 12px;font-size:14px}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.seg button:focus-visible{outline:3px solid var(--tile);outline-offset:2px}
+/* status */
+.status{display:grid;grid-template-columns:auto 1fr;gap:10px 18px;align-items:center}
+.age{font:800 clamp(44px,12vw,64px)/1 var(--f-d)}
+.age small{font:500 18px var(--f-b);margin-left:2px}
+.who{display:flex;flex-direction:column;gap:2px;font-size:13px;color:var(--ink2);min-width:0}
+.gauges{grid-column:1/-1;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px 22px}
+.g{display:grid;grid-template-columns:5.2em 1fr 2.2em;align-items:center;gap:8px;font-size:13px}
+.g .bar{height:8px;background:var(--soft);border-radius:2px;overflow:hidden}
+.g .bar i{display:block;height:100%;background:var(--ink)}
+.g b{font:13px var(--f-m);text-align:right;font-variant-numeric:tabular-nums}
+.money{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:4px 22px;font-size:14px;border-top:1px solid var(--line);padding-top:10px}
+.money span b{font:15px var(--f-m);font-variant-numeric:tabular-nums}
+.neg{color:var(--ng)}
+/* results */
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:13px var(--f-m);border:1px solid var(--line);border-radius:3px;padding:2px 8px;font-variant-numeric:tabular-nums}
+.chip.up{color:var(--ok);border-color:var(--ok)}
+.chip.down{color:var(--ng);border-color:var(--ng)}
+.roll{font:13px var(--f-m);color:var(--ink2)}
+.roll b{color:var(--ink)}
+/* handbook card */
+.techo{border:2px solid var(--ink);border-radius:8px;padding:16px;display:grid;grid-template-columns:auto 1fr;gap:6px 14px;background:var(--card)}
+.techo dt{font:12px var(--f-m);color:var(--ink2);letter-spacing:.1em;padding-top:3px}
+.techo dd{margin:0;font-weight:500}
+.techo .full{grid-column:1/-1}
+.facts{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:4px;font-size:14px}
+/* log */
+details{border-top:1px solid var(--line);padding-top:12px}
+summary{cursor:pointer;font:13px var(--f-m);letter-spacing:.08em;color:var(--ink2)}
+summary:focus-visible{outline:3px solid var(--tile);outline-offset:3px}
+.log{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-direction:column;gap:6px;font-size:14px}
+.log li{display:grid;grid-template-columns:3.4em 1fr;gap:10px}
+.log li span{font:13px var(--f-m);color:var(--ink2);text-align:right}
+.srclist{display:flex;flex-direction:column;gap:4px;font-size:13px;margin:10px 0 0;padding-left:1.1em;overflow-wrap:anywhere}
+a{color:var(--ink);text-underline-offset:3px}
+.tags{display:flex;flex-wrap:wrap;gap:8px}
+.tag{border-radius:3px;padding:3px 10px;font-size:14px;border:1.5px solid var(--ink)}
+.tag.used{background:var(--tile);color:var(--tileink);border-color:var(--tileink);font-weight:700}
+.tag.miss{border-style:dashed;color:var(--ink2);border-color:var(--ink2)}
+.tbl{overflow-x:auto}
+.tbl table{border-collapse:collapse;font-size:13px;min-width:460px;width:100%}
+.tbl th,.tbl td{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+.tbl th{font:12px var(--f-m);color:var(--ink2);font-weight:400}
+.foot{font-size:12px;color:var(--ink2);line-height:1.8}
+@media (prefers-reduced-motion:no-preference){.card{animation:in .25s ease-out}@keyframes in{from{opacity:.0;transform:translateY(6px)}to{opacity:1;transform:none}}}
+
+/* ---- 1画面ダッシュボード ---- */
+html,body{height:100%}
+body{display:flex;flex-direction:column;font-size:15px;line-height:1.65;padding-bottom:0;overflow:hidden}
+.band{height:14px;flex:none;background-size:20px 14px;background-position:10px 0}
+.app{flex:1;min-height:0;display:flex;flex-direction:column;gap:8px;padding-block:8px 10px}
+.top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px 14px;flex:none}
+.brand{font:800 22px/1.2 var(--f-d)}
+.counters{display:flex;flex-wrap:wrap;gap:6px 8px;flex:1;justify-content:center;min-width:0}
+.ctr{display:flex;align-items:baseline;gap:6px;border:1px solid var(--line);border-radius:4px;background:var(--card);padding:2px 10px;line-height:1.35;min-width:0}
+.ctr b{font:800 19px/1.2 var(--f-d);font-variant-numeric:tabular-nums}
+.ctr small{color:var(--ink2);font-size:11.5px}
+.ctr.up b{color:var(--ng)}
+.top-btn{background:transparent;border:1.5px solid var(--ink);border-radius:4px;padding:3px 10px;font-size:13px}
+.top-btn:focus-visible{outline:3px solid var(--tile);outline-offset:2px}
+.grid{flex:1;min-height:0;display:grid;grid-template-columns:268px minmax(0,1fr) 340px;gap:10px}
+.is-title .grid{grid-template-columns:minmax(0,720px);justify-content:center}
+.col{display:flex;flex-direction:column;gap:8px;min-height:0;min-width:0;overflow:auto}
+.card{padding:13px 15px;gap:9px}
+.card h2{font-size:clamp(19px,2vw,25px)}
+.hero{gap:10px}
+.hero h1{font-size:clamp(40px,7vw,72px)}
+.hero .lead{font-size:15px}
+.hero .start{display:flex;flex-direction:column;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:6px;padding:14px 16px}
+.ten{max-width:240px}
+.status{gap:6px 14px}
+.age{font-size:42px}
+.g{font-size:12.5px}
+.money{font-size:13px;padding-top:6px}
+.famdl{display:grid;grid-template-columns:auto 1fr;gap:2px 12px;margin:0;font-size:13.5px}
+.famdl dt{font:12px var(--f-m);color:var(--ink2);letter-spacing:.08em;padding-top:2px}
+.famdl dd{margin:0}
+.sys{border-left:4px solid var(--tile);background:var(--soft);padding:8px 12px;border-radius:0 4px 4px 0;display:flex;flex-direction:column;gap:4px;flex:none}
+.sys ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:5px;font-size:12.8px;line-height:1.6}
+.sys li b{display:block;font-weight:700;font-size:13.2px}
+.data{font-size:12.2px;padding:6px 10px;flex:none}
+.tlbox{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:10px 12px;flex:1;min-height:150px;overflow:auto}
+.tlbox h2,#tlm h2{font-size:15px;font-weight:700;margin-bottom:6px;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.tlbox h2 small,#tlm h2 small{font:11.5px var(--f-m);color:var(--ink2);letter-spacing:.06em}
+.tlist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.tlist li{display:grid;grid-template-columns:3.2em 1fr;gap:8px;padding:3px 0;border-top:1px solid var(--line);font-size:13px;line-height:1.55}
+.tlist li:first-child{border-top:0}
+.tlist li span{font:12.5px var(--f-m);color:var(--ink2);text-align:right;font-variant-numeric:tabular-nums}
+.tlist li.now{background:var(--tile);color:var(--tileink);border-radius:3px;padding:3px 6px;margin-bottom:3px;font-weight:700}
+.tlist li.now span{color:var(--tileink)}
+.tlist li.last{font-weight:700}
+.cause{font-size:15px}
+.cause b{font:12.5px var(--f-m);letter-spacing:.1em;color:var(--ink2);margin-right:.6em}
+.choice{padding:9px 12px}
+.choices{gap:7px}
+#tlm{display:none}
+#ov{position:fixed;inset:0;z-index:20;background:rgba(10,16,22,.62);display:flex;align-items:center;justify-content:center;padding:16px}
+#ov .ovin{background:var(--bg);color:var(--ink);border:2px solid var(--ink);border-radius:8px;max-width:820px;width:100%;max-height:100%;overflow:auto;padding:16px 18px;display:flex;flex-direction:column;gap:12px}
+#ov .ovin h2{font-size:20px}
+@media (max-width:900px){
+  html,body{height:auto}
+  body{overflow:auto;padding-bottom:12.5em}
+  .app{min-height:0}
+  .grid,.is-title .grid{display:flex;flex-direction:column}
+  .col{overflow:visible}
+  #colA{order:1}#app{order:2}#colC{order:3}
+  #colC .tlbox{display:none}
+  .counters{justify-content:flex-start}
+  #tlm{display:block;position:fixed;left:0;right:0;bottom:0;z-index:5;background:var(--card);border-top:2px solid var(--ink);padding:8px max(16px,env(safe-area-inset-right,0px)) calc(8px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));max-height:11.5em;overflow:auto}
+}
+
+/* ---- スマホ(幅600px以下): 年表を大きく、左側(状態・家族)を小さくしてスクロール ---- */
+@media (max-width:600px){
+  body{padding-bottom:16px}
+  #colA{max-height:27vh;overflow:auto;gap:6px;border:1px solid var(--line);border-radius:6px;padding:4px;-webkit-overflow-scrolling:touch}
+  #colA .card{padding:7px 9px;gap:4px}
+  #colA .age{font-size:28px}
+  #colA .who{font-size:12px}
+  #colA .g{font-size:11px}
+  #colA .famdl{font-size:11.5px;gap:1px 8px}
+  #colA .famdl dt{font-size:10.5px}
+  #colA .mny{font-size:11px}
+  #colA .mrow b{font-size:11.5px}
+  #colA .mrow.big b{font-size:13px}
+  #colA .mrow.sub,#colA .mrow.sub span:last-child{font-size:10.5px}
+  #colA .kicker{font-size:10.5px}
+  #colA .seg button{padding:3px 8px;font-size:12px}
+  #tlm{position:static;height:auto;max-height:none;overflow:visible;margin-top:10px;border:1px solid var(--line);border-top:2px solid var(--ink);border-radius:6px;padding:10px 12px 12px}
+  #tlm h2{font-size:17px}
+  #tlm h2 small{font-size:12.5px}
+  #tlm .tlist li{grid-template-columns:3.8em 1fr;gap:10px;padding:6px 0;font-size:16px;line-height:1.6}
+  #tlm .tlist li span{font-size:15px}
+}
+
+/* ---- スマホ: 上部(タイトル・データ・推計・時間の流れ)を常に表示 ---- */
+#stick{display:contents}
+@media (max-width:600px){
+  #stick{display:block;position:sticky;top:0;z-index:6;background:var(--bg);padding-bottom:4px;border-bottom:1px solid var(--line)}
+  .top{flex-wrap:wrap;gap:4px 8px;padding-top:4px}
+  .brand{flex:1;font-size:20px;order:1}
+  #btn-data{order:2;font-size:12px;padding:3px 8px}
+  .counters{order:3;flex:0 0 100%;display:grid;grid-template-columns:1fr 1fr;gap:3px 6px}
+  .ctr{padding:1px 6px;gap:4px}
+  .ctr b{font-size:14px}
+  .ctr small{font-size:10px;white-space:nowrap}
+  #c-inc-r,#c-dead-r{display:none}
+  .ctr{overflow:hidden}
+  .ctr small:first-child{overflow:hidden;text-overflow:ellipsis}
+  #ctlbar #ctl .kicker{overflow:hidden}
+  #ctlbar #ctl .card{padding:3px 6px;flex-direction:row;align-items:center;gap:8px;border-radius:4px}
+  #ctlbar #ctl .kicker{font-size:10.5px;margin:0;flex:1}
+  #ctlbar #ctl .seg{flex:none}
+  #ctlbar #ctl .seg button{padding:3px 8px;font-size:12px}
+  #ctlbar{margin-top:4px}
+}
+
+/* ---- お金・自動進行 ---- */
+.mny{grid-column:1/-1;display:flex;flex-direction:column;gap:1px;border-top:1px solid var(--line);padding-top:6px;font-size:12.8px}
+.mrow{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.mrow b{font:700 13.5px var(--f-m);font-variant-numeric:tabular-nums;white-space:nowrap}
+.mrow.big b{font-size:15.5px}
+.mrow.sub{padding-left:12px;color:var(--ink2);font-size:12px}
+.mrow.sub span:last-child{font:12px var(--f-m);font-variant-numeric:tabular-nums;white-space:nowrap}
+.mny .small{font-size:11.5px;line-height:1.5}
+.feeds{display:flex;flex-direction:column;gap:8px}
+.tll{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px;font-size:13px;line-height:1.55}
+.tll b{font-family:var(--mono,monospace);font-weight:600;margin-right:4px}
+.feed{border-left:3px solid var(--line);padding-left:10px;display:flex;flex-direction:column;gap:4px}
+.pg{display:flex;flex-direction:column;gap:4px}
+.pg .bar{height:8px;background:var(--soft);border-radius:2px;overflow:hidden}
+.pg .bar i{display:block;height:100%;background:var(--tile)}
+.choices.two{display:grid;grid-template-columns:1fr 1fr}
+@media (max-width:640px){.choices.two{grid-template-columns:1fr}}
+
+#colA .card{padding:9px 13px;gap:6px}
+#colA .age{font-size:36px}
+#colA .g{font-size:12px}
+.seg.sp{flex-wrap:nowrap;gap:5px}
+.seg.sp button{padding:5px 8px;font-size:13px;white-space:nowrap}
+.famdl{grid-template-columns:auto 1fr auto 1fr;gap:2px 8px}
+.famdl dd.wide{grid-column:span 3}
+</style>
+
+<div class="band" aria-hidden="true"></div>
+<div class="app" id="shell">
+<div id="stick"><header class="top"><div class="brand">10％の人生</div>
+<div class="counters" role="status" aria-label="ページを開いてからの推計">
+<span class="ctr"><small>ページを開いてから</small><b id="c-time">0:00</b></span>
+<span class="ctr up"><small>障害者に加わった人</small><b id="c-inc">+0</b><small id="c-inc-r"></small></span>
+<span class="ctr"><small>亡くなった障害者</small><b id="c-dead">0</b><small id="c-dead-r"></small></span>
+<span class="ctr"><small>差し引き</small><b id="c-net">+0</b></span></div>
+<button class="top-btn" id="btn-data" type="button">データと出典</button></header><div id="ctlbar"></div></div>
+<div class="grid"><aside class="col" id="colA" hidden></aside><main class="col" id="app"></main><aside class="col" id="colC" hidden></aside></div>
+</div>
+<div id="tlm" hidden aria-label="人生の年表"></div>
+<div id="ov" hidden><div class="ovin" role="dialog" aria-label="データと出典"><button class="top-btn" id="ov-close" type="button" style="align-self:flex-end">閉じる</button><div id="ov-body"></div></div></div>
+
+<script>
+(function(){
+'use strict';
+var $=function(s){return document.querySelector(s)};
+var rnd=function(a,b){return a+Math.random()*(b-a)};
+var ri=function(a,b){return Math.floor(rnd(a,b+1))};
+var pick=function(a){return a[Math.floor(Math.random()*a.length)]};
+var clamp=function(v){return Math.max(0,Math.min(100,v))};
+function wpick(items,wf){var t=0,i;for(i=0;i<items.length;i++)t+=wf(items[i]);var r=Math.random()*t;for(i=0;i<items.length;i++){r-=wf(items[i]);if(r<=0)return items[i]}return items[items.length-1]}
+function wchoice(pairs){var t=0,i;for(i=0;i<pairs.length;i++)t+=pairs[i][1];var r=Math.random()*t;for(i=0;i<pairs.length;i++){r-=pairs[i][1];if(r<=0)return pairs[i][0]}return pairs[pairs.length-1][0]}
+function yen(n){return Math.round(n).toLocaleString('ja-JP')}
+
+/* ---------- データ ---------- */
+var TYPES={body:'身体障害',intel:'知的障害',mental:'精神障害'};
+var TECHO={body:'身体障害者手帳',intel:'療育手帳',mental:'精神障害者保健福祉手帳'};
+var GRADE={body:{heavy:'1〜2級',mid:'3〜4級',light:'5〜6級'},intel:{heavy:'A(重度)',mid:'B1(中度)',light:'B2(軽度)'},mental:{heavy:'1級',mid:'2級',light:'3級'}};
+var AGES=[0,3,6,9,12,15,18,20,22,25,28,32,36,40,45,50,55,60,65,68,72,76,80,85,90,95];
+
+var MUNIS=[
+ {id:'fukuoka',name:'福岡市',pref:'福岡県',wageB:22870,wageNote:'福岡県の令和6年度B型平均工賃',medFull:true,
+  facts:['重度障がい者医療費助成:身体手帳1・2級/療育手帳A/精神手帳1級が対象。生活保護の受給者や所得制限を超える人は対象外','重度心身障がい者福祉手当を毎年12月に支給(身体1級・療育A1/A2など)'],
+  local:{ok:function(s){return s.grade==='heavy'&&s.techo&&s.type!=='mental'},title:'12月に届く福祉手当',text:'福岡市には、身体障害者手帳1級や療育手帳A1・A2などの人に毎年12月に支給される「重度心身障がい者福祉手当」がある。9月1日から11月30日まで継続して要件を満たしていることが条件だ。'}},
+ {id:'hiroshima',name:'広島市',pref:'広島県',wageB:25889,wageNote:'広島県の令和6年度B型平均工賃',taxi:'h',
+  facts:['重度障害者福祉タクシー利用助成:視覚1・2級、肢体不自由1種、療育手帳A、精神手帳1級などが対象。本人の所得制限あり(前年所得169.5万円以下+扶養加算)']},
+ {id:'uozu',name:'魚津市',pref:'富山県',wageB:23994,wageNote:'富山県の令和6年度B型平均工賃',medFull:true,taxi:'hm',
+  facts:['重度心身障害者等医療費助成:0〜64歳で重度(身体1・2級/療育A/精神1級)の人は、保険適用分を全額助成(世帯全員の前年合計所得1,000万円未満)','福祉タクシー・ガソリン利用券(2,500円分×2冊)または市民バス回数券を支給','富山県ゆずりあいパーキング(障害者等用駐車場)の利用証制度'],
+  local:{ok:function(s){return !!s.techo},title:'駐車場の「ゆずりあい」利用証',text:'魚津市のある富山県には、障害者等用駐車場を必要な人が使いやすくするための「ゆずりあいパーキング」利用証がある。社会福祉課の窓口で事前に申請する。'}},
+ {id:'obihiro',cp:16.5,name:'帯広市',pref:'北海道',wageB:27361,wageNote:'北海道の令和6年度B型平均工賃',
+  facts:['市の福祉ガイドに、障害基礎年金・特別障害者手当(月30,450円)・特別児童扶養手当(1級58,450円/2級38,930円)が一覧で載っている(令和8年4月)','北海道のB型事業所の平均工賃は月27,361円(令和6年度)']},
+ {id:'gifu',name:'岐阜市',pref:'岐阜県',wageB:23758,wageNote:'岐阜県の令和6年度B型平均工賃',medFull:true,taxi:'h',
+  facts:['市の障がい者福祉助成に、重度心身障害者等医療費助成、タクシー料金の助成、日常生活用具費の支給、重度身体障害者住宅改善費の助成、身体障害者用自動車改造費の助成、補助犬の飼育費の助成などが並ぶ','就学前障がい児の発達支援の無償化'],
+  local:{ok:function(s){return s.type==='body'&&!!s.techo},title:'住まいと車の改造に出る助成',text:'岐阜市には、重度身体障害者の住宅改善費の助成や、身体障害者用に自動車を改造する費用の助成、日常生活用具費の支給がある。手すりやスロープ、車の改造は自己負担が大きいので、助成の有無で選択肢が変わる。'}},
+ {id:'fussa',name:'福生市',pref:'東京都',wageB:24283,wageNote:'東京都の令和6年度B型平均工賃',
+  facts:['東京都重度心身障害者手当、児童育成手当(障害手当)、心身障害者福祉手当などがある(市の広報に基づく。古い資料のため金額は未反映)'],
+  local:{ok:function(s){return s.grade==='heavy'&&s.type!=='mental'&&!!s.techo},title:'東京都の重度心身障害者手当',text:'福生市の広報には、重度の知的障害や、上肢・下肢に重度の機能障害がある人などを対象にした「東京都重度心身障害者手当」が載っている。窓口は障害福祉課だ。'}},
+ {id:'kobe',name:'神戸市',pref:'兵庫県',wageB:20664,wageNote:'兵庫県の令和6年度B型平均工賃',med:'part',taxi:'hm',taxiNoInc:true,
+  facts:['重度障害者医療費助成:身体1・2級、療育手帳A、精神手帳1級などが対象。外来は1日最大600円(月2回まで、3回目以降は無料)、入院は1割(月2,400円まで)。低所得の人は外来400円・入院月1,600円。本人・配偶者・扶養義務者の市民税所得割が23.5万円未満という所得制限がある','重度心身障害者タクシー利用券:500円券が年最大72枚(36,000円分)。福祉乗車証・敬老優待乗車証・燃料費助成を受けている人は対象外','兵庫県のB型平均工賃は令和6年度に月20,664円で、全国平均24,141円を下回っている']},
+ {id:'osaka',name:'大阪市',pref:'大阪府',wageB:19747,wageNote:'大阪府の令和6年度B型平均工賃',med:'part',taxi:'hm',taxiNoInc:true,
+  facts:['重度障がい者医療費助成:身体1・2級、療育手帳A、精神手帳1級などが対象。窓口負担は1日最大500円・月最大3,000円(超えた分は払い戻し)。所得制限あり(令和7年10月から本人は扶養0人で479万4千円)','重度障がい者等タクシー料金給付:1回の乗車につき最大500円(リフト付は2,000円)。身体・療育手帳A・B1の一部が対象','大阪府のB型平均工賃は令和6年度に月19,747円で、全国平均24,141円を下回っている']},
+ {id:'samukawa',cp:4.9,name:'寒川町',pref:'神奈川県',wageB:23307,wageNote:'神奈川県の令和6年度B型平均工賃',
+  facts:['町内の手帳所持者は2,353人で人口の4.79%(令和5年4月)','このゲームでは町独自の助成は未反映']},
+ {id:'niigata',name:'新潟県内の市',pref:'新潟県',wageB:21778,wageNote:'新潟県の令和6年度B型平均工賃',
+  facts:['新潟県のB型平均工賃は月21,778円、A型(雇用型)は月83,376円(令和6年度)','このゲームでは県内市町村の独自助成は未反映']},
+ {id:'sapporo',name:'札幌市',pref:'北海道',cp:197,wageB:27361,wageNote:'北海道の令和6年度B型平均工賃',med:'part',
+  facts:['重度心身障がい者医療費助成:身体1〜3級(3級は内部障害に限る)、療育手帳A、精神手帳1級が対象。住民税課税の人は1割負担(通院は月の上限あり)、非課税の人や18歳以下は初診580円など','65歳以上で助成を受けるには、後期高齢者医療制度に加入している必要がある(令和8年10月時点の市の案内)']},
+ {id:'aomori',name:'青森市',pref:'青森県',wageB:22198,wageNote:'青森県の令和6年度B型平均工賃',med:'part',taxi:'h',
+  facts:['重度心身障害者医療費助成:身体1・2級、3級(内部障害などの一部)、療育手帳A、精神手帳1級が対象。国保は窓口負担が課税世帯1割・非課税世帯0(上限あり)、社保などは償還払い。所得制限あり','タクシー・移送サービス利用券または自家用車給油券(どちらか一方):身体1級・療育A・精神1級の在宅の人']},
+ {id:'morioka',name:'盛岡市',pref:'岩手県',wageB:26017,wageNote:'岩手県の令和6年度B型平均工賃',med:'part',
+  facts:['重度心身障がい者医療費助成:身体1・2級、精神手帳1級(2025年8月追加)などが対象。本人・配偶者・扶養義務者が全員非課税なら全額助成、誰かが課税なら1件あたり外来750円・入院2,500円を自己負担','岩手県の「ひとにやさしい駐車場利用証」(歩行が困難などの要件を満たす人に交付)'],
+  local:{ok:function(s){return s.type==='body'&&!!s.techo},title:'駐車場の「利用証」',text:'盛岡市のある岩手県には、歩行が困難などの要件を満たす人に交付される「ひとにやさしい駐車場利用証」がある。対象となる駐車場に停めやすくなる。要件は県の案内で確認する。'}},
+ {id:'sendai',name:'仙台市',pref:'宮城県',wageB:24115,wageNote:'宮城県の令和6年度B型平均工賃',med:'full',taxi:'h',
+  facts:['重度心身障害者医療費助成:身体1・2級、療育A、精神1級などは全額助成の区分(口座振込の償還払い)。一部の区分は3分の2助成。所得制限あり','福祉タクシー利用券:500円券を年60枚(年30,000円)。自家用車燃料費助成券:1,000円券を年30枚(年30,000円)。どちらも所得制限あり'],
+  local:{ok:function(s){return !!s.techo&&s.grade!=='light'&&s.living!=='facility'},title:'自家用車の燃料費助成',text:'仙台市には、自家用車の燃料費助成券(1,000円券を年30枚)がある。身体障害者手帳や療育手帳A、精神手帳などの条件を満たす人が対象で、所得制限があり、施設入所者は対象外だ。窓口で申請する。'}},
+ {id:'akita',name:'秋田市',pref:'秋田県',wageB:20221,wageNote:'秋田県の令和6年度B型平均工賃',med:'part',taxi:'h',
+  facts:['福祉医療制度(障がい児(者)福祉医療):身体1〜3級、療育手帳A、精神手帳1級などが対象。自己負担分の一部を助成(窓口負担の詳細は市の案内で確認)','身体障がい者通院タクシー料金助成:580円の利用券を月4枚(内部障害1級、下肢・体幹1〜3級、視覚1〜3級などの在宅の人。秋田市内の通院のみ)']},
+ {id:'yamagata',name:'山形市',pref:'山形県',wageB:19621,wageNote:'山形県の令和6年度B型平均工賃',med:'part',
+  facts:['重度心身障がい(児)者医療給付:身体1・2級、精神手帳1級、療育手帳Aなどが対象。非課税の人は無料、課税の人は1割負担(月の上限あり)。医療証は65歳到達月の末日まで','重度心身障がい者福祉手当(月額4,000円):公的年金を受給していない重度の人を扶養している人が対象'],
+  local:{ok:function(s){return s.grade==='heavy'&&!!s.techo&&s.age>=20&&!s.pension},title:'重度の人を扶養する家族への手当',text:'山形市には、重度心身障がい者福祉手当(月額4,000円)がある。対象は、公的年金を受給していない重度の人を扶養している人だ。窓口で、扶養する人が申請する。'}},
+ {id:'fukushima',name:'福島市',pref:'福島県',wageB:21449,wageNote:'福島県の令和6年度B型平均工賃',med:'full',taxi:'h',
+  facts:['重度心身障がい者医療費助成:身体1・2級、療育A、精神手帳1級(通院のみ)などが対象。協力医療機関では、月の自己負担が21,000円未満なら窓口払い不要','福祉タクシー券:500円券30枚を年1冊(下肢・体幹・移動機能を含む身体1・2級、療育Aなど)']},
+ {id:'mito',name:'水戸市',pref:'茨城県',wageB:21399,wageNote:'茨城県の令和6年度B型平均工賃',taxi:'hm',
+  facts:['重度心身障害者の医療福祉費助成制度(マル福):医療費の一部負担金を助成する制度。所得制限があり、65歳以上は後期高齢者医療制度の加入者が対象(水戸市の案内)','福祉タクシー券:1枚300円分を市が負担し、年間の上限は100枚(申請の時期で枚数が変わる)。身体1・2級、療育A、精神1・2級が対象。自動車税の減免を受けている人と施設入所者は対象外']},
+ {id:'utsunomiya',name:'宇都宮市',pref:'栃木県',wageB:23818,wageNote:'栃木県の令和6年度B型平均工賃',med:'full',taxi:'h',
+  facts:['重度心身障がい者医療費助成(マル福):身体1・2級、療育A1・A2、精神手帳1級などが対象。県内の医療機関では受給資格者証と保険証の提示で、原則として窓口負担なし。食事代・個室代などは対象外','重度心身障がい者タクシー料金助成:協定タクシーで初乗運賃相当額を上限に助成。年間96枚(月8枚)'],
+  local:{ok:function(s){return !!s.techo&&((s.type==='body'&&s.grade==='heavy')||s.age>=70)},title:'はり・きゅう・マッサージの助成',text:'宇都宮市には、在宅の70歳以上の人や身体障がい者手帳1・2級の人に、はり・きゅう・マッサージの施術料を助成する制度がある(年間18枚、1枚1,000円)。窓口で申請する。'}},
+ {id:'maebashi',name:'前橋市',pref:'群馬県',wageB:24195,wageNote:'群馬県の令和6年度B型平均工賃',med:'full',taxi:'h',
+  facts:['重度心身障害者福祉医療:身体1・2級、療育A、障害基礎年金1級相当などが対象。群馬県内の医療機関では資格者証の提示で窓口負担なし。2023年8月に所得制限が導入され、超えると助成の対象外になる','福祉タクシー券:身体1・2級、療育A、精神1級の在宅の人に、タクシー基本料金分を月2枚。自動車税の減免を受けていないことが条件'],
+  local:{ok:function(s){return !!s.techo},title:'「思いやり駐車場利用証」',text:'群馬県には、障害のある人などが使いやすい駐車区画を示す「思いやり駐車場利用証」がある。前橋市の窓口で、無料で当日に交付される。'}},
+ {id:'saitama',name:'さいたま市',pref:'埼玉県',wageB:21528,wageNote:'埼玉県の令和6年度B型平均工賃',med:'full',taxi:'h',
+  facts:['心身障害者医療費支給制度:身体1〜3級、療育手帳、精神手帳1級などが対象。保険診療の一部負担金を支給する。2019年から所得制限があり、2015年以降に65歳以上で新たに対象になる人は支給の対象外','福祉タクシー利用料金助成:身体1・2級、療育A、精神1級などが対象。初乗運賃相当額の券を年54枚'],
+  local:{ok:function(s){return !!s.techo&&s.grade==='heavy'&&income()<=100},title:'自動車燃料費の助成',text:'さいたま市には、自家用車を主な移動手段にしている重度の人に、燃料費を助成する制度がある(1リットル50円、年200リットル・10,000円が上限)。前年度の市民税が非課税の人が対象で、福祉タクシー助成とは併用できない。'}},
+ {id:'chiba',name:'千葉市',pref:'千葉県',wageB:23646,wageNote:'千葉県の令和6年度B型平均工賃',med:'part',taxi:'h',
+  facts:['心身障害者(児)医療費助成:身体1・2級と内部障害3級、知的障害(A〜B1)、精神手帳1級などが対象。市民税所得割額33,000円未満の世帯は無料、それ以上は通院1回300円・入院1日300円。65歳以上で新たに該当した人は対象外','福祉タクシー・自動車燃料費等助成:身体1・2級、療育A、精神1級などが対象。年30枚で、タクシー券と燃料費助成のどちらか一方を選ぶ'],
+  local:{ok:function(s){return s.type==='mental'&&!!s.techo},title:'精神障害者の入院医療費助成',text:'千葉市には、市県民税が非課税の世帯の精神障害者に、1か月以上の入院(措置入院を除く)の保険診療の自己負担を、2分の1助成する制度がある。窓口で申請する。'}},
+ {id:'yokohama',cp:378,name:'横浜市',pref:'神奈川県',wageB:23307,wageNote:'神奈川県の令和6年度B型平均工賃',med:'full',taxi:'h',taxiNoInc:true,
+  facts:['重度障害者医療費助成:身体1・2級、知能指数35以下、身体3級と知能指数50以下の併有、精神手帳1級(通院のみ)が対象。保険診療の自己負担が助成され、所得制限・年齢制限はない(令和8年8月時点の市の案内)','福祉タクシー利用券:1枚500円を上限に助成。年間84枚(人工透析で週3回以上通院する人は168枚)。下肢・体幹・視覚・内部・移動機能障害を含む身体1・2級、愛の手帳A1・A2、精神手帳1級などが対象']},
+ {id:'kanazawa',name:'金沢市',pref:'石川県',wageB:24402,wageNote:'石川県の令和6年度B型平均工賃',med:'full',taxi:'h',
+  facts:['障害者医療費助成:身体1〜3級、療育手帳A(Bは入院のみ)、精神手帳1級などが対象。受給者証を提示すれば県内の医療機関では無料。所得制限あり','福祉タクシー利用助成:1回の乗車につき700円(身体・知的は年36枚、精神は年24枚)。下肢1・2級、体幹・視覚1〜3級、内部1級、療育A、精神1・2級の在宅の人が対象。自分で運転する人と施設入所者は対象外']},
+ {id:'fukui',name:'福井市',pref:'福井県',wageB:30022,wageNote:'福井県の令和6年度B型平均工賃',med:'full',
+  facts:['重度障がい者医療費助成:身体1〜3級(3級は所得制限あり)、療育手帳A、精神手帳1・2級で自立支援医療(精神通院)を受ける人(通院のみ)などが対象。県内の医療機関・薬局では受給者証の提示で窓口の支払いは不要(市の案内では、自己負担分は約2か月後に口座へ返還とも書かれている)','県外の医療機関で受診したときは、領収書を添えて申請する。事前の申請が必要で、申請の翌月から対象になる']},
+ {id:'kofu',name:'甲府市',pref:'山梨県',wageB:26600,wageNote:'山梨県の令和6年度B型平均工賃',med:'full',
+  facts:['山梨県の重度心身障害者医療費助成制度:身体1〜3級、療育手帳A、精神手帳1・2級などが対象。保険適用の自己負担分を助成する。所得制限あり。窓口でいったん支払い、約3か月で口座に還付される運用(県の案内)','このゲームでは甲府市独自の助成は未反映(県の制度のみ)']},
+ {id:'nagano',name:'長野市',pref:'長野県',wageB:24522,wageNote:'長野県の令和6年度B型平均工賃',taxi:'h',
+  facts:['福祉医療費給付金(重度障害者):1レセプトごとに500円の受給者負担金を差し引いて支給。身体1〜3級、療育A、精神1・2級などが対象。70歳未満の障害者の区分で、一部の区分に所得制限がある','障害者タクシー利用券:1枚600円を年36枚。下肢・体幹・視覚・内部の1・2級などが対象']},
+ {id:'shizuoka',name:'静岡市',pref:'静岡県',wageB:23496,wageNote:'静岡県の令和6年度B型平均工賃',med:'part',taxi:'h',
+  facts:['重度心身障害者医療費助成:身体1・2級と内部障害3級、療育A、精神手帳1級などが対象。1か月・1医療機関あたり500円を差し引いて助成(月500円は自己負担)。65歳以上で市民税課税世帯は原則として通院分のみ助成','重度心身障害者タクシー利用券:550円券を年24枚(身体1・2級、療育A)。車いす用は500円券を年48枚'],
+  local:{ok:function(s){return !!s.techo&&s.type==='body'&&s.grade!=='light'&&s.age>=18},title:'自動車の免許・改造費の補助',text:'静岡市には、自動車運転免許の取得費や、自動車の改造費を補助する制度がある(それぞれ上限10万円)。条件は市の案内で確認し、障害福祉課の窓口で申請する。'}},
+ {id:'nagoya',name:'名古屋市',pref:'愛知県',wageB:27069,wageNote:'愛知県の令和6年度B型平均工賃',taxi:'h',
+  facts:['障害者医療費助成:身体1〜3級(じん臓機能障害は1〜4級)、精神手帳1・2級、知能指数50以下などが対象。本人の所得制限あり(扶養0人で令和8年8月から375万8千円)。65〜74歳で後期高齢者医療の被保険者になりうる障害の人は対象外で、福祉給付金支給制度の助成を受けられる場合がある','タクシー料金の助成:市バス・地下鉄の利用が困難で、福祉特別乗車券をもらっていない重度の障害者に、福祉タクシー利用券またはリフト付タクシー利用券を交付(金額・枚数は市の案内で確認)']},
+ {id:'tsu',name:'津市',pref:'三重県',wageB:24330,wageNote:'三重県の令和6年度B型平均工賃',taxi:'hm',
+  facts:['障がい者医療費助成:身体1〜3級、療育手帳A・B1(またはIQ50以下)、精神手帳1・2級が対象。医療機関で支払った後に口座へ払い戻される(2〜3か月後、65歳以上は約5か月後)。65歳以上は後期高齢者医療への加入が条件。本人の所得制限あり(令和8年8月から扶養0人で375万8千円)','障害者等交通サービス支援事業:在宅で身体1・2級、療育A1・A2、精神1・2級の人が通院・通学などで月1回以上出かける場合、1回1,000円(月4回まで)の助成。所得税非課税が条件','自動車運転免許の取得費(3分の2以内・上限10万円)、自動車の改造費(上限10万円)の助成がある']},
+ {id:'otsu',name:'大津市',pref:'滋賀県',wageB:26031,wageNote:'滋賀県の令和6年度B型平均工賃',med:'part',
+  facts:['福祉医療費助成:身体1・2級、療育手帳A1・A2・B1、精神手帳1級などが対象。住民税非課税なら無料、課税世帯は入院1日1,000円(月14,000円まで)・通院はレセプト1件500円(調剤薬局は負担なし)。所得制限あり','身体障害者用自動車改造費助成:上限5万円(令和6年3月時点の案内)'],
+  local:{ok:function(s){return s.type==='body'&&!!s.techo},title:'自動車の改造費助成',text:'大津市には、身体障害のある人が運転する自動車の改造費を助成する制度がある(上限5万円)。所得の上限は特別障害者手当の基準に合わせている。'}},
+ {id:'kyoto',name:'京都市',pref:'京都府',wageB:24743,wageNote:'京都府の令和6年度B型平均工賃',
+  facts:['重度障害者医療費支給制度:身体1・2級、IQ35以下、精神手帳1級などが対象。窓口で払った自己負担額が支給される。所得制限あり(本人は扶養0人で375万8千円、配偶者・扶養義務者は628万7千円未満)','65歳以上は、後期高齢者医療を選んでこの制度から外れることもできる']},
+ {id:'nara',name:'奈良市',pref:'奈良県',wageB:25459,wageNote:'奈良県の令和6年度B型平均工賃',taxi:'h',taxiNoInc:true,
+  facts:['心身障害者医療費助成:身体1・2級または療育手帳の人が対象。通院は1医療機関あたり月500円(月上限1,500円)、入院は1,000円(14日未満は500円)、調剤薬局は負担なし。後期高齢者医療の加入者は別の制度(重度心身障害者老人等医療費助成)になる','福祉タクシー券:下肢・体幹・内部・視覚の各1・2級、療育A1・A2が対象(金額・枚数は市の案内で確認)','友愛バス優待乗車証で市内の路線バスが無料になる制度がある']},
+ {id:'wakayama',name:'和歌山市',pref:'和歌山県',wageB:24662,wageNote:'和歌山県の令和6年度B型平均工賃',med:'full',taxi:'h',
+  facts:['重度心身障害児(者)医療費助成:身体1〜3級(3級は非課税世帯のみ)、療育A1・A2、精神1級が対象。県内の医療機関では保険適用分の自己負担が無料。本人の所得制限あり(扶養0人で459万6千円)。65歳以上で新たに該当した人は対象外(市の案内は令和2年のもの)','障害児者外出支援事業:500円の福祉タクシー利用券が年24枚(下肢・体幹・視覚1・2級は30枚)。バスカードや公衆浴場回数券との選択']},
+ {id:'tottori',name:'鳥取市',pref:'鳥取県',wageB:27915,wageNote:'鳥取県の令和6年度B型平均工賃',med:'part',taxi:'h',
+  facts:['障害者特別医療費助成:身体1・2級、療育手帳A(特別医療該当)、精神手帳1級が対象。1割負担だが医療機関ごとに月の上限があり、世帯全員が市民税非課税なら0円、本人が課税なら通院2,000円・入院10,000円。院外薬局は無料。本人の所得制限あり(扶養0人で169.5万円未満)','重度障がい者(児)タクシー料金助成:身体1・2級、療育A、精神1級で市町村民税非課税の人に月4枚のタクシー利用券。手帳の提示でメーター額の10%割引もある','自動車の改造費は上限10万円、福祉車両の購入は3分の2以内で上限10万円の助成(所得制限あり)']},
+ {id:'matsue',name:'松江市',pref:'島根県',wageB:29304,wageNote:'島根県の令和6年度B型平均工賃',taxi:'h',taxiNoInc:true,
+  facts:['福祉タクシー事業:在宅の身体1・2級、療育A、精神1級の人に、500円分の利用券を月6枚・年72枚まで交付(人工透析の通院は追加あり)。高齢者移送タクシー事業とは併用できない','重度障がい者の医療費助成がある(自己負担額は市のページに記載がなく、このゲームでは効果を入れていない)']},
+ {id:'okayama',name:'岡山市',pref:'岡山県',wageB:21650,wageNote:'岡山県の令和6年度B型平均工賃',med:'part',taxi:'h',
+  facts:['心身障害者医療費助成:身体1〜3級、IQ35以下、精神手帳1級(自立支援医療も受給)が対象。原則1割負担で、月の上限は所得区分で決まる(一般は外来12,000円・入院44,400円、低所得は外来1,000〜2,000円)。本人の所得制限あり(扶養0人で169.5万円)','福祉タクシー助成:在宅の身体1・2級・療育Aで所得税非課税世帯の人に、1枚630円までの利用券を月4枚(透析などは8〜12枚)']},
+ {id:'yamaguchi',name:'山口市',pref:'山口県',wageB:27369,wageNote:'山口県の令和6年度B型平均工賃',med:'full',taxi:'hm',taxiNoInc:true,
+  facts:['重度心身障害者医療費助成:身体1〜3級、療育A、精神1級などが対象。保険診療の自己負担分を全額助成(食事代などは対象外)。本人の所得制限あり','タクシー利用券:1枚200円。身体1〜3級・療育A・精神1級は年120枚、身体4〜6級・療育B・精神2・3級は年60枚(令和8年3月時点の案内)']},
+ {id:'tokushima',name:'徳島市',pref:'徳島県',wageB:30231,wageNote:'徳島県の令和6年度B型平均工賃',
+  facts:['重度心身障害者等医療費助成:身体1・2級、療育A、身体3・4級かつ療育B1などが対象。本人・配偶者・扶養義務者の所得に制限がある(窓口の自己負担額は市のページに記載がなく、このゲームでは効果を入れていない)','後期高齢者医療の障害認定を受けられる状態の人は、後期高齢者医療に加入していないと助成を受けられない']},
+ {id:'takamatsu',name:'高松市',pref:'香川県',wageB:23387,wageNote:'香川県の令和6年度B型平均工賃',med:'full',taxi:'h',
+  facts:['障害者医療費助成:身体1〜4級、療育手帳などが対象。県内の医療機関では保険診療の自己負担分が無料(後期高齢者医療の人は一度払って後日振り込み)。本人の所得制限あり(令和8年8月から扶養0人で375万8千円)。65歳以上で手帳の交付を受けた場合は、交付時に65歳未満であることが条件(平成20年8月以降の交付分)','障害者福祉タクシー助成:身体1級・療育マルA・精神1級は1枚670円を年40枚(透析は100枚)、身体2級・療育A・精神2級は年25枚。18歳以上は本人と配偶者が市民税非課税であることが条件']},
+ {id:'matsuyama',name:'松山市',pref:'愛媛県',wageB:23396,wageNote:'愛媛県の令和6年度B型平均工賃',med:'full',taxi:'h',taxiNoInc:true,
+  facts:['重度心身障害者医療費助成:身体1・2級、療育A、療育Bと身体手帳の両方を持つ人が対象。県内の医療機関では保険診療の自己負担分を助成(県外は一度払って後日払い戻し)。入院時の食事代などは対象外','重度障害者タクシー利用助成:在宅の身体1・2級、療育A、精神1級の人に、1回600円(令和8年度から)の一般タクシー券を年24回分。車いす利用の人向けの福祉タクシー券もある','身体障害者用自動車改造費助成事業がある']},
+ {id:'kochi',name:'高知市',pref:'高知県',wageB:28296,wageNote:'高知県の令和6年度B型平均工賃',med:'full',
+  facts:['重度心身障害児・者医療費助成:身体1・2級、療育A1・A2が対象。高知県内の医療機関では受給者証の提示で保険診療の自己負担分が公費助成される(県外は一度払って払い戻し)。65歳以上で初めて対象になる人は、世帯全員が市町村民税非課税の場合のみ(令和6年12月時点の案内)']},
+ {id:'saga',name:'佐賀市',pref:'佐賀県',wageB:26114,wageNote:'佐賀県の令和6年度B型平均工賃',med:'part',
+  facts:['重度心身障害者医療費助成(県の制度):身体1・2級、療育A、身体3級かつIQ50以下、精神手帳1級が対象。保険診療の自己負担分から月500円を引いた額が助成される。所得制限あり(県のページは令和5年6月更新)','佐賀県パーキングパーミット(身障者用駐車場利用証)制度:歩行が困難な身体障害の人、療育Aの人などが対象'],
+  local:{ok:function(s){return s.type==='body'&&!!s.techo},title:'駐車場の「利用証」',text:'佐賀県には、歩行が困難な身体障害のある人などに利用証を交付する「パーキングパーミット」制度がある。身障者用の駐車場を使いやすくなる。'}},
+ {id:'nagasaki',name:'長崎市',pref:'長崎県',wageB:26029,wageNote:'長崎県の令和6年度B型平均工賃',med:'part',taxi:'h',taxiNoInc:true,
+  facts:['心身障害者福祉医療費:身体1〜3級、療育A1・A2・B1、精神手帳1級が対象。身体1・2級・療育A・精神1級は医療機関ごと1日800円・月1,600円まで、3級・B1は払い戻しで助成額が半分。本人・配偶者・扶養義務者の所得制限あり','福祉タクシー利用券:車いすを常に使う身体1・2級、療育A、視覚1級(所得税非課税世帯)の人に500円券1冊48枚。交通費助成事業(年5,000円相当)もある']},
+ {id:'kumamoto',name:'熊本市',pref:'熊本県',wageB:22551,wageNote:'熊本県の令和6年度B型平均工賃',med:'part',taxi:'h',
+  facts:['重度心身障がい者(児)医療費助成:3歳以上で身体1・2級、療育A1・A2、精神手帳1級が対象。自己負担を全額または3分の2助成。20歳以上は所得制限あり(扶養0人で本人375万8千円)','福祉タクシー利用券:身体1・2級、療育A、精神1・2級で、市町村民税非課税(または生活保護)の人に1回500円の券を40枚綴りで交付(患者等輸送タクシー券もある)']},
+ {id:'oita',name:'大分市',pref:'大分県',wageB:25561,wageNote:'大分県の令和6年度B型平均工賃',med:'part',taxi:'h',taxiNoInc:true,
+  facts:['障害者医療費の助成:身体1〜3級、療育手帳、精神手帳1級が対象。県内では医療証の提示で原則申請不要。1つの医療機関で1か月の自己負担が1,000円未満の場合は対象外。老齢福祉年金に準じた所得制限あり(市のページは令和6年12月更新)','障がい者タクシー利用券:視覚1・2級、肢体不自由1・2級、内部1級、療育A1・A2、精神1級(写真貼付)の人に年1冊交付(金額・枚数は市のページに記載なし)']},
+ {id:'miyazaki',name:'宮崎市',pref:'宮崎県',wageB:28026,wageNote:'宮崎県の令和6年度B型平均工賃',med:'part',taxi:'hm',
+  facts:['重度心身障がい者医療費助成:身体1・2級、療育A、身体3級かつ療育B1、精神手帳1級が対象。窓口負担は入院が月1,000円、外来が医療機関ごと月500円、調剤は原則なし。20歳未満は自己負担なし。20歳以上は所得制限あり','重度障がい者タクシー料金等助成:身体1・2級、療育A・B1・B2、精神1級で市県民税所得割が非課税の人に、タクシー券12,000円分(500円券24枚)またはガソリン券6,000円分']},
+ {id:'kagoshima',name:'鹿児島市',pref:'鹿児島県',wageB:26503,wageNote:'鹿児島県の令和6年度B型平均工賃',taxi:'h',taxiNoInc:true,
+  facts:['重度心身障害者等医療費助成:身体1・2級、療育A、身体3級かつ療育B1、精神手帳1級(通院のみ)が対象。窓口で払った自己負担額が口座に振り込まれる(負担額は市のページに記載がなく、このゲームでは効果を入れていない)。所得制限あり','友愛タクシー券:視覚1・2級、下肢1〜4級(4級は65歳以上)、体幹1〜3級、療育A、精神1級などの人に200円券を年70枚(1回の乗車で最大25枚)。手帳の提示でタクシー運賃の1割引もある']},
+ {id:'naha',name:'那覇市',pref:'沖縄県',wageB:22111,wageNote:'沖縄県の令和6年度B型平均工賃',
+  facts:['重度心身障がい者医療費等助成:身体1・2級、療育A1・A2、療育B1かつ身体3級などが対象。窓口で払った後、診療月の翌々月末に口座へ振り込まれる(窓口負担額は市のページに記載がなく、このゲームでは効果を入れていない)','所得制限があり、所得がゼロでも毎年の確定申告(所得の申告)が必要。療育手帳は沖縄県が交付したものに限る','公共交通の割引:バスとゆいレールは本人と介護人1人まで5割引、タクシーは1割引(助成券はない)、高速道路は事前登録で半額','税の減免:自動車税・軽自動車税(種別割)は障がい者1人につき1台が全額減免。所得税・住民税の障害者控除、前年の合計所得135万円以下は住民税が非課税(令和8年4月時点)','日常生活用具の給付:吸引器、入浴補助用具、紙おむつ、ストーマ装具、住宅改修など。自己負担は原則1割で月の上限は24,600円(生活保護世帯は0円)。事前の申請が必要','NHK受信料は世帯全員が住民税非課税なら全額免除、手帳を持つ人が世帯主なら半額免除。市営・県営住宅は優先入居の扱い','手当(令和8年4月):特別障害者手当は月30,450円、障害児福祉手当は月16,560円(所得制限あり・現況届が必要)'],
+  local:{ok:function(s){return !!s.techo},title:'交通の割引と税の減免',text:'那覇市では、手帳があるとバスとゆいレールが本人と介護人1人まで5割引、タクシーが1割引、高速道路が事前登録で半額になる。自動車税・軽自動車税(種別割)は、障がい者1人につき1台が全額減免される。生計が同じ家族の車の場合は、証明書が必要なことがある。'}}
+];
+
+var BEN={
+ techo:['障害者手帳','運賃割引や各種助成への入口になる'],
+ jidoh:['児童発達支援(療育)','3〜5歳は利用料が無償化'],
+ houdei:['放課後等デイサービス','6〜18歳。負担は原則1割・所得に応じた月額上限'],
+ tokuji:['特別児童扶養手当','1級58,450円・2級38,930円/月(令和8年4月)'],
+ nenkin:['障害基礎年金','2級は年額847,300円(月約70,608円)、1級は月88,260円(令和8年度)'],
+ tokusho:['特別障害者手当','月30,450円(令和8年4月)。20歳以上・在宅・重度重複'],
+ iryo:['重度障害者医療費助成','自治体独自。保険適用分の自己負担を助成'],
+ jiritsu:['自立支援医療','自己負担は原則1割、所得に応じて月額上限'],
+ taxi:['福祉タクシー等の利用助成','自治体独自'],
+ waribiki:['運賃・有料道路などの割引','手帳の種別や等級による'],
+ shuro:['就労移行支援','一般就労を目指す訓練。原則2年'],
+ gouri:['合理的配慮','2024年4月から民間事業者にも提供義務'],
+ koujo:['障害者控除','所得税・住民税の控除'],
+ soudan:['相談支援・当事者会','サービス等利用計画を一緒につくる'],
+ kyotaku:['居宅介護(ホームヘルプ)','自宅での生活を支える'],
+ gh:['グループホーム','地域で共同生活を送る'],
+ seinen:['成年後見制度','財産管理や契約を支える'],
+ kaigo:['介護保険と障害福祉の調整','65歳以降は介護保険が優先。ケアマネと相談支援専門員の連携が鍵'],
+ hinan:['個別避難計画・福祉避難所','災害時の避難を事前に決めておく'],
+ local:['自治体独自の支援','住んでいる自治体ごとに内容が異なる'],
+ tanki:['短期入所(ショートステイ)','家族の休息や急な事情を支える'],
+ kazoku:['親の会・家族会','同じ立場の家族とつながる'],
+ young:['きょうだい・ヤングケアラーの支援','家族の世話を担う子どもの負担を減らす'],
+ kosodate:['子育て支援','保育・ファミリーサポート・家事援助など'],
+ hogo:['生活保護','最低限度の生活を支える。申請は福祉事務所']
+};
+
+var SOURCES=[
+ ['令和5年度障害者雇用実態調査(厚生労働省)','https://www.mhlw.go.jp/content/11601000/001233721.pdf'],
+ ['単身世帯の消費支出(家計調査の解説・生命保険文化センター)','https://www.jili.or.jp/lifeplan/houseeconomy/941.html'],
+ ['障害者の状況(令和8年版障害者白書 参考資料・内閣府)','https://www8.cao.go.jp/shougai/whitepaper/r08hakusho/zenbun/siryo_01.html'],
+ ['障害者数の推移(平成30年版厚生労働白書)','https://www.mhlw.go.jp/wp/hakusyo/kousei/18/dl/1-01.pdf'],
+ ['障害者の状況(令和7年版障害者白書 参考資料・内閣府)','https://www8.cao.go.jp/shougai/whitepaper/r07hakusho/zenbun/siryo_01.html'],
+ ['令和4年 生活のしづらさなどに関する調査(厚生労働省)','https://www.mhlw.go.jp/content/12201000/001259398.pdf'],
+ ['令和7年 障害者雇用状況の集計結果(厚生労働省)','https://www.mhlw.go.jp/stf/newpage_67490.html'],
+ ['令和6年度 工賃(賃金)の実績について(厚生労働省)','https://www.mhlw.go.jp/content/12200000/001637154.pdf'],
+ ['障害基礎年金の受給要件・年金額(日本年金機構)','https://www.nenkin.go.jp/service/jukyu/seido/shougainenkin/jukyu-yoken/20150514.html'],
+ ['重度障がい者医療費助成制度(福岡市)','https://www.city.fukuoka.lg.jp/hofuku/hokennenkin/life/02.html'],
+ ['重度心身障がい者福祉手当の支給(福岡市)','https://www.city.fukuoka.lg.jp/fukushi/syougaisyashien/health/shinohukushiteate.html'],
+ ['重度障害者福祉タクシー利用助成(広島市)','https://www.city.hiroshima.lg.jp/living/fukushi-kaigo/1014921/1025788/1022075.html'],
+ ['障がい者の福祉ガイド(魚津市)','https://www.city.uozu.toyama.jp/attach/EDIT/078/078996.pdf'],
+ ['年金・手当等の一覧(帯広市)','https://www.city.obihiro.hokkaido.jp/_res/projects/default_project/_page_/001/004/968/nenkin-teate.pdf'],
+ ['障がい者福祉助成・割引(岐阜市)','https://www.city.gifu.lg.jp/kenko/syougaisyafukushi/1004706/index.html'],
+ ['広報ふっさ 2014年12月1日号(福生市)','https://www.city.fussa.tokyo.jp/_res/projects/default_project/_page_/001/000/082/26-12-1-2p.pdf'],
+ ['寒川町障がい者福祉計画(案)','https://www.town.samukawa.kanagawa.jp/material/files/group/7/R503_08.pdf'],
+ ['令和6年度工賃(賃金)実績について(新潟県)','https://www.pref.niigata.lg.jp/sec/shougaifukushi/1281038535306.html'],
+ ['令和2年度 平均工賃(厚生労働省)','https://www.mhlw.go.jp/content/12200000/000859590.pdf'],
+ ['令和6年簡易生命表(厚生労働省)','https://www.mhlw.go.jp/toukei/saikin/hw/life/life25/dl/life25-03.pdf'],
+ ['結婚・出産のライフイベント(生命保険文化センター)','https://www.jili.or.jp/lifeplan/lifeevent/803.html'],
+ ['生涯未婚率(生命保険文化センター)','https://www.jili.or.jp/lifeplan/lifeevent/805.html'],
+ ['離婚(生命保険文化センター)','https://www.jili.or.jp/lifeplan/lifeevent/807.html'],
+ ['健康寿命と平均寿命の差(生命保険文化センター)','https://www.jili.or.jp/lifeplan/lifesecurity/oldage/3.html'],
+ ['出生動向基本調査(第16回・国立社会保障・人口問題研究所)','https://www.ipss.go.jp/ps-doukou/j/doukou16/doukou16_gaiyo.asp'],
+ ['重度心身障がい者医療費助成(札幌市)','https://www.city.sapporo.jp/hoken-iryo/iryojosei/judo.html'],
+ ['重度心身障害者医療費助成・タクシー等の利用券(青森市)','https://www.city.aomori.aomori.jp/hukushi_kenkou/hukushi/1002848/1002884/1002896.html'],
+ ['福祉タクシー・移送サービス利用券等(青森市)','https://www.city.aomori.aomori.jp/shougai-shien/fukushi-kenkou/fukushi/syougai-fukushi/fukushi-servece/22.html'],
+ ['重度心身障がい者医療費助成(盛岡市)','https://www.city.morioka.iwate.jp/kenkou/shogai/teate/1004113.html'],
+ ['ひとにやさしい駐車場利用証制度(岩手県)','https://www.pref.iwate.jp/kurashikankyou/fukushi/chiiki/machizukuri/1003538/1003539.html'],
+ ['重度心身障害者医療費助成(仙台市)','https://www.city.sendai.jp/servicekanri/kurashi/kenkotofukushi/shogai/iryoshien/kyufu/jose.html'],
+ ['福祉タクシー利用券(仙台市)','https://www.city.sendai.jp/servicekanri/kurashi/kenkotofukushi/shogai/shakaisanka/waribiki/kofu.html'],
+ ['自家用車燃料費助成(仙台市)','https://www.city.sendai.jp/servicekanri/kurashi/kenkotofukushi/shogai/shakaisanka/jikayosha/nenryohi.html'],
+ ['福祉医療制度(秋田市)','https://www.city.akita.lg.jp/faq/syogaifukushi/1012865.html'],
+ ['身体障がい者通院タクシー料金助成(秋田市)','https://www.city.akita.lg.jp/kurashi/shogaifukushi/1005378/1049250.html'],
+ ['重度心身障がい(児)者医療給付制度(山形市)','https://www.city.yamagata-yamagata.lg.jp/kenkofukushi/syougaisha/1006656/1002150.html'],
+ ['重度心身障がい者福祉手当(山形市)','https://www.city.yamagata-yamagata.lg.jp/kenkofukushi/syougaisha/1006656/1004644.html'],
+ ['重度心身障がい者医療費助成(福島市)','https://www.city.fukushima.fukushima.jp/soshiki/9/1041/3/488.html'],
+ ['福祉タクシー券(福島市)','https://www.city.fukushima.fukushima.jp/soshiki/9/1043/3/1728.html'],
+ ['重度心身障害者の医療福祉費助成制度(水戸市)','https://www.city.mito.lg.jp/page/3602.html'],
+ ['重度心身障がい者医療費助成(宇都宮市)','https://www.city.utsunomiya.lg.jp/kenko/shogai/teate/1004206.html'],
+ ['重度心身障がい者タクシー料金助成(宇都宮市)','https://www.city.utsunomiya.lg.jp/kenko/shogai/teate/1004207.html'],
+ ['重度心身障害者医療の所得制限(前橋市)','https://www.city.maebashi.gunma.jp/soshiki/kenko/kokuminkenkohoken/gyomu/2/1/36041.html'],
+ ['福祉タクシー券・思いやり駐車場利用証等(前橋市)','https://www.city.maebashi.gunma.jp/soshiki/fukushibu/shogaifukushi/gyomu/6/1/5467.html'],
+ ['心身障害者医療費支給制度(さいたま市)','https://www.city.saitama.lg.jp/faq/001/002/003/p110337.html'],
+ ['福祉タクシー利用料金の助成(さいたま市)','https://www.city.saitama.lg.jp/faq/001/002/003/p110360.html'],
+ ['自動車燃料費助成事業(さいたま市)','https://www.city.saitama.lg.jp/faq/001/002/003/p110381.html'],
+ ['障害のある人のための医療費助成(千葉市)','https://www.city.chiba.jp/faq/hokenfukushi/koreishogai/jiritsu/3107.html'],
+ ['福祉タクシー・自動車燃料費等助成(千葉市)','https://www.city.chiba.jp/hokenfukushi/koreishogai/jiritsu/hukushitakusi.html'],
+ ['重度障害者医療費助成制度(横浜市)','https://www.city.yokohama.lg.jp/kenko-iryo-fukushi/kenko-iryo/iryohijosei/judo-top/judo-gaiyo/gaiyo.html'],
+ ['福祉タクシー利用券(横浜市)','https://www.city.yokohama.lg.jp/kenko-iryo-fukushi/fukushi-kaigo/fukushi/annai/gaishutsu/kotsu/riyoken.html'],
+ ['障害者医療費助成(金沢市)','https://www4.city.kanazawa.lg.jp/soshikikarasagasu/kenkoseisakuka/yokuarushitsumon/2934.html'],
+ ['福祉タクシー利用助成(金沢市)','https://www4.city.kanazawa.lg.jp/soshikikarasagasu/shogaifukushika/gyomuannai/3/6/2/9294.html'],
+ ['障がいのある方の医療について(福井市)','https://www.city.fukui.lg.jp/fukusi/sfukusi/seido/iryou.html'],
+ ['重度心身障害者医療費助成制度(山梨県)','https://www.pref.yamanashi.jp/shogai-fks/judo/jidoukanpu-ikou.html'],
+ ['福祉医療費給付金(長野市)','https://www.city.nagano.nagano.jp/n100600/kosodate/p001460.html'],
+ ['障害者タクシー利用券(長野市)','https://www.city.nagano.nagano.jp/n102000/contents/p002340.html'],
+ ['重度心身障害者医療費助成(静岡市)','https://www.city.shizuoka.lg.jp/s5498/s001928.html'],
+ ['重度心身障害者タクシー利用券等(静岡市)','https://www.city.shizuoka.lg.jp/s5498/s002825.html'],
+ ['障害者医療費助成制度(名古屋市)','https://www.city.nagoya.jp/kenkofukushi/page/0000008709.html'],
+ ['タクシー料金の助成(名古屋市)','https://www.city.nagoya.jp/kenkofukushi/shougaisha/1016573/1016575.html'],
+ ['障がい者医療費助成(津市)','https://www.info.city.tsu.mie.jp/fukushi_kenkou/kenkou_iryou/1002973/1002989/1002990.html'],
+ ['在宅福祉サービス・交通サービス支援事業(津市)','https://www.info.city.tsu.mie.jp/fukushi_kenkou/shougaisha_fukushi/1003179/1003188.html'],
+ ['福祉医療費助成(大津市)','https://www.city.otsu.lg.jp/soshiki/020/1403/g/josei/fukushiiryohi/138907.html'],
+ ['身体障害者用自動車改造費助成(大津市)','https://www.city.otsu.lg.jp/soshiki/020/1408/g/j/139027.html'],
+ ['重度障害者医療費支給制度(京都市)','https://www.city.kyoto.lg.jp/hokenfukushi/page/0000160242.html'],
+ ['心身障害者医療費助成・福祉タクシー券(奈良市)','https://www.city.nara.lg.jp/soshiki/38/9689.html'],
+ ['福祉タクシー券・友愛バス(奈良市)','https://www.city.nara.lg.jp/soshiki/34/9246.html'],
+ ['重度心身障害児(者)医療費助成(和歌山市)','https://www.city.wakayama.wakayama.jp/kurashi/kourei_kaigo/1001098/1001653.html'],
+ ['障害児者外出支援事業(和歌山市)','https://www.city.wakayama.wakayama.jp/kurashi/kourei_kaigo/1001098/1010457.html'],
+ ['重度障がい者医療費助成(大阪市)','https://www.city.osaka.lg.jp/fukushi/page/0000369437.html'],
+ ['重度障がい者等タクシー料金給付(大阪市)','https://www.city.osaka.lg.jp/fukushi/page/0000007578.html'],
+ ['重度障害者医療費助成(神戸市)','https://www.city.kobe.lg.jp/a52670/kenko/health/medical/judoshogaisha.html'],
+ ['重度心身障害者タクシー利用券(神戸市)','https://www.city.kobe.lg.jp/a40792/kenko/handicap/zaitakufukushi/koutsukikan/s031.html'],
+ ['障害者特別医療費助成制度(鳥取市)','https://www.city.tottori.lg.jp/www/contents/1207893129095/index.html'],
+ ['障がいのある方への各種助成事業(鳥取市)','https://www.city.tottori.lg.jp/page/4558.html'],
+ ['福祉タクシー事業(松江市)','https://www.city.matsue.lg.jp/soshikikarasagasu/kenkofukushibu_shogaishafukushika/2/2/1642.html'],
+ ['心身障害者医療費助成制度(岡山市)','https://www.city.okayama.jp/kurashi/0000004276.html'],
+ ['福祉タクシー助成(岡山市)','https://www.city.okayama.jp/kurashi/0000058357.html'],
+ ['重度心身障害者医療費助成制度(山口市)','https://www.city.yamaguchi.lg.jp/soshiki/59/7169.html'],
+ ['タクシー利用券(山口市)','https://www.city.yamaguchi.lg.jp/soshiki/57/5067.html'],
+ ['重度心身障害者等医療費の助成(徳島市)','https://www.city.tokushima.tokushima.jp/smph/kenko_fukushi/josei_kyufu/judo_josei.html'],
+ ['障害者医療費助成(高松市)','https://www.city.takamatsu.kagawa.jp/smph/kurashi/sogo/shinseisho/shinseisho/kenko/shogaisha.html'],
+ ['障害者福祉タクシー助成制度(高松市)','https://www.city.takamatsu.kagawa.jp/smph/kurashi/kenkou/shogai_shien/kurashi_josei/koutsu/taxi.html'],
+ ['重度心身障害者医療費助成制度(松山市)','https://www.city.matsuyama.ehime.jp/kurashi/fukushi/shogai/iryo/juusin.html'],
+ ['重度障害者タクシー利用助成事業(松山市)','https://www.city.matsuyama.ehime.jp/kurashi/fukushi/shogai/shakaisanka/syougaitaxi.html'],
+ ['重度心身障害者に対する医療費の助成(高知市)','https://www.city.kochi.kochi.jp/soshiki/29/shougaiiryou.html'],
+ ['重度心身障害者医療費助成について(佐賀県)','https://www.pref.saga.lg.jp/kiji00379789/index.html'],
+ ['パーキングパーミット制度(佐賀県)','https://www.pref.saga.lg.jp/kiji00361285/index.html'],
+ ['心身障害者福祉医療費(長崎市)','https://www.city.nagasaki.lg.jp/page/3828.html'],
+ ['福祉タクシー、交通費助成事業(長崎市)','https://www.city.nagasaki.lg.jp/page/2564.html'],
+ ['重度心身障がい者(児)医療費助成(熊本市)','https://www.city.kumamoto.jp/kiji00359024/index.html'],
+ ['障がい者福祉タクシー利用券(熊本市)','https://www.city.kumamoto.jp/kiji00354/index.html'],
+ ['障害者医療費の助成(大分市)','https://www.city.oita.oita.jp/o089/kenko/fukushi/1087371699363.html'],
+ ['障がい者タクシー利用券の交付(大分市)','https://www.city.oita.oita.jp/o089/kenko/fukushi/1086943505779.html'],
+ ['重度心身障がい者医療費助成(宮崎市)','https://www.city.miyazaki.miyazaki.jp/health/grant/7678.html'],
+ ['重度障がい者タクシー料金等助成(宮崎市)','https://www.city.miyazaki.miyazaki.jp/health/disabilities_welfare/exemption/212.html'],
+ ['医療の助成(鹿児島市)','https://www.city.kagoshima.lg.jp/kenkofukushi/fukushi/syofuku/kenko/fukushi/shogai/iryo/index.html'],
+ ['交通・移動の援助(鹿児島市)','https://www.city.kagoshima.lg.jp/kenkofukushi/fukushi/syofuku/kenko/fukushi/shogai/kotsu/index.html'],
+ ['那覇市重度心身障がい者医療費等助成事業','https://www.city.naha.okinawa.jp/fukusi/syougai/iryoujhi/jusiniryou.html'],
+ ['令和5年分 民間給与実態統計調査(国税庁)','https://www.nta.go.jp/information/release/kokuzeicho/2024/minkan_2024/pdf/01.pdf'],
+ ['令和6年度 厚生年金保険・国民年金事業の概況(厚生労働省)','https://www.mhlw.go.jp/content/001617995.pdf'],
+ ['令和2年国勢調査 人口等基本集計結果(総務省統計局)','https://www.stat.go.jp/data/kokusei/2020/kekka/pdf/outline_01.pdf'],
+ ['公共交通機関・高速道路の料金割引(那覇市)','https://www.city.naha.okinawa.jp/fukusi/syougai/yugu/waribikicar.html'],
+ ['日常生活用具給付事業(那覇市)','https://www.city.naha.okinawa.jp/fukusi/syougai/hosougu/yougu.html'],
+ ['税関係の減免(那覇市)','https://www.city.naha.okinawa.jp/fukusi/syougaifukushi/1007400/1003241/1003243.html'],
+ ['NHK放送受信料の免除・公営住宅への優先入居(那覇市)','https://www.city.naha.okinawa.jp/fukusi/syougaifukushi/1007400/1003241/1003245.html'],
+ ['障害年金・手当等(那覇市)','https://www.city.naha.okinawa.jp/fukusi/syougaifukushi/1007400/1003261.html'],
+ ['通常学級の児童生徒8.8%(文部科学省 2022年調査・東洋経済オンライン)','https://toyokeizai.net/articles/-/701625?display=b']
+];
+
+function wageFor(s){var m=s.type==='body'?23.5:s.type==='intel'?13.7:(s.sub==='発達障害'?13.0:14.9);return Math.round(m*12*rnd(.8,1.2))}
+function regularWage(s){return s.disabled?Math.round(wageFor(s)*1.15):ri(300,460)}
+function techoP(s){return s.type==='mental'&&s.grade==='light'?.65:.92}
+function sample(a,n){var b=a.slice(),i,j,t;for(i=b.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));t=b[i];b[i]=b[j];b[j]=t}return b.slice(0,n)}
+/* ---------- 状態 ---------- */
+var S=null;
+var UI={mode:'birth',screen:'title',res:null};
+
+var PREFPOP={'北海道':5224614,'青森県':1237984,'岩手県':1210534,'宮城県':2301996,'秋田県':959502,'山形県':1068027,'福島県':1833152,'茨城県':2867009,'栃木県':1933146,'群馬県':1939110,'埼玉県':7344765,'千葉県':6284480,'東京都':14047594,'神奈川県':9237337,'新潟県':2201272,'富山県':1034814,'石川県':1132526,'福井県':766863,'山梨県':809974,'長野県':2048011,'岐阜県':1978742,'静岡県':3633202,'愛知県':7542415,'三重県':1770254,'滋賀県':1413610,'京都府':2578087,'大阪府':8837685,'兵庫県':5465002,'奈良県':1324473,'和歌山県':922584,'鳥取県':553407,'島根県':671126,'岡山県':1888432,'広島県':2799702,'山口県':1342059,'徳島県':719559,'香川県':950244,'愛媛県':1334841,'高知県':691527,'福岡県':5135214,'佐賀県':811442,'長崎県':1312317,'熊本県':1738301,'大分県':1123852,'宮崎県':1069576,'鹿児島県':1588256,'沖縄県':1467480};
+function nextMuni(){
+  var tot={};MUNIS.forEach(function(m){tot[m.pref]=(tot[m.pref]||0)+(m.cp||1)});
+  return wpick(MUNIS,function(m){return (PREFPOP[m.pref]||0)*(m.cp||1)/tot[m.pref]});
+}
+function newLife(mode){
+  var typeW=mode==='data'?[['body',37],['intel',11],['mental',52]]:[['body',40],['intel',45],['mental',15]];
+  var type=wchoice(typeW),sub,onset,sex;
+  if(type==='body'){
+    sub=wchoice([['肢体不自由',45],['内部障害',30],['聴覚・言語障害',17],['視覚障害',8]]);
+    onset=mode==='data'?wchoice([[0,12],[ri(2,17),8],[ri(18,39),15],[ri(40,64),30],[ri(65,88),35]]):wchoice([[0,60],[ri(1,5),40]]);
+    sex=Math.random()<.5?'男性':'女性';
+  }else if(type==='intel'){
+    sub='知的障害';onset=0;sex=Math.random()<.64?'男性':'女性';
+  }else{
+    sub=mode==='data'?wchoice([['気分障害(うつ・双極性障害)',30],['不安・ストレス関連の障害',25],['統合失調症',15],['発達障害',10],['てんかん',5],['認知症',10],['依存症など',5]]):'発達障害';
+    if(sub==='認知症')onset=ri(68,88);
+    else if(sub==='発達障害')onset=mode==='data'?ri(0,10):ri(2,5);
+    else if(sub==='てんかん')onset=wchoice([[ri(0,15),50],[ri(16,40),30],[ri(41,80),20]]);
+    else onset=wchoice([[ri(10,19),22],[ri(20,34),38],[ri(35,59),28],[ri(60,85),12]]);
+    sex=Math.random()<.4?'男性':'女性';
+  }
+  var grade=wchoice([['heavy',35],['mid',35],['light',30]]);
+  var muni=nextMuni();
+  var s={mode:mode,type:type,sub:sub,onset:onset,sex:sex,grade:grade,muni:muni,age:0,
+    health:clamp(76+ri(-5,5)),
+    mind:clamp(68+ri(-5,5)),
+    social:clamp(56+ri(-8,8)),dignity:clamp(60+ri(-6,6)),
+    money:0,work:null,salary:0,living:'family',livingSet:false,school:null,edu:null,
+    ownHome:false,qual:false,dx:(type==='body'&&onset===0),dxTry:0,dxAsk:-99,techo:false,pension:false,tokusho:false,severe2:grade==='heavy'&&Math.random()<.35,pTry:0,
+    partner:false,disabled:false,onsetAge:-1,workYrs:0,lastSalary:0,hogo:false,techoAsk:-99,feed:[],used:new Set(),missed:new Set(),done:new Set(),log:[],queue:[],ev:null,note:''};
+  s.birthYear=2026-ri(0,0);
+  return s;
+}
+
+function pHouse(){var p=S.partner;return !!(p&&!p.dead&&(p.status==='married'||p.status==='cohab'))}
+function partnerMonthly(){
+  if(!pHouse())return 0;
+  var p=S.partner,pa=S.age+p.off,y=p.yr||0;
+  if(pa<65)return p.works?Math.round(y*10000*(y<200?.88:.8)/12):0;
+  return p.works?(p.sex==='M'?169967:111413):56337;
+}
+function mergeSav(p){
+  if(!p.savIn){p.savIn=true;S.money+=p.sav*10000;S.log.push({age:S.age,t:'お互いの貯えを合わせる(パートナーの貯え 約'+p.sav+'万円)'})}
+  if(S.living==='family'&&Math.random()<.8){S.living='alone';S.livingSet=true;S.log.push({age:S.age,t:'二人で新しい住まいを借りる'})}
+}
+function parts(){
+  var p={wage:0,work:0,nenkin:0,tokusho:0,old:0,hogo:0},emp=(S.work==='regular'||S.work==='general')&&S.age<65;
+  if(emp)p.wage=Math.round(S.salary*10000*(S.salary<200?.88:.8)/12);
+  if(S.work==='a')p.work=91451;
+  if(S.work==='b')p.work=S.muni.wageB;
+  if(S.pension)p.nenkin=S.grade==='heavy'?88260:70608;
+  if(S.tokusho)p.tokusho=30450;
+  if(S.age>=65){
+    var kosei=Math.min(150000,Math.round(S.workYrs*S.lastSalary*10000*.0055/12));
+    p.old=(S.pension?0:58000)+kosei;
+  }
+  if(S.fam&&S.fam.ptLoss&&S.fam.ptLoss.married&&S.fam.ptLoss.works&&S.age>=40)p.surv=50000;
+  p.pub=p.nenkin+p.tokusho+p.old+(p.surv||0);
+  p.partner=partnerMonthly();
+  var sum=p.wage+p.work+p.pub+p.partner;
+  if(S.hogo&&S.age>=18){p.hogo=Math.max(0,expenseMonth()-sum);p.pub+=p.hogo}
+  p.total=sum+p.hogo;
+  return p;
+}
+function expenseMonth(){
+  if(S.age<18)return 0;
+  var base={family:40000,alone:150000,group:100000,facility:80000}[S.living]||40000;
+  var emp=(S.work==='regular'||S.work==='general')&&S.age<65;
+  var netW=emp?Math.round(S.salary*10000*(S.salary<200?.88:.8)/12):0;
+  if(emp&&S.living==='alone'&&netW>=200000)base+=40000;
+  if(emp&&S.living==='family')base+=20000;
+  if(S.ownHome&&S.living==='alone')base-=50000;
+  if(pHouse()){if(S.living==='family')base+=25000;else if(S.living!=='facility')base=Math.round(base*1.6)}
+  if(S.disabled)base+=5000;
+  var hhW=netW+partnerMonthly();if(hhW>base)base+=Math.round((hhW-base)*.7);
+  S.fam.kids.forEach(function(k){if(!k.dead&&S.age-k.born<=21)base+=(k.withMe?30000:20000)});
+  return base;
+}
+function income(){var p=parts();return (p.total-p.partner)*12/10000}
+function incomeHH(){return parts().total*12/10000}
+var DXFREE=['jidoh','gouri','hinan','kosodate','waribiki','young','kazoku','hogo'];
+function markLog(n){var o=[];for(var i=n;i<S.log.length;i++){S.log[i].sh=1;if(S.log[i].t)o.push({age:S.log[i].age,t:S.log[i].t})}return o}
+function tlNote(a,txt){a=(a||[]).filter(function(x){return !(txt&&x.t.indexOf(txt)>=0)});return a.length?'<p class="small muted tlnote">年表に追加: '+a.map(function(x){return esc(x.age+'歳 '+x.t)}).join(' / ')+'</p>':''}
+function use(id){S.used.add(id);S.missed.delete(id)}
+function miss(id){if(!S.used.has(id))S.missed.add(id)}
+function apply(r){
+  var d=r.fx||{},chips=[],map={h:['体調','health'],m:['心','mind'],so:['つながり','social'],d:['自分らしさ','dignity']},k;
+  for(k in map){if(d[k]){S[map[k][1]]=clamp(S[map[k][1]]+d[k]);chips.push([map[k][0],d[k],''])}}
+  if(d.$){S.money+=d.$*10000;chips.push(['貯え',d.$,'万円'])}
+  (r.use||[]).forEach(function(id){if(S.dx||!S.disabled||DXFREE.indexOf(id)>=0)use(id)});(r.miss||[]).forEach(miss);
+  if(r.set)Object.keys(r.set).forEach(function(key){S[key]=r.set[key]});
+  if(r.after)r.after();
+  if(r.log)S.log.push({age:r.logAge!=null?r.logAge:S.age,t:r.log});
+  return chips;
+}
+function R(p,ok,ng){var hit=Math.random()<p;var o=hit?ok:ng;o.roll={p:p,hit:hit};return o}
+function medKind(m){return m.med||(m.medFull?'full':null)}
+function elMed(s){return !!(medKind(s.muni)&&s.techo&&s.grade==='heavy')}
+function elTaxi(s){var t=s.muni.taxi;if(!t||!s.techo)return false;var okG=t==='hm'?(s.grade!=='light'):(s.grade==='heavy');return okG&&(s.muni.taxiNoInc||incomeHH()<=250)}
+
+/* ---------- 家族のモデル(人口統計にもとづく) ---------- */
+/* 令和6年簡易生命表(平均寿命 男81.09歳・女87.13歳)に合わせた、男女別の生存曲線(0〜110歳) */
+var LT={M:[1.0,0.9982,0.99813,0.99805,0.99797,0.99789,0.99781,0.99772,0.99763,0.99753,0.99744,0.99733,0.99723,0.99711,0.997,0.99688,0.99675,0.99662,0.99649,0.99635,0.9962,0.99592,0.99561,0.99528,0.99493,0.99455,0.99415,0.99371,0.99324,0.99274,0.99219,0.99161,0.99099,0.99032,0.98959,0.98882,0.98799,0.9871,0.98614,0.98511,0.984,0.98274,0.98137,0.9799,0.97832,0.97661,0.97476,0.97278,0.97064,0.96834,0.96586,0.96318,0.96031,0.95721,0.95388,0.95029,0.94644,0.94229,0.93783,0.93305,0.9279,0.92238,0.91646,0.91011,0.9033,0.896,0.88626,0.87567,0.86417,0.8517,0.8382,0.8236,0.80784,0.79085,0.77259,0.753,0.72863,0.70236,0.67417,0.64404,0.612,0.58417,0.55516,0.52504,0.49394,0.462,0.42144,0.38026,0.33893,0.29798,0.258,0.21964,0.18343,0.14995,0.11968,0.093,0.07248,0.05503,0.04059,0.029,0.02,0.01387,0.00929,0.006,0.00371,0.0022,0.00139,0.00084,0.00049,0.00028,0.00015],F:[1.0,0.9985,0.99846,0.99842,0.99838,0.99834,0.9983,0.99826,0.99822,0.99817,0.99813,0.99808,0.99803,0.99798,0.99793,0.99788,0.99783,0.99777,0.99772,0.99766,0.9976,0.99741,0.9972,0.99698,0.99674,0.99649,0.99621,0.99591,0.99558,0.99523,0.99486,0.99445,0.99401,0.99354,0.99303,0.99248,0.99188,0.99124,0.99055,0.9898,0.989,0.98825,0.98746,0.98661,0.9857,0.98473,0.9837,0.98259,0.98142,0.98016,0.97882,0.97739,0.97587,0.97424,0.97251,0.97066,0.96869,0.96659,0.96435,0.96196,0.95942,0.95671,0.95383,0.95075,0.94748,0.944,0.93945,0.93454,0.92924,0.92354,0.9174,0.91079,0.90368,0.89603,0.88782,0.879,0.86486,0.84921,0.83193,0.8129,0.792,0.77239,0.75123,0.72847,0.70407,0.678,0.64676,0.61343,0.57809,0.54089,0.502,0.45393,0.40447,0.35438,0.30455,0.256,0.21238,0.17174,0.13489,0.10249,0.075,0.05598,0.04042,0.02813,0.0188,0.012,0.00794,0.00506,0.00309,0.0018,0.001]};
+function gauss(m,sd){var u=1-Math.random(),v=Math.random();return m+sd*Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)}
+function gc(m,sd,lo,hi){return Math.max(lo,Math.min(hi,gauss(m,sd)))}
+function survAt(k,x){var a=LT[k];if(x<=0)return 1;if(x>=110)return 0;var i=Math.floor(x),f=x-i;return a[i]*(1-f)+a[i+1]*f}
+function cumH(k,x){return -Math.log(Math.max(survAt(k,x),1e-9))}
+function invS(k,t){var a=LT[k],i,d;for(i=0;i<110;i++){if(a[i+1]<=t){d=a[i]-a[i+1];return i+(d>0?(a[i]-t)/d:0)}}return 110}
+function lifeAbs(k,age0){var s0=survAt(k,Math.max(0,age0));return invS(k,Math.max(1e-6,s0*(1-Math.random())))}
+function mkP(rel,sexK,off,age0){var life=lifeAbs(sexK,age0);return{rel:rel,nm:rel,sex:sexK,off:off,life:life,dead:false,deathAge:Math.floor(life-off),care:false,careAt:null}}
+function setCareAt(p){if(p.life>=72){var gap=gc(p.sex==='M'?2.8:3.9,1.8,.5,9);p.careAt=Math.floor(p.life-gap-p.off)}}
+function causeAt(age){
+  var p;
+  if(age>=100)return '老衰';
+  if(age<40)p=[['不慮の事故',35],['悪性新生物(がん)',28],['心疾患',12],['脳血管疾患',8],['肺炎',5]];
+  else if(age<65)p=[['悪性新生物(がん)',38],['心疾患',16],['脳血管疾患',10],['不慮の事故',8],['肝疾患',5],['肺炎',4]];
+  else if(age<85)p=[['悪性新生物(がん)',30],['心疾患',17],['脳血管疾患',9],['肺炎',9],['誤嚥性肺炎',6],['老衰',5],['不慮の事故',4],['腎不全',3]];
+  else p=[['老衰',28],['心疾患',18],['悪性新生物(がん)',14],['肺炎',9],['誤嚥性肺炎',9],['脳血管疾患',7],['認知症の進行',5]];
+  return wchoice(p);
+}
+function makeFamily(){
+  var f={pend:[],cur:null,kids:[],sibs:[],exes:0,pstate:'none',desired:wchoice([[0,9],[1,18],[2,50],[3,20],[4,3]]),loveTry:0,ptIll:false,ptIllN:0,ptLoss:null,lastPartner:null};
+  var n=wchoice([[1,21],[2,104],[3,66],[4,20]]),order=ri(0,n-1),m1=gc(31.0,3.8,20,40),b=[m1],i,sh;
+  for(i=1;i<n;i++)b.push(b[i-1]+gc(2.8,1.2,1,6));
+  if(b[n-1]>43.5){sh=b[n-1]-43.5;for(i=1;i<n;i++)b[i]-=sh*(i/(n-1))}
+  var mAge=Math.round(b[order]),fAge=Math.max(19,Math.round(b[order]+gc(1.8,2.8,-3,8)));
+  f.mother=mkP('母','F',mAge,mAge);f.father=mkP('父','M',fAge,fAge);
+  setCareAt(f.mother);setCareAt(f.father);
+  for(i=0;i<n;i++){
+    if(i===order)continue;
+    var off=Math.round(b[order]-b[i]);if(off===0)off=(i<order?1:-1);
+    var sx=Math.random()<.512?'M':'F',rel=off>0?(sx==='M'?'兄':'姉'):(sx==='M'?'弟':'妹');
+    var s=mkP(rel,sx,off,off>0?off:0);
+    s.marryAge=Math.random()<(sx==='M'?.72:.82)?Math.round(gc(sx==='M'?31.1:29.8,4,21,46)):null;
+    s.kidAges=[];
+    if(s.marryAge!=null){var kn=wchoice([[0,10],[1,20],[2,50],[3,20]]),ka=s.marryAge+gc(1.8,1.5,0,5),j,a;for(j=0;j<kn;j++){a=Math.round(ka);if(a<=(sx==='F'?43:50))s.kidAges.push(a);ka+=gc(2.8,1.2,1,6)}}
+    s.moveAge=Math.random()<.3?Math.round(gc(28,5,21,45)):null;
+    s.illAge=Math.random()<.35?Math.round(gc(62,8,45,85)):null;
+    f.sibs.push(s);
+  }
+  f.sibs.sort(function(x,y){return y.off-x.off});
+  var by={};f.sibs.forEach(function(s){(by[s.rel]=by[s.rel]||[]).push(s)});
+  Object.keys(by).forEach(function(r){var arr=by[r];if(arr.length===1)return;arr.forEach(function(s,k){s.nm=arr.length===2?(k===0?'上の':'下の')+r:r+'('+(k+1)+')'})});
+  return f;
+}
+function mkPartner(){
+  var same=Math.random()<.04,pk=S.sexK==='M'?(same?'M':'F'):(same?'F':'M'),d;
+  if(same)d=gauss(0,3);else if(S.sexK==='M')d=-gauss(1.8,3.2);else d=gauss(1.8,3.2);
+  d=Math.round(Math.max(-9,Math.min(9,d)));
+  if(S.age+d<18)d=18-S.age;
+  var p=mkP('パートナー',pk,d,S.age+d);
+  p.sub=Math.random()<.1;p.status='dating';p.since=S.age;p.liveSince=null;p.works=Math.random()<.78;p.inlaw=false;p.same=same;
+  var pa=S.age+d;
+  p.yr=p.works?Math.round(gc(pk==='M'?500:310,pk==='M'?150:100,pk==='M'?180:100,pk==='M'?1000:700)):0;
+  p.sav=Math.round((pa<25?40:pa<30?120:pa<40?250:pa<50?400:600)*rnd(.4,1.6));
+  p.savIn=false;
+  return p;
+}
+function mkKid(){
+  var sx=Math.random()<.512?'M':'F',k=mkP('子',sx,-S.age,0);
+  k.born=S.age;k.leaveAge=ri(18,25);k.supportAge=Math.random()<.088?ri(7,14):null;k.withMe=true;
+  k.marryAge=Math.random()<(sx==='M'?.70:.78)?Math.round(gc(sx==='M'?31:29.5,4,22,42)):null;k.gk=[];
+  if(k.marryAge!=null){var n=wchoice([[0,12],[1,22],[2,48],[3,18]]),a=k.marryAge+gc(2,1.5,0,5),j,r;for(j=0;j<n;j++){r=Math.round(a);if(r<=(sx==='F'?43:50))k.gk.push(r);a+=gc(2.8,1.2,1,6)}}
+  return k;
+}
+function kidNm(k){
+  var ks=S.fam.kids;if(ks.length===1)return k.sex==='M'?'息子':'娘';
+  var same=ks.filter(function(x){return x.sex===k.sex}).sort(function(a,b){return a.born-b.born}),i=same.indexOf(k);
+  return ['長','次','三','四'][Math.min(Math.max(i,0),3)]+(k.sex==='M'?'男':'女');
+}
+function parentsAlive(s){return !s.fam.father.dead||!s.fam.mother.dead}
+function sibAlive(s){return s.fam.sibs.filter(function(x){return !x.dead&&s.age+x.off>=0}).length}
+function sibN(s){return s.fam.sibs.filter(function(x){return !x.dead&&s.age+x.off>=0}).length}
+function kidsAliveN(s){return s.fam.kids.filter(function(k){return !k.dead}).length}
+function careParent(s){var r=null;[s.fam.father,s.fam.mother].forEach(function(p){if(!p.dead&&!p.care&&p.careAt!=null&&s.age>=p.careAt&&!r)r=p});return r}
+function pushFam(age,title,t,fx,log){
+  var n0=S.log.length,r={t:t,fx:fx||{},log:log,logAge:age},chips=apply(r),tl0=markLog(n0);
+  S.famFeed.push({k:'家族',title:title,text:t,chips:chips,age:age,tl:tl0});
+}
+function famTick(prev,lim){
+  var F=S.fam,L=[],a=function(pa){return pa>prev&&pa<=lim};
+  var push=function(age,kind,o){o=o||{};o.age=age;o.kind=kind;L.push(o)};
+  var yl=function(fn){var y;for(y=prev+1;y<=lim;y++){if(fn(y))return}};
+  [F.father,F.mother].forEach(function(p){
+    if(p.dead)return;
+    if(p.deathAge<=lim){push(Math.max(p.deathAge,prev),'pDeath',{p:p});return}
+    yl(function(y){var pa=y+p.off;if(pa>=62&&pa<=86&&Math.random()<.03){push(y,'pIll',{p:p});return true}});
+  });
+  F.sibs.forEach(function(s){
+    if(s.dead)return;
+    var dA=s.deathAge,ok=function(pa){return a(pa)&&pa<dA},pm,pv,pi;
+    if(dA<=lim)push(Math.max(dA,prev),'sDeath',{p:s});
+    if(s.off<0&&ok(-s.off))push(-s.off,'sBorn',{p:s});
+    if(s.marryAge!=null){pm=s.marryAge-s.off;if(ok(pm))push(pm,'sWed',{p:s})}
+    s.kidAges.forEach(function(ka,i){var pk=ka-s.off;if(ok(pk))push(pk,'sKid',{p:s,i:i})});
+    if(s.moveAge!=null){pv=s.moveAge-s.off;if(ok(pv))push(pv,'sMove',{p:s})}
+    if(s.illAge!=null){pi=s.illAge-s.off;if(ok(pi))push(pi,'sIll',{p:s})}
+  });
+  var pt=S.partner;
+  if(pt&&!pt.dead){
+    if(pt.deathAge<=lim)push(Math.max(pt.deathAge,prev),'ptDeath',{p:pt});
+    else{
+      var live=pt.status!=='dating',pa0=function(y){return y+pt.off};
+      yl(function(y){
+        var d=y-(pt.liveSince!=null?pt.liveSince:pt.since);
+        if(!live){if(Math.random()<.07){push(y,'breakup',{p:pt});return true}}
+        else{var h=d<5?.022:d<10?.018:d<20?.011:.004;if(Math.random()<h){push(y,'divorce',{p:pt});return true}}
+      });
+      if(live){
+        yl(function(y){if(pa0(y)>=28&&pa0(y)<=58&&Math.random()<.05){push(y,'ptWork',{p:pt});return true}});
+        if(!pt.inlaw)yl(function(y){if(pa0(y)>=45&&pa0(y)<=65&&Math.random()<.03){push(y,'inlaw',{p:pt});return true}});
+        if(!F.ptIll&&F.ptIllN<2)yl(function(y){var pg=pa0(y);if(pg>=45&&Math.random()<.004*(pg-40)){push(y,'ptIll',{p:pt});return true}});
+      }
+    }
+  }
+  F.kids.forEach(function(k){
+    if(k.dead)return;
+    var dA=k.deathAge,ok=function(pa){return a(pa)&&pa<dA};
+    if(dA<=lim)push(Math.max(dA,prev),'kDeath',{k:k});
+    [[3,'kIn'],[6,'kSchool'],[13,'kTeen'],[15,'kExam'],[18,'kGrad'],[k.leaveAge,'kOut'],[k.supportAge,'kSupport']].forEach(function(m){
+      if(m[0]==null)return;
+      if(!k.withMe&&m[1]!=='kGrad'&&m[1]!=='kSupport')return;
+      var pa=k.born+m[0];if(ok(pa))push(pa,m[1],{k:k});
+    });
+    if(k.marryAge!=null){var pw=k.born+k.marryAge;if(ok(pw))push(pw,'kWed',{k:k})}
+    k.gk.forEach(function(g,i){var pg=k.born+g;if(ok(pg))push(pg,'kGrand',{k:k,i:i})});
+  });
+  L.sort(function(x,y){return x.age-y.age});
+  L.forEach(famFire);
+}
+function famFire(e){
+  var F=S.fam,p=e.p,k=e.k,nm=p?p.nm:'',kn=k?kidNm(k):'',dis=S.disabled,ob=S.sexK==='M'?'おじ':'おば',cause,o;
+  if(p&&p.dead)return;
+  if(k&&k.dead)return;
+  if((e.kind==='ptWork'||e.kind==='inlaw'||e.kind==='ptIll'||e.kind==='divorce'||e.kind==='breakup'||e.kind==='ptDeath')&&S.partner!==p)return;
+  switch(e.kind){
+  case 'pDeath':
+    p.dead=true;p.care=false;cause=causeAt(Math.floor(p.life));
+    F.pend.push({rel:p.rel,age:e.age,life:Math.floor(p.life),cause:cause});
+    S.log.push({age:e.age,t:p.rel+'が亡くなる(享年'+Math.floor(p.life)+'歳・'+cause+')'});
+    break;
+  case 'pIll':
+    pushFam(e.age,p.rel+'の入院',p.rel+'が入院した。見舞いに通い、病室で話す時間が増えた。年を重ねた親の体調が、少しずつ気がかりになってきた。',{m:-3,so:1},p.rel+'が入院');
+    break;
+  case 'sBorn':
+    pushFam(e.age,nm+'が生まれる','家族に新しい命が加わった。'+nm+'が生まれ、'+(S.sexK==='M'||true?'きょうだいができた。':'')+(dis?'家族みんなで迎え、小さな手を握った。':'小さな手を握ると、胸があたたかくなった。'),{so:5,m:4,d:2},nm+'が生まれる');
+    break;
+  case 'sWed':
+    if(S.age>=12){p.ask=true;break}
+    pushFam(e.age,nm+'の結婚',nm+'が結婚した。'+(dis?'式では、席や休憩の配慮を家族が調整してくれた。':'')+'新しい家族が増え、集まりの顔ぶれが変わった。',{so:3,m:2},nm+'が結婚');
+    break;
+  case 'sKid':
+    if(e.i===0)pushFam(e.age,nm+'に子ども',nm+'に初めての子どもが生まれ、'+ob+'になった。会うたびに、小さな手が大きくなっていく。',{so:4,m:3},nm+'に子どもが生まれ、'+ob+'になる');
+    else pushFam(e.age,nm+'に子ども',nm+'に'+(e.i+1)+'人目の子どもが生まれ、甥や姪がまた一人増えた。にぎやかになった親戚の集まりを、楽しみにするようになった。',{so:3,m:2},nm+'に'+(e.i+1)+'人目の子どもが生まれる');
+    break;
+  case 'sMove':
+    pushFam(e.age,nm+'の転居',nm+'が仕事の都合で遠方へ引っ越した。会う機会は減り、連絡はオンラインが中心になった。',{so:-3},nm+'が遠方へ転居');
+    break;
+  case 'sIll':
+    pushFam(e.age,nm+'の入院',nm+'が大きな病気で入院した。支え合ってきた関係が、いま試されている。',{m:-4},nm+'が入院');
+    break;
+  case 'sDeath':
+    p.dead=true;cause=causeAt(Math.floor(p.life));
+    pushFam(e.age,nm+'の死',nm+'が亡くなった(享年'+Math.floor(p.life)+'歳・'+cause+')。同じ家で育った時間が、思い出になった。',{m:-10,so:-5,h:-2},nm+'が亡くなる(享年'+Math.floor(p.life)+'歳・'+cause+')');
+    break;
+  case 'ptWork':
+    o=pick([{t:'パートナーが昇進し、仕事が忙しくなった。家計には余裕が出たが、二人の時間は減った。',fx:{so:-1,m:1,$:6},l:'パートナーが昇進'},{t:'パートナーに転勤の話が出て、単身赴任になった。連絡は毎晩のビデオ通話が中心になった。',fx:{so:-4,m:-2},l:'パートナーが単身赴任'},{t:'パートナーが転職し、収入が少し下がった。家計の見直しを二人で話し合った。',fx:{m:-2,$:-4},l:'パートナーが転職'}]);
+    pushFam(e.age,'パートナーの仕事',o.t,o.fx,o.l);
+    break;
+  case 'inlaw':
+    p.inlaw=true;
+    pushFam(e.age,'パートナーの親',dis?'パートナーの親の介護が始まり、パートナーが実家に通う日が増えた。家事の分担を、障害のある自分の状況も踏まえて話し合った。':'パートナーの親の介護が始まり、パートナーが実家に通う日が増えた。家事や仕事の分担を話し合った。',{m:-3,so:1},'パートナーの親の介護が始まる');
+    break;
+  case 'ptIll':
+    F.ptIll=true;F.ptIllN++;
+    S.log.push({age:e.age,t:'パートナーが病気になる'});
+    break;
+  case 'divorce':
+    var splitNote='';if(S.money>0&&p.savIn){S.money=Math.round(S.money/2);splitNote='貯えは財産分与で分け合った。'}
+    S.ptLeft=e.age;S.partner=null;F.exes++;F.pstate='divorced';F.lastPartner=p;
+    F.kids.forEach(function(kk){if(!kk.dead&&e.age-kk.born<20)kk.withMe=Math.random()<(S.sexK==='F'?.88:.12)});
+    pushFam(e.age,'離婚','話し合いを重ねた末に、離婚することになった。'+splitNote+(F.kids.length?'子どもの暮らしと養育費について、取り決めをした。':'')+(dis?'相談支援や法律相談の窓口にも相談した。':''),{m:-10,so:-6,d:-2},'離婚');
+    break;
+  case 'breakup':
+    S.ptLeft=e.age;S.partner=null;F.pstate='none';F.lastPartner=p;
+    pushFam(e.age,'別れ','交際は終わった。会う回数が減り、お互いの道が分かれていった。',{m:-6,so:-3},'パートナーと別れる');
+    break;
+  case 'ptDeath':
+    p.dead=true;cause=causeAt(Math.floor(p.life));
+    F.ptLoss={age:e.age,life:Math.floor(p.life),cause:cause,works:p.works,married:p.status==='married'};F.lastPartner=p;F.pstate='widowed';S.partner=null;
+    S.log.push({age:e.age,t:(p.status==='dating'?'パートナー':(p.nm||'パートナー'))+'が亡くなる(享年'+Math.floor(p.life)+'歳・'+cause+')'});
+    break;
+  case 'kIn':
+    pushFam(e.age,kn+'の入園',kn+'が保育園に通い始めた(3歳)。'+(dis?'園には自分の障害のことを伝え、送迎や連絡の方法を相談した。':'')+'朝の支度に追われながらも、小さな成長を毎日見つけた。',{so:2,m:2},kn+'が入園');
+    break;
+  case 'kSchool':
+    pushFam(e.age,kn+'の入学',kn+'が小学校に入学した(6歳)。ランドセル姿を写真に収め、保護者会や行事への関わり方を考えるようになった。',{so:2,m:3,d:1},kn+'が小学校に入学');
+    break;
+  case 'kSupport':
+    pushFam(e.age,kn+'の相談','文部科学省の調査では、通常の学級の小中学生の8.8%に、学習面や行動面で著しい困難を示す可能性があるとされる。'+kn+'も、担任から相談を受けた。通級や巡回相談など、学校の支援を一緒に探した。',{m:-3,so:1},kn+'の学校生活について相談を受ける');
+    break;
+  case 'kTeen':
+    pushFam(e.age,kn+'の思春期',kn+'が思春期を迎え、口数が減った。向き合い方に悩む日が増えた。',{m:-3},kn+'が思春期を迎える');
+    break;
+  case 'kExam':
+    pushFam(e.age,kn+'の受験',kn+'の高校受験。夜食を用意しながら、結果を待った。',{m:-2,so:1},kn+'が高校受験');
+    break;
+  case 'kGrad':
+    if(Math.random()<.55)pushFam(e.age,kn+'の進学',kn+'が高校を卒業し、進学した。入学金と授業料の準備が必要になった。',{$:-60,m:-2,so:1},kn+'が進学');
+    else pushFam(e.age,kn+'の就職',kn+'が高校を卒業し、就職した。初任給で、家族に小さな贈り物をしてくれた。',{so:3,m:3},kn+'が就職');
+    break;
+  case 'kOut':
+    pushFam(e.age,kn+'の独立',kn+'が家を出て一人暮らしを始めた。部屋が静かになり、連絡の頻度を相談した。',{so:-3,m:-2},kn+'が独立');
+    k.withMe=false;
+    break;
+  case 'kWed':
+    pushFam(e.age,kn+'の結婚',kn+'が結婚した。新しい家族を迎え、これからの付き合い方を考えた。',{so:4,m:4,d:2},kn+'が結婚');
+    break;
+  case 'kGrand':
+    pushFam(e.age,'孫の誕生',kn+'に子どもが生まれ、孫ができた。会うたびに、笑い声が家に増えた。',{so:6,m:5,d:3},'孫が生まれる');
+    break;
+  case 'kDeath':
+    k.dead=true;cause=causeAt(Math.floor(k.life));
+    pushFam(e.age,kn+'の死',kn+'が亡くなった(享年'+Math.floor(k.life)+'歳・'+cause+')。順番が逆になった悲しみは、言葉にならない。',{m:-20,so:-8,h:-5},kn+'が亡くなる(享年'+Math.floor(k.life)+'歳)');
+    break;
+  }
+}
+/* 設定やステータスの食い違いを、表示の前に内部で整える */
+function sanitize(){
+  var s=S,f=s.fam,i;
+  ['health','mind','social','dignity'].forEach(function(k){if(!isFinite(s[k]))s[k]=50;s[k]=clamp(s[k])});
+  if(!isFinite(s.money))s.money=0;
+  if(!s.disabled){s.techo=false;s.pension=false;s.tokusho=false;s.hogo=false;if(s.work==='general')s.work='regular'}
+  if(s.living!=='alone')s.ownHome=false;
+  if(s.disabled&&!s.dx){s.techo=false;s.pension=false;s.tokusho=false}
+  if(!s.techo&&s.work==='general')s.work='regular';
+  if(s.tokusho&&(!s.disabled||!s.severe2))s.tokusho=false;
+  if(s.pension&&!s.disabled)s.pension=false;
+  if(s.age<18&&(s.living==='alone'||s.living==='group'))s.living='family';
+  if(s.age>=65&&(s.work==='regular'||s.work==='general'))s.work='none';
+  if(s.partner&&s.partner.dead)s.partner=null;
+  if(!s.partner&&f.pstate==='married')f.pstate='none';
+  [f.father,f.mother].forEach(function(p){if(p.dead)p.care=false});
+  f.kids.forEach(function(k){if(k.dead)k.withMe=false});
+  if(!s.partner)f.ptIll=false;
+}
+
+/* ---------- イベント ---------- */
+var EV=[];
+function ev(id,o){EV.push(Object.assign({id:id,lo:0,hi:100,w:function(){return 1}},o))}
+var BARRIER={'肢体不自由':'駅のエレベーターが故障していて、改札までたどり着けない。','内部障害':'見た目では分からず、優先席に座っていると冷たい視線を感じた。','聴覚・言語障害':'窓口で名前を呼ばれたが聞こえず、後ろの人に急かされた。','視覚障害':'点字ブロックの上に自転車が止められていて、先に進めない。','知的障害':'説明書きの言葉が難しく、手続きの窓口で固まってしまった。'};
+function barrier(s){return BARRIER[s.sub]||'体調の波をうまく説明できないまま、予定を断ることが続いた。'}
+
+ev('early',{big:1,lo:0,hi:5,once:1,w:function(s){return s.disabled?5:0},must:function(s){return s.disabled},
+ k:'幼いころ',title:'ことばや動きの「ちがい」',
+ t:function(s){return s.age+'歳。健診で、発達について相談を勧められた。地域には児童発達支援(療育)の事業所がある。'},
+ data:'3〜5歳の児童発達支援は、幼児教育・保育の無償化で利用料がかからない(岐阜市の案内ほか)。',
+ ch:[{l:'療育に通ってみる',h:'親子で専門職や同じ立場の家族とつながる',f:function(s){return{t:'小さな教室で、同じ年ごろの子や支援員と過ごす時間ができた。家族にも相談できる人が増えた。'+(s.dx?'':'あわせて医療機関で診察と発達検査を受け、診断がついた。'),fx:{so:5,d:4,h:2,m:2},use:['jidoh'],set:{dx:true},log:s.dx?'療育につながる':'療育につながり、'+s.sub+'の診断を受ける'}}},
+  {l:'しばらく家庭で様子を見る',h:'家族だけで抱え込む形になる',f:function(s){return{t:'日々の暮らしのなかで、家族だけが背負う時間が続いた。',fx:{so:-4,m:-4},miss:['jidoh'],log:'相談先につながらないまま幼少期を過ごす'}}}]});
+
+ev('dxLater',{big:1,lo:3,hi:100,w:function(s){return s.disabled&&!s.dx&&s.dxTry<3&&s.age-s.dxAsk>=3&&(s.type==='intel'?s.age>=4:s.age>=s.onsetAge+1)?4:0},
+ must:function(s){return s.disabled&&!s.dx&&s.dxTry<3&&s.age-s.dxAsk>=3&&(s.type==='intel'?s.age>=6:s.age>=s.onsetAge+3)},
+ onShow:function(s){s.dxAsk=s.age;s.dxTry++},
+ k:'医療',title:'受診して、診断を受けるか',
+ t:function(s){var base=s.age<18?'学校の先生や保健師から、一度受診して相談してみるよう勧められた。':'困りごとが続いている。病院で相談してみるかどうかを考えている。';return base+'診断がつくと、手帳や療育・年金などの制度の入口になる。診断を受けるかどうかは、本人(未成年は保護者と一緒)が決める。いまのところ診断は受けていない。'},
+ data:'障害者手帳・障害年金・特別児童扶養手当などの申請には、医師の診断書が必要になる。',
+ ch:[{l:'医療機関を受診して、検査を受ける',h:'知的障害は児童相談所などでの判定になる',f:function(s){var p=s.grade==='light'?.7:.9;return R(p,{t:'診察と検査を経て、診断がついた。名前がつくことで、使える制度や支援の入口が見えてきた。',fx:{m:2,h:2,d:-1},use:s.type==='mental'?['jiritsu']:[],set:{dx:true},log:s.sub+'の診断を受ける'},{t:'診察と検査を受けたが、診断の基準には届かず、経過観察になった。困りごとは残ったが、相談できる先は得られた。',fx:{m:-3,so:1},log:'受診したが、診断には至らず経過観察になる'})}},
+  {l:'いまは受診しない',h:'診断がないままだと、手帳や年金の申請はできない',f:function(s){return{t:'受診に踏み出せないまま、時間が過ぎた。診断がないので、手帳や年金などの申請もできないままだった。',fx:{m:-3,so:-2},miss:['techo'],log:'受診を見送る'}}}]});
+
+ev('schoolpath',{big:1,lo:6,hi:17,once:1,w:function(s){return s.disabled&&s.school===null?5:0},must:function(s){return s.disabled&&s.school===null},
+ k:'就学',title:'どの学びの場で学ぶか',
+ t:function(s){return '小学校に上がる。就学先は、通常の学級、特別支援学級、特別支援学校から、本人・保護者の意向を聞いたうえで決まる。'},
+ ch:[{l:'通常の学級で学ぶ',h:'合理的配慮を学校と相談しながら',f:function(s){return R(.55,{t:'担任とクラスの理解を得られ、行事にも参加できた。わからないことは聞ける雰囲気があった。',fx:{so:8,d:6},set:{school:'regular'},log:'小学校に入学(通常の学級)'},{t:'支援が十分でなく、からかいや孤立を経験した。学校に行きたくない朝が増えた。',fx:{so:-8,m:-10,d:-4},set:{school:'regular'},log:'小学校に入学(通常の学級・孤立を経験)'})}},
+  {l:'特別支援学級で学ぶ',if:function(s){return s.dx},h:'少人数で、学びの進め方を調整してもらう',f:function(s){return R(.8,{t:'少人数で、ペースに合わせた学びができた。得意なことを見つけてもらえた。',fx:{d:6,m:4,so:2},set:{school:'special-class'},log:'小学校に入学(特別支援学級)'},{t:'学びやすさはあったが、交流の機会が少なく、さみしさも残った。',fx:{m:-2,so:-2},set:{school:'special-class'},log:'小学校に入学(特別支援学級)'})}},
+  {l:'特別支援学校で学ぶ',if:function(s){return s.dx},h:'専門の教員と設備がそろう',f:function(s){return{t:'専門性のある教員と少人数の環境で、生活や学びの土台ができた。地域の同世代との接点は少なめだった。',fx:{m:4,d:3,so:-2,h:2},set:{school:'special-school'},log:'特別支援学校 小学部に入学'}}}]});
+
+ev('houdei',{big:1,lo:7,hi:17,once:1,w:function(s){return s.disabled&&s.dx&&s.age>=6?3:0},
+ k:'放課後',title:'放課後の居場所',
+ t:function(s){return '学校が終わったあと、家族が仕事から戻るまでの時間をどう過ごすか。放課後等デイサービスという選択肢がある。'},
+ data:'放課後等デイサービスは6〜18歳が対象。利用者負担は原則1割で、世帯の所得に応じた月額上限がある。',
+ ch:[{l:'放課後等デイサービスを使う',h:'受給者証を取り、事業所を選ぶ',f:function(s){return{t:'放課後に安心して過ごせる場所ができた。学校とは違う友だちもできた。',fx:{so:5,d:3,h:2},use:['houdei'],log:'放課後等デイサービスを利用'}}},
+  {l:'利用せず、家で過ごす',h:'',f:function(s){return{t:'家で過ごす時間が長くなり、家族の負担が増えた。',fx:{m:-2,so:-3},miss:['houdei'],log:''}}}]});
+
+ev('tokuji',{lo:3,hi:19,once:1,w:function(s){return s.disabled&&s.dx?(s.grade==='light'?1:3):0},
+ k:'家計',title:'子どもの障害と家計',
+ t:function(s){return '療育や通院、付き添いで、家族の働き方も変わってきた。20歳未満の障害のある子の保護者に支給される特別児童扶養手当という制度がある。'},
+ data:'特別児童扶養手当:1級58,450円、2級38,930円(月額・令和8年4月・所得制限あり)。',
+ ch:[{l:'手当を申請する',h:'診断書などを準備して市区町村の窓口へ',f:function(s){var p=s.grade==='heavy'?.9:s.grade==='mid'?.6:.2;return R(p,{t:'認定され、毎月の手当が家計を支えるようになった。',fx:{m:3,d:2},use:['tokuji'],log:'特別児童扶養手当が認定される'},{t:'障害の程度が認定に届かず、不支給になった。',fx:{m:-3},log:''})}},
+  {l:'制度を知らないまま過ぎる',h:'',f:function(s){return{t:'手当の存在を知らないまま、家計のやりくりが続いた。',fx:{m:-3},miss:['tokuji'],log:''}}}]});
+
+ev('friend',{lo:7,hi:17,w:function(){return 3},
+ k:'友だち',title:'席替えのあと',
+ t:function(s){return '新しいクラスになった。隣の席の子が、こちらをちらちら見ている。'},
+ ch:[{l:'自分から話しかけてみる',h:'',f:function(s){var p=s.school==='regular'?.55:.7;return R(p,{t:'「それ、おもしろいね」と返ってきた。放課後にも話すようになった。',fx:{so:9,d:5,m:3},log:'親しい友だちができる'},{t:'うまく伝わらず、気まずさだけが残った。',fx:{so:-2,m:-4},log:''})}},
+  {l:'静かに一人で過ごす',h:'',f:function(s){return{t:'静かな時間は落ち着いたが、教室のざわめきは遠かった。',fx:{m:1,so:-4},log:''}}}]});
+
+ev('path15',{big:1,lo:15,hi:17,once:1,w:function(s){return s.disabled&&s.edu===null?5:0},must:function(s){return s.disabled&&s.edu===null},
+ k:'進路',title:'中学卒業のあと',
+ t:function(s){return '中学卒業が近づいた。高校、特別支援学校高等部、通信制など、進路は一つではない。'},
+ ch:[{l:'高校に進学する',h:'',f:function(s){return R(.7,{t:'新しい環境に少しずつ慣れ、部活や委員会にも顔を出せた。',fx:{so:5,d:5},set:{edu:'high'},log:'高校に入学'},{t:'授業や人間関係に疲れ、欠席が増えた。それでも卒業までつないだ。',fx:{m:-8,h:-3},set:{edu:'high'},log:'高校に入学'})}},
+  {l:'特別支援学校の高等部に進む',if:function(s){return s.disabled&&s.dx},h:'職業教育や実習がある',f:function(s){return{t:'実習で働く経験を重ね、卒業後の進路を具体的に考えられるようになった。',fx:{d:5,m:3},set:{edu:'special'},log:'特別支援学校 高等部に入学'}}},
+  {l:'通信制・サポート校で学ぶ',h:'自分のペースで',f:function(s){return{t:'自分のペースを守りながら学べた。会う人は少なかったが、疲れは減った。',fx:{m:4,so:-2,h:3},set:{edu:'high'},log:'通信制高校に入学'}}}]});
+
+ev('work_path',{big:1,lo:18,hi:64,onShow:function(s){s.wpN=(s.wpN||0)+1},w:function(s){return s.disabled&&s.work===null&&s.age<=60?(s.age<=30?6:3):0},must:function(s){return s.disabled&&s.work===null&&s.age<=30&&s.age>=18},
+ k:'はたらく',title:function(s){return (s.wpN||0)<=1&&s.age<=24?'卒業後の道':'働き方をもう一度考える'},
+ t:function(s){return ((s.wpN||0)<=1&&s.age<=24?'学校を終えたあと、どんな形で働くか、あるいは働かないか。':'いまは仕事に就いていない。これからの収入と日中の過ごし方を、あらためて考える。')+(s.techo?'':'手帳はまだ取っていない。障害者雇用の枠に応募するには、障害者手帳が必要になる。')},
+ data:'民間企業の法定雇用率は2.5%(2026年7月から2.7%)。令和7年6月時点の実雇用率は2.41%、達成企業は46.0%。障害者雇用の平均賃金(月額・令和5年度調査)は身体23.5万円、知的13.7万円、精神14.9万円、発達13.0万円。A型の平均賃金は月91,451円、B型の平均工賃は月24,141円(令和6年度)。',
+ ch:function(s){
+  var gb=s.grade==='light'?.6:s.grade==='mid'?.45:.25,wB=yen(s.muni.wageB),out=[],pj=Math.min(.85,gb+(s.edu==='high'?.08:0));
+  if(s.techo){
+   out.push({l:'企業の障害者雇用に応募する',h:'手帳を使って応募する枠',f:function(s){return R(pj,{t:'面接を重ね、障害者雇用で採用された。配慮事項を伝え、短時間から始めた。',fx:{d:8,so:4,m:3},set:{work:'general',salary:wageFor(s)},log:'障害者雇用で就職'},{t:'何社受けても結果が出ず、気持ちが沈んだ。応募の仕方を見直すことにした。',fx:{m:-8,d:-3},log:'就職活動が長引く'})}});
+  }else{
+   out.push({l:'手帳を申請して、障害者雇用に応募する',if:function(s){return s.dx},h:'障害者雇用の応募には手帳が必要。取得は審査による',f:function(s){
+     if(Math.random()>=techoP(s))return{t:'診断書をそろえて申請したが、基準に届かず手帳は交付されなかった。障害者雇用には応募できないため、別の道を探すことになった。',fx:{m:-6,d:-3},log:'手帳が交付されず、就職活動が止まる'};
+     var hit=Math.random()<pj,o=hit?{t:'手帳が交付され、障害者雇用の面接を重ねて採用された。配慮事項を伝え、短時間から始めた。',fx:{d:8,so:4,m:3},use:['techo'],set:{techo:true,work:'general',salary:wageFor(s)},log:'手帳を取得し、障害者雇用で就職'}:{t:'手帳は交付されたが、応募した会社からは採用に至らなかった。応募の仕方を見直すことにした。',fx:{m:-4,d:-1},use:['techo'],set:{techo:true},log:'手帳を取得するが、就職活動が続く'};
+     o.roll={p:pj,hit:hit};return o}});
+   out.push({l:'一般の求人に応募する(障害者雇用ではない)',h:'手帳なし。配慮は自分で伝える',f:function(s){return R(pj*.6,{t:'一般枠で採用された。体調のことは、必要な範囲で伝えながら働くことにした。',fx:{d:6,so:3,m:-1},set:{work:'regular',salary:regularWage(s)},log:'一般の求人で就職'},{t:'書類選考で落ち続け、応募の仕方を見直すことにした。',fx:{m:-7,d:-3},log:'就職活動が長引く'})}});
+  }
+  out.push({l:'就労移行支援を使って準備する',if:function(s){return s.dx},h:'原則2年。手帳がなくても、医師の意見書などで使える場合がある',f:function(s){var g=s.techo;return R(.65,{t:'2年かけて、働くための生活リズムと職場でのやり取りを身につけ、就職が決まった。'+(g?'':'手帳は取らず、一般の求人への応募を支援してもらった。'),fx:{d:8,so:5,m:4},use:['shuro'],set:{work:g?'general':'regular',salary:g?wageFor(s):regularWage(s)},log:'就労移行支援を経て就職'},{t:'訓練は力になったが、就職は決まらず、B型で働き始めた。',fx:{d:3,so:4,m:2},use:['shuro'],set:{work:'b'},log:'就労移行支援のあとB型で働く'})}});
+  out.push({l:'就労継続支援A型で働く',if:function(s){return s.dx},h:'雇用契約を結ぶ。平均賃金は月91,451円',f:function(s){return{t:'雇用契約のもとで、決まった時間に働く生活が始まった。賃金は最低賃金が基準になる。',fx:{d:4,m:2,so:3},set:{work:'a'},log:'A型事業所で働き始める'}}});
+  out.push({l:'就労継続支援B型で働く',if:function(s){return s.dx},h:'この地域の平均工賃の目安は月'+wB+'円',f:function(s){return{t:'自分のペースで作業ができ、通う場所ができた。工賃は多くないが、体調に合わせて通えた。',fx:{m:4,so:4,d:2},set:{work:'b'},log:'B型事業所に通い始める'}}});
+  out.push({l:'まず病院を受診して、診断を受けてから考える',if:function(s){return !s.dx},h:'診断がないと、障害者雇用や福祉サービスは使えない',f:function(s){return R(s.grade==='light'?.7:.9,{t:'受診して診断がついた。次の進路は、制度を確かめながら考え直すことにした。',fx:{m:1,d:1},set:{dx:true},use:s.type==='mental'?['jiritsu']:[],log:s.sub+'の診断を受ける'},{t:'受診したが、診断には至らず経過観察になった。進路は決まらないまま時間が過ぎた。',fx:{m:-4},log:'受診したが、診断には至らない'})}});
+  out.push({l:'家で過ごす',h:'家族の支援と年金に頼る',f:function(s){return{t:'日中は家で過ごす日が増えた。収入は限られ、家族との距離が近いまま時間が流れた。',fx:{m:-3,so:-5},set:{work:'none'},log:'家で過ごす生活を選ぶ'}}});
+  return out}});
+
+ev('jobshock',{big:1,lo:18,hi:64,once:1,w:function(s){return s.disabled&&(s.work==='general'||s.work==='regular')&&s.onsetAge>=22&&s.age>=s.onsetAge&&s.age<=s.onsetAge+6?9:0},must:function(s){return s.disabled&&(s.work==='general'||s.work==='regular')&&s.onsetAge>=22&&s.age>=s.onsetAge&&s.age<=s.onsetAge+6},
+ k:'はたらく',title:'発症のあと、職場へ',
+ t:function(s){return '仕事を続けられるのか。上司や同僚にどこまで、どう伝えるか。2024年4月から民間事業者にも合理的配慮の提供義務がある。'+(s.techo?'':'手帳はまだ取っていない。障害者雇用の枠に移るには、手帳が必要になる。')},
+ data:'合理的配慮の提供は、障害者差別解消法の改正により2024年4月から民間事業者も義務。',
+ ch:[{l:'配慮を申し出て、働き方を調整する',h:'時短・配置転換・業務の見直し',f:function(s){return R(.7,{t:'時短勤務と業務の切り分けが決まり、仕事を続けられた。給与は下がったが、居場所は残った。',fx:{d:5,m:4},use:['gouri'],set:{salary:Math.round(s.salary*.85)},log:'配慮を得て仕事を続ける'},{t:'話し合いは平行線で、退職を勧められた。',fx:{d:-6,m:-10},set:{work:null,salary:0},log:'職場の理解を得られず退職'})}},
+  {l:'手帳を申請し、障害者雇用への切り替えを相談する',if:function(s){return !s.techo&&s.dx},h:'配慮は得やすいが、給与は下がりやすい',f:function(s){
+    if(Math.random()>=techoP(s))return{t:'手帳は交付されなかった。配慮を求める根拠が弱いまま、仕事を続けることになった。',fx:{m:-6,d:-3},log:'手帳が交付されない'};
+    return R(.6,{t:'手帳を取得し、会社と話し合って障害者雇用に切り替えた。給与は下がったが、配慮のもとで働けるようになった。',fx:{d:4,m:4},use:['techo','gouri'],set:{techo:true,work:'general',salary:Math.round(s.salary*.7)},log:'手帳を取得し、障害者雇用に切り替える'},{t:'手帳は交付されたが、会社に障害者雇用の枠がなく、切り替えはできなかった。',fx:{m:-3,d:1},use:['techo'],set:{techo:true},log:'手帳を取得する'})}},
+  {l:'障害者雇用への切り替えを相談する',if:function(s){return s.techo&&s.work==='regular'},h:'手帳があるので、会社と話し合える',f:function(s){return R(.65,{t:'会社と話し合い、障害者雇用に切り替えた。給与は下がったが、配慮のもとで働けるようになった。',fx:{d:4,m:4},use:['gouri'],set:{work:'general',salary:Math.round(s.salary*.7)},log:'障害者雇用に切り替える'},{t:'会社に障害者雇用の枠がなく、切り替えはできなかった。',fx:{m:-3},log:''})}},
+  {l:'休職して治療に専念する',h:'傷病手当金などを使う',f:function(s){return R(.6,{t:'治療に専念し、しばらくして職場に復帰できた。',fx:{h:6,m:3},log:'休職を経て復職'},{t:'復職は難しく、退職することになった。',fx:{h:3,m:-6,d:-4},set:{work:null,salary:0},log:'休職の末に退職'})}},
+  {l:'退職して療養する',h:'',f:function(s){return{t:'いったん仕事を手放し、体調を整えることを優先した。',fx:{h:5,m:-4,d:-4},set:{work:null,salary:0},log:'退職して療養に入る'}}}]});
+
+ev('pension',{big:1,lo:20,hi:64,w:function(s){return s.disabled&&s.dx&&!s.pension&&s.pTry<3&&(s.onset<20||s.age-s.onset>=2)?5-s.pTry:0},must:function(s){return s.disabled&&s.dx&&!s.pension&&s.pTry===0&&(s.onset<20||s.age-s.onset>=2)},
+ k:'お金',title:'障害年金を申請するか',
+ t:function(s){return s.onset<20?(s.age<=22?'20歳になった。20歳前に障害のある人は、20歳から障害基礎年金を請求できる場合がある。':'まだ障害年金を請求していない。20歳前に障害のある人は、20歳以降であれば、いつでも障害基礎年金を請求できる場合がある。(診断を受けていなかった人は、診断がついてから請求する)'):'障害認定日が過ぎた。初診日に加入していた年金や保険料の納付状況などの条件を満たせば、障害年金を請求できる。'},
+ data:'障害基礎年金(令和8年度):2級は年額847,300円(月約70,608円)、1級はその1.25倍(月88,260円)。1・2級の判定は日本年金機構が行い、手帳の等級とは一致しない。',
+ ch:[{l:'申請する',h:'診断書や病歴を整える。結果は認定次第',f:function(s){var p=s.grade==='heavy'?.85:s.grade==='mid'?.55:.15;s.pTry+=1;return R(p,{t:'1・2級に認定され、年金が毎月の暮らしの土台になった。',fx:{m:5,d:4},use:['nenkin'],set:{pension:true},log:'障害基礎年金を受給'},{t:'不支給の通知が届いた。落ち込んだが、状態が変われば再請求もできる。',fx:{m:-6,d:-3},log:'障害年金は不支給'})}},
+  {l:'申請しない',h:'手続きが難しそうで、先送りする',f:function(s){s.pTry+=1;return{t:'手続きの負担に押され、請求を見送った。',fx:{m:-2},miss:['nenkin'],log:''}}}]});
+
+ev('tokusho',{big:1,lo:20,hi:64,once:1,w:function(s){return s.disabled&&s.dx&&s.severe2&&!s.tokusho&&s.living!=='facility'?4:0},
+ k:'お金',title:'もう一つの手当',
+ t:function(s){return '日常生活で常に介護が必要な状態の人には、年金とは別に特別障害者手当が支給されることがある。'},
+ data:'特別障害者手当:月30,450円(令和8年4月)。20歳以上・在宅・重度の障害が重複していること。年金との併給可、所得制限あり。',
+ ch:[{l:'申請する',h:'',f:function(s){return{t:'認定されて、月々の手当が加わった。介助にかかる費用に回せた。',fx:{m:3,d:2},use:['tokusho'],set:{tokusho:true},log:'特別障害者手当を受給'}}},
+  {l:'知らずに過ぎる',h:'',f:function(s){return{t:'制度を知らないまま、家族の持ち出しが続いた。',fx:{m:-3},miss:['tokusho'],log:''}}}]});
+
+ev('living',{big:1,lo:20,hi:50,once:1,w:function(s){return s.disabled&&!s.livingSet?4:0},must:function(s){return s.disabled&&!s.livingSet&&s.age>=22},
+ k:'住まい',title:'どこで、誰と暮らすか',
+ t:function(s){return '実家を離れるか、このまま暮らすか。住まいの選択は、日々の介助やお金、気持ちの余裕に直結する。'},
+ data:'ゲーム上の生活費の仮定(年額):実家72万円、一人暮らし168万円、グループホーム108万円、入所施設96万円。',
+ ch:[{l:'実家で暮らし続ける',h:'生活費は抑えられる',f:function(s){return{t:'生活費を抑えながら、家族の手を借りて暮らした。距離が近いぶん、衝突も増えた。',fx:{m:-1,so:-2},set:{living:'family',livingSet:true},log:'実家で暮らす'}}},
+  {l:'一人暮らし(ヘルパーを利用)',if:function(s){return s.dx},h:'居宅介護などを組み合わせる',f:function(s){return R(.65,{t:'ヘルパーや相談支援の力を借りて、自分のペースで暮らす生活が整った。',fx:{d:9,m:3,h:-2},use:['kyotaku'],set:{living:'alone',livingSet:true},log:'一人暮らしを始める'},{t:'支援の時間が足りず、夜や休日に心細い日が続いた。それでも生活を続けた。',fx:{d:5,m:-6,h:-4},use:['kyotaku'],set:{living:'alone',livingSet:true},log:'一人暮らしを始める'})}},
+  {l:'一人暮らし(自分で暮らしを整える)',if:function(s){return !s.dx},h:'診断がなく、福祉サービスは使えない',f:function(s){return R(.6,{t:'家事や金銭管理を一つずつ覚え、自分のペースの暮らしができた。',fx:{d:7,m:1},set:{living:'alone',livingSet:true},log:'一人暮らしを始める'},{t:'助けを頼める先がなく、体調を崩す日が続いた。それでも暮らしを続けた。',fx:{d:3,m:-6,h:-3},set:{living:'alone',livingSet:true},log:'一人暮らしを始める'})}},
+  {l:'グループホームに入る',if:function(s){return s.dx},h:'世話人や仲間と共同生活',f:function(s){return{t:'世話人や同じ立場の仲間と暮らす、地域のなかの小さな家庭ができた。',fx:{so:6,d:3,m:2},use:['gh'],set:{living:'group',livingSet:true},log:'グループホームで暮らす'}}},
+  {l:'入所施設で暮らす',if:function(s){return s.dx},h:'24時間の支援がある',f:function(s){return{t:'24時間の支援で体調は安定したが、一日の自由は少なかった。',fx:{h:4,d:-4,so:-1},set:{living:'facility',livingSet:true},log:'入所施設で暮らす'}}}]});
+
+ev('medical',{big:1,lo:3,hi:100,once:1,w:function(s){return s.disabled&&s.dx?5:0},
+ k:'医療',title:'通院と医療費',
+ t:function(s){var m=s.muni,k=medKind(m);if(k&&elMed(s))return m.name+'には、重度の障害のある人の医療費を助成する制度がある。手帳の等級は対象に当てはまりそうだ。'+(k==='part'?'ただし、自己負担は一部残る。':'');if(k)return m.name+'には重度障害者向けの医療費助成があるが、あなたの手帳の等級や所得では対象外だった。代わりに、国の自立支援医療が使える。';return '通院が続き、医療費の負担が気になってきた。国の自立支援医療が使える。'},
+ data:'自立支援医療:自己負担は原則1割、世帯の所得に応じて月額上限がある。自治体の医療費助成は内容がまちまち(福岡市・札幌市・仙台市・福島市など、各市の公式ページで制度を確認)。',
+ ch:function(s){if(elMed(s))return[{l:'医療費助成を申請する',h:'受給者証を窓口で受け取る',f:function(s){var pt=medKind(s.muni)==='part';return{t:pt?'自己負担は一部残るが、助成で負担が軽くなり、通院を我慢することが減った。':'医療費の自己負担が助成されて、通院を我慢することが減った。',fx:{h:6,m:3,$:pt?4:8},use:['iryo'],log:'重度障害者医療費助成を利用'}}},{l:'手続きをしない',h:'',f:function(s){return{t:'手続きをしないまま、通院を減らして過ごした。',fx:{h:-4,m:-2},miss:['iryo'],log:''}}}];
+  return[{l:'自立支援医療を申請する',h:'',f:function(s){return{t:'自己負担が1割に収まり、月々の上限もあって、通院を続けやすくなった。',fx:{h:5,m:2,$:3},use:['jiritsu'],log:'自立支援医療を利用'}}},{l:'いまの負担のままにする',h:'',f:function(s){return{t:'通院のたびに会計を気にして、受診を先延ばしにした。',fx:{h:-4,m:-2,$:-3},miss:['jiritsu'],log:''}}}]}});
+
+ev('techo_late',{big:1,lo:3,hi:100,w:function(s){return s.disabled&&s.dx&&!s.techo&&s.age-s.techoAsk>=8?5:0},must:function(s){return s.disabled&&s.dx&&!s.techo&&s.techoAsk<0&&s.age>=3},
+ onShow:function(s){s.techoAsk=s.age},
+ k:'手続き',title:'手帳を取るか',
+ t:function(s){return (s.age<18?'保護者が、':'')+TECHO[s.type]+'を取るかどうか考えている。手帳があると、運賃割引や医療・就労などの支援の入口になる。取るかどうかは本人(未成年は保護者と一緒)が決める。手帳がなくても使える制度もある。'},
+ ch:[{l:'申請する',h:'診断書などを準備する',f:function(s){return R(techoP(s),{t:'手帳が交付された。使い方は、窓口の人が丁寧に教えてくれた。',fx:{m:2,d:-1},use:['techo'],set:{techo:true},log:TECHO[s.type]+'を取得'},{t:'等級の基準に届かず、交付されなかった。',fx:{m:-4},log:''})}},
+  {l:'いまは取らない',h:'レッテルになる気がする',f:function(s){return{t:'周囲に知られたくない気持ちが勝って、見送った。手帳はまだ持っていない。',fx:{m:1},miss:['techo'],log:''}}}]});
+
+ev('taxi',{lo:18,hi:80,once:1,w:function(s){return s.techo?4:0},
+ k:'移動',title:'出かけるときの足',
+ t:function(s){var m=s.muni;if(elTaxi(s))return m.name+'には福祉タクシー等の助成がある。あなたの等級と収入は、対象に当てはまりそうだ。';if(m.taxi)return m.name+'には福祉タクシー等の助成があるが、あなたの等級や収入では対象にならなかった。手帳による割引は使える。';return '出かけるたびの交通費が重い。手帳があれば、鉄道・バス・有料道路などで割引を受けられる場合がある。'},
+ data:'魚津市は2,500円分×2冊の福祉タクシー・ガソリン利用券か市民バス回数券、広島市は重度障害者福祉タクシー利用助成(所得制限あり)、岐阜市はタクシー料金の助成を実施。',
+ ch:function(s){if(elTaxi(s))return[{l:'助成を申請する',h:'',f:function(s){return{t:'外出のたびの出費が軽くなり、通院や友人に会う回数が増えた。',fx:{so:5,m:3,$:6},use:['taxi','waribiki'],log:'福祉タクシー等の助成を利用'}}},{l:'申請しない',h:'',f:function(s){return{t:'手続きを面倒に感じ、外出を控えた。',fx:{so:-4,m:-2},miss:['taxi'],log:''}}}];
+  return[{l:'手帳の割引を使う',h:'',f:function(s){return{t:'手帳を見せて割引を受け、少しずつ遠くへ出かけられるようになった。',fx:{so:3,m:2,$:2},use:['waribiki'],log:''}}},{l:'使わない',h:'提示するのがつらい',f:function(s){return{t:'手帳を出すことへの抵抗感が残り、割引は使わなかった。',fx:{m:-1,$:-2},miss:['waribiki'],log:''}}}]}});
+
+ev('local',{lo:18,hi:80,once:1,w:function(s){var l=s.muni.local;return s.dx&&l&&l.ok(s)?4:0},
+ k:'地域',title:function(s){return s.muni.local?s.muni.local.title:'地域の支援'},
+ t:function(s){return s.muni.local?s.muni.local.text:'住んでいる街の窓口で、使える独自の支援がないか確かめてみた。'},
+ ch:[{l:'窓口で申請・相談する',h:'',f:function(s){return{t:'窓口で説明を聞いて申請し、暮らしの選択肢が一つ増えた。',fx:{so:3,m:3,$:4},use:['local'],log:s.muni.name+'の独自支援を利用'}}},
+  {l:'いまは必要ないと考える',h:'',f:function(s){return{t:'いまの暮らしで回っているからと、見送った。',fx:{},miss:['local'],log:''}}}]});
+
+ev('barrier',{lo:16,hi:64,w:function(s){return s.disabled?5:0},
+ k:'暮らし',title:'日常の小さな壁',
+ t:function(s){return barrier(s)},
+ ch:[{l:'合理的配慮を申し出る',h:'できないことではなく、必要な工夫を伝える',f:function(s){return R(.65,{t:'伝えてみると、「それなら、こうしましょう」と対応してもらえた。',fx:{so:5,d:6},use:['gouri'],log:'合理的配慮を申し出て受け入れられる'},{t:'断られてしまい、悔しさが残った。',fx:{m:-8,d:-4},use:['gouri'],log:''})}},
+  {l:'我慢してやり過ごす',h:'',f:function(s){return{t:'事を荒立てないようにやり過ごしたが、心にはずっと残った。',fx:{m:-6,d:-6,h:-3},miss:['gouri'],log:''}}},
+  {l:'相談窓口・当事者会に話す',h:'',f:function(s){return{t:'同じ経験をした人から、使える窓口と言い方のコツを教わった。',fx:{so:6,m:4,d:3},use:['soudan'],log:'当事者会につながる'}}}]});
+
+ev('burnout',{lo:18,hi:64,w:function(s){return s.disabled?(s.type==='mental'?5:3):0},
+ k:'体調',title:'波が来た',
+ t:function(s){return '張りつめた日々の後で、体調が大きく崩れた。朝、体が動かない。'},
+ ch:[{l:'休養をとり、身近な人に頼る',if:function(s){return !s.dx},h:'',f:function(s){return{t:'休むことを自分に許し、家族や友人に頼った。回復には時間がかかったが、暮らしの土台は守れた。',fx:{h:7,m:5,$:-5},log:'休養して立て直す'}}},
+  {l:'休養をとり、相談支援につながる',if:function(s){return s.dx},h:'',f:function(s){return{t:'休むことを許可して、周りに頼った。回復には時間がかかったが、暮らしの土台は守れた。',fx:{h:8,m:6,$:-5},use:['soudan'],log:'休養して立て直す'}}},
+  {l:'無理をして続ける',h:'',f:function(s){return R(.45,{t:'ぎりぎりで乗り切ったが、疲れだけが残った。',fx:{d:3,h:-4,m:-3},log:''},{t:'体調が悪化し、入院が必要になった。',fx:{h:-15,m:-15,so:-4,$:-10},log:'体調悪化で入院'})}}]});
+
+var ORD=[
+ [0,5,'お気に入りの絵本を、何度も読んでもらった。毎日の小さな発見が、世界の広がりだった。',{m:2}],
+ [0,5,'公園の砂場で、名前も知らない子と並んで遊んだ。',{so:2}],
+ [0,5,'季節の行事のたびに、家族が写真を撮った。',{m:2,so:1}],
+ [6,12,'運動会の練習で、日焼けして帰ってくる。給食の好き嫌いを、少しずつ克服している。',{h:2,so:2}],
+ [6,12,'放課後の校庭で、日が暮れるまで遊んだ。',{so:3,m:2}],
+ [6,12,'夏休みの宿題に追われながら、虫を追いかけた。',{m:2}],
+ [6,12,'学校の帰り道、通学路の景色が少しずつ変わっていくのを見ていた。',{m:1},true],
+ [13,17,'テストや部活で慌ただしい毎日。友だちとの何気ない会話が、いちばんの息抜きだった。',{so:3,m:-1}],
+ [13,17,'将来のことを聞かれて、うまく答えられない日が続いた。',{m:-2}],
+ [13,17,'文化祭の準備で、教室に残る日が増えた。',{so:4,d:2}],
+ [18,24,'新しい生活のリズムをつかむまでに、半年かかった。',{d:2,m:-1}],
+ [18,24,'アルバイトや学校帰りに寄るお店が、行きつけになった。',{so:2,$:1}],
+ [18,24,'将来の話を、友人と夜通し語り合った。',{so:3,m:2}],
+ [25,39,'仕事にも慣れ、週末の過ごし方が定まってきた。',{m:2,d:2}],
+ [25,39,'同期の結婚式が続き、祝儀の出費がかさんだ。',{so:3,$:-3}],
+ [25,39,'残業が続いた月は、疲れが抜けなかった。',{h:-3,m:-2}],
+ [25,39,'通院の日程を仕事に合わせて調整する、いつもの毎日。',{m:-1,h:1},true],
+ [40,59,'健康診断の結果に、少しだけ気を遣うようになった。',{h:1,m:-1}],
+ [40,59,'親の通院に付き添う日が、少しずつ増えた。',{m:-2},false,false,function(s){return parentsAlive(s)}],
+ [40,59,'同世代の友人との集まりが、年に一度の楽しみになった。',{so:3,m:2}],
+ [40,59,'体力の波に合わせて、予定を詰め込まないようになった。',{m:2,h:1},true],
+ [60,74,'畑や散歩など、日課がいくつかできた。',{h:2,m:3}],
+ [60,74,'地域の集まりに顔を出すと、昔話に花が咲いた。',{so:3,m:2}],
+ [60,74,'退職後の暮らしの収支を、家計簿で確かめた。',{m:-1}],
+ [75,100,'朝の散歩と、決まった時間の食事が一日のリズムになった。',{h:1,m:2}],
+ [75,100,'昔の友人から届く便りを、何度も読み返した。',{m:3,so:1}],
+ [75,100,'病院の待合室で、顔なじみの人と挨拶をするようになった。',{so:2}]
+];
+var JOY=[
+ ['絵・イラスト・写真','作品をSNSや展示に出してみる','描いた絵を、知らない人が褒めてくれた。画面の向こうの反応が、次の一枚の力になった。',{d:8,m:4,so:3},'創作に夢中になる'],
+ ['音楽(演奏・歌・DTM)','教室や配信、バンドもある','好きな曲を弾けるようになり、小さな発表会で拍手をもらった。',{m:6,d:5,so:3},'音楽にのめり込む'],
+ ['障害者スポーツ・運動','地域の教室や大会がある','体を動かす楽しさを思い出した。大会で知り合った仲間と、練習のあとに笑い合った。',{h:6,d:5,so:5},'スポーツを始める'],
+ ['ゲーム・eスポーツ','オンラインで世界が広がる','夜遅くまで仲間とプレイした。家にいても、会話の絶えない日々になった。',{so:6,m:4,d:3},'ゲーム仲間ができる'],
+ ['推し活(ライブ・配信)','応援する気持ちが日々の支えに','推しのライブに足を運び、同じ気持ちの人たちと語り合った。出費は少しかさんだ。',{m:6,so:4,$:-2},'推し活に夢中になる'],
+ ['料理・お菓子づくり','自分の食事を自分でつくる','レシピを覚えるたび、できることが一つずつ増えた。差し入れを喜んでもらえた。',{d:6,m:4,so:2,h:1},'料理を楽しむ'],
+ ['園芸・家庭菜園','季節を感じる','小さなプランターから始め、収穫した野菜を食べた。土に触れる時間が心を落ち着かせた。',{m:6,h:3,d:3},'園芸を始める'],
+ ['動物と暮らす・ボランティア','犬や猫、保護活動も','動物と過ごす時間が、毎日の張り合いになった。散歩で近所の人と話すようにもなった。',{m:6,so:3,d:3,$:-1},'動物と過ごす日々'],
+ ['鉄道・旅行・ご当地めぐり','計画を立てるところから楽しむ','時刻表を調べ、少し遠くの町まで出かけた。帰りの車窓で、また行きたいと思った。',{so:3,m:5,d:3,$:-3},'旅に出る'],
+ ['読書・小説・詩を書く','言葉の世界に入り込む','図書館に通い、書き始めた短い文章を友人が読んでくれた。',{m:5,d:6},'言葉の世界に入る'],
+ ['手芸・ものづくり・陶芸','手を動かして形にする','作ったものを身近な人に贈ると、「ほしい」と言ってくれる人がいた。',{d:6,m:5,$:1},'ものづくりに夢中になる'],
+ ['プログラミング・動画編集','在宅でもできる技術','小さなアプリをつくり、自分の暮らしの困りごとを一つ解決した。',{d:7,so:3,m:3,$:2},'プログラミングを学ぶ'],
+ ['釣り・キャンプ・散歩','自然のなかで過ごす','朝の静かな水辺で過ごす時間が、気持ちを整えてくれた。',{h:5,m:5,so:2},'自然のなかで過ごす'],
+ ['手話・語学・方言','言葉で人とつながる','新しい言葉を覚えるたび、話せる相手が増えていった。',{so:6,d:5,m:2},'新しい言葉を学ぶ'],
+ ['地域の祭り・ボランティア','顔の見える関係をつくる','祭りの準備に加わり、近所の人から名前で呼ばれるようになった。',{so:8,d:5},'地域の活動に参加'],
+ ['将棋・囲碁・ボードゲーム','静かに頭を使う時間','対局会に通い、年の離れた友人ができた。',{so:6,m:4},'盤の前で仲間ができる'],
+ ['ダンス・演劇・合唱','みんなで一つのものをつくる','舞台に立った日、客席から送られた拍手が体に残った。',{so:7,d:6,h:3},'舞台に立つ'],
+ ['落語・お笑い・ラジオ','笑うことで気持ちが軽くなる','毎晩のラジオが、一日の終わりの楽しみになった。',{m:6,so:3},'笑いで気持ちが軽くなる'],
+ ['星・昆虫・鳥の観察','小さな発見を記録する','ノートに記録を重ねるうち、図鑑にない発見をした。',{m:6,d:4,h:2},'観察の記録を始める'],
+ ['カフェ巡り・街歩き','お気に入りの場所を見つける','行きつけの店ができ、店主と挨拶を交わすようになった。',{so:3,m:4,$:-2},'行きつけの店ができる'],
+ ['筋トレ・ヨガ・ストレッチ','体と心を整える','無理のない範囲で続けるうち、朝の体のこわばりが軽くなった。',{h:7,m:3},'体を整える習慣をつくる'],
+ ['資格の勉強・学び直し','学ぶことで道が開く','夜の勉強時間が増え、試験に合格した。次の目標ができた。',{d:7,m:2},'学び直しを始める'],
+ ['おえかき・工作・おりがみ','手を動かすのが楽しい','画用紙いっぱいに描いた絵を、家族が冷蔵庫に貼ってくれた。',{d:6,m:4,so:2},'おえかきや工作に夢中になる'],
+ ['虫とり・外遊び・ごっこ遊び','体を動かして、いっぱい遊ぶ','日が暮れるまで遊び、泥だらけで帰った。家族に笑われたのも楽しかった。',{h:5,so:6,m:3},'外遊びに夢中になる'],
+ ['絵本・図鑑・読み聞かせ','好きなページを何度も開く','お気に入りの図鑑は、ぼろぼろになるまで読んだ。好きな生きものの名前を、全部覚えた。',{d:5,m:4},'図鑑や絵本に夢中になる'],
+ ['ブロック・プラモデル・ミニカー','集めて、組み立てる','何時間もかけて組み立てた作品を、友だちに見せた。',{d:6,m:4,so:2},'ものづくりに夢中になる'],
+ ['ピアノ・リコーダー・歌','音を出す楽しさ','音楽の時間に弾けた曲を、家に帰ってもう一度弾いた。',{d:6,m:4},'楽器や歌に夢中になる'],
+ ['部活・クラブ(文化系・運動系)','仲間と同じ目標に向かう','放課後の部室が、居場所になった。仲間と過ごす時間が、毎日の楽しみになった。',{so:8,d:5,m:3},'部活動に夢中になる'],
+ ['アニメ・マンガ・動画','好きな作品を語り合う','好きな作品の話で、初めて友だちと夜まで話し込んだ。',{so:5,m:5,d:3},'好きな作品を語り合う'],
+ ['DIY・ドライブ・バイク','自分の手で、行きたい場所へ','休みの日に、少し遠くまで出かけた。帰り道に見た夕焼けを、写真に撮った。',{d:6,m:5,$:-2},'ドライブや手作りを楽しむ'],
+ ['ゲートボール・グラウンドゴルフ','近所の仲間と体を動かす','毎週の集まりで、顔なじみの仲間ができた。点数を競う時間が、一週間の楽しみになった。',{so:7,h:4,m:3},'地域の仲間と体を動かす'],
+ ['俳句・短歌・書道','ことばや筆で気持ちを表す','季節の移り変わりを一句にまとめ、地域の句会で披露した。',{d:6,m:5,so:3},'俳句や書道に親しむ'],
+ ['ラジオ体操・ウォーキング','毎日の習慣にする','毎朝同じ時間に歩くうち、道で挨拶を交わす人が増えた。',{h:6,so:4,m:3},'朝の散歩が習慣になる'],
+ ['昔の写真・思い出の整理','これまでの人生をふり返る','古い写真を整理しながら、思い出を家族に語った。語るほどに、気持ちが整っていった。',{m:6,so:4,d:4},'思い出の整理を始める']
+];
+var JOYAGE={'絵・イラスト・写真':[6,100],'音楽(演奏・歌・DTM)':[10,100],'障害者スポーツ・運動':[6,100],'ゲーム・eスポーツ':[8,69],'推し活(ライブ・配信)':[12,90],'料理・お菓子づくり':[10,100],'園芸・家庭菜園':[6,100],'動物と暮らす・ボランティア':[10,100],'鉄道・旅行・ご当地めぐり':[8,100],'読書・小説・詩を書く':[8,100],'手芸・ものづくり・陶芸':[8,100],'プログラミング・動画編集':[12,80],'釣り・キャンプ・散歩':[8,100],'手話・語学・方言':[10,100],'地域の祭り・ボランティア':[12,100],'将棋・囲碁・ボードゲーム':[6,100],'ダンス・演劇・合唱':[6,100],'落語・お笑い・ラジオ':[12,100],'星・昆虫・鳥の観察':[6,100],'カフェ巡り・街歩き':[15,100],'筋トレ・ヨガ・ストレッチ':[12,100],'資格の勉強・学び直し':[18,80],'おえかき・工作・おりがみ':[6,10],'虫とり・外遊び・ごっこ遊び':[6,10],'絵本・図鑑・読み聞かせ':[6,11],'ブロック・プラモデル・ミニカー':[6,14],'ピアノ・リコーダー・歌':[6,14],'部活・クラブ(文化系・運動系)':[12,17],'アニメ・マンガ・動画':[10,45],'DIY・ドライブ・バイク':[18,70],'ゲートボール・グラウンドゴルフ':[60,100],'俳句・短歌・書道':[50,100],'ラジオ体操・ウォーキング':[55,100],'昔の写真・思い出の整理':[68,100]};
+function joyFor(age){return JOY.filter(function(j){var a=JOYAGE[j[0]]||[6,100];return a[0]<=age&&age<=a[1]})}
+ev('joy',{big:1,lo:6,hi:100,w:function(){return 3},
+ k:'好きなこと',title:'夢中になれるもの',
+ t:function(s){return '体調の良い日に、ふと心が動くものに出会った。気になるものを一つ選んで、始めてみよう。'},
+ ch:function(s){return sample(joyFor(s.age),6).map(function(j){return{l:j[0],h:j[1],f:function(s){var fx={},k;for(k in j[3])fx[k]=j[3][k];return{t:j[2],fx:fx,log:j[4],set:j[0]==='資格の勉強・学び直し'?{qual:true}:undefined}}}})}});
+
+ev('ordinary',{lo:0,hi:100,w:function(){return 3},k:'日々',plain:1,title:'日々',t:function(){return ''},
+ ch:[{l:'日々',f:function(s){var c=ORD.filter(function(o){return o[0]<=s.age&&s.age<=o[1]&&(!o[4]||s.disabled)&&(!o[5]||!s.disabled)&&(!o[6]||o[6](s))});var o=pick(c);return{t:o[2],fx:o[3]||{}}}}]});
+ev('love',{big:1,lo:20,hi:60,w:function(s){return s.partner||s.fam.loveTry>=3?0:(s.age<46?9:3)},must:function(s){return !s.partner&&s.fam.loveTry===0&&s.age>=25&&s.age<=36},onShow:function(s){s.fam.loveTry++},
+ k:'人間関係',title:'気になる人',
+ t:function(s){return '職場や趣味の場で、気の合う人に出会った。'+(s.disabled?'障害のことをいつ、どう話すかで迷っている。':'')},
+ ch:[{l:'時間をかけて打ち明ける',h:'',f:function(s){return R(s.disabled?.6:.8,{t:'受け止めてもらえた。お互いの苦手を話せる関係が育った。',fx:{so:10,d:8,m:8},after:function(){s.partner=mkPartner();s.fam.pstate='dating'},log:'パートナーと出会う'},{t:'距離が開いてしまったが、話せたことで気持ちは軽くなった。',fx:{m:-5,d:3},log:'気持ちを伝えたが、うまくいかなかった'})}},
+  {l:'自信が持てず、距離を置く',h:'',f:function(s){return{t:'傷つくのが怖く、一歩を踏み出さなかった。',fx:{m:-2,d:-2},log:'気になる人に、声をかけられなかった'}}}]});
+
+ev('koujo',{lo:20,hi:64,once:1,w:function(s){return s.techo&&(s.work==='general'||s.work==='regular'||s.work==='a'||s.pension)?3:0},
+ k:'お金',title:'税金の控除',
+ t:function(s){return '年末調整や確定申告の季節。障害のある本人は、所得税・住民税で障害者控除を受けられる。'},
+ ch:[{l:'申告する',h:'',f:function(s){return{t:'控除を申告して、手取りが少し増えた。',fx:{$:4,m:1},use:['koujo'],log:''}}},
+  {l:'知らずに過ぎる',h:'',f:function(s){return{t:'控除の存在を知らないまま、税金を払い続けた。',fx:{$:-3},miss:['koujo'],log:''}}}]});
+
+ev('soudan',{lo:6,hi:100,once:1,w:function(s){return s.disabled&&s.dx&&!s.used.has('soudan')?3:0},
+ k:'支援',title:'相談できる人',
+ t:function(s){return '福祉サービスを使うには、サービス等利用計画をつくる。計画づくりを手伝う相談支援専門員が地域にいる。'},
+ ch:[{l:'相談支援を使う',h:'',f:function(s){return{t:'生活全体の様子を聞いてもらい、使えるサービスを一緒に組み立てた。',fx:{m:4,so:4,d:3},use:['soudan'],log:'相談支援専門員とつながる'}}},
+  {l:'自分たちで何とかする',h:'',f:function(s){return{t:'家族や本人だけで調べ続け、疲れがたまった。',fx:{m:-3,so:-2},miss:['soudan'],log:''}}}]});
+
+ev('parent',{big:1,lo:35,hi:60,once:1,w:function(s){return s.disabled&&s.dx&&parentsAlive(s)&&s.living==='family'&&(s.grade!=='light'||s.type==='intel')?4:0},
+ k:'家族',title:'親が年を重ねて',
+ t:function(s){return '同居する親が高齢になり、体力が落ちてきた。「親亡きあと」の暮らしが現実の課題になってきた。'},
+ ch:[{l:'グループホームと成年後見の相談を始める',h:'',f:function(s){return{t:'親が元気なうちに、住まいと財産管理の準備を進めることができた。',fx:{m:3,so:3},use:['gh','seinen'],set:{living:'group'},log:'親亡きあとに備える'}}},
+  {l:'いまの暮らしを続ける',h:'',f:function(s){return{t:'先延ばしにしているうちに、親の入院が続き、暮らしの不安が大きくなった。',fx:{m:-6,so:-3},miss:['gh','seinen'],log:''}}}]});
+
+ev('disaster',{lo:20,hi:85,once:1,w:function(s){return s.disabled?2:0},
+ k:'災害',title:'大きな揺れ',
+ t:function(s){return '大きな地震と豪雨が重なり、避難が必要になった。自治体には、支援が必要な人の個別避難計画と福祉避難所がある。'},
+ ch:[{l:'日ごろから避難先と支援者を決めていた',h:'',f:function(s){return R(.92,{t:'決めてあった支援者と一緒に福祉避難所へ向かえ、大きな混乱なく過ごせた。',fx:{so:3,m:2},use:['hinan'],log:'災害時に計画通り避難'},{t:'計画どおりにはいかなかったが、周囲の助けでどうにか避難できた。',fx:{m:-4,h:-3},use:['hinan'],log:''})}},
+  {l:'そのとき考えようと思っていた',h:'',f:function(s){return R(.55,{t:'近所の人が声をかけてくれて、何とか避難所にたどり着いた。',fx:{m:-3,h:-3},miss:['hinan'],log:'災害時に避難'},{t:'避難所の環境が合わず、数日眠れないまま体調を崩した。',fx:{h:-10,m:-12,so:-3},miss:['hinan'],log:'災害時の避難で苦労する'})}}]});
+
+ev('move',{big:1,lo:22,hi:60,once:1,w:function(){return 3},
+ k:'暮らし',title:'引っ越しの話',
+ t:function(s){return '仕事や家族の事情で、他の自治体への引っ越しを考えることになった。障害福祉の制度は、住む自治体によって内容が異なる。'},
+ data:'自治体独自の医療費助成・タクシー助成・手当などは、転居すると転居先の制度で申請し直す。',
+ ch:[{l:'引っ越す',h:'転居先の窓口で手続きし直す',f:function(s){var o=MUNIS.filter(function(m){return m.id!==s.muni.id}),n=pick(o);s.done.delete('medical');s.done.delete('taxi');s.done.delete('local');s.used.delete('iryo');s.used.delete('taxi');s.used.delete('local');return{t:n.name+'(' +n.pref+')に引っ越した。新しい窓口で、使える制度を確かめ直すことになった。',fx:{so:-4,m:-2},set:{muni:n},log:n.name+'に転居'}}},
+  {l:'いまの街に住み続ける',h:'',f:function(s){return{t:'慣れた街で、顔なじみの支援者との関係を保った。',fx:{so:2},log:''}}}]});
+
+ev('workplace',{lo:22,hi:64,w:function(s){return s.work&&s.work!=='none'?4:0},
+ k:'はたらく',title:function(s){return (s.work==='general'||s.work==='regular')?'職場で':s.work==='a'?'A型事業所で':'B型事業所で'},
+ t:function(s){return (s.work==='general'||s.work==='regular')?'数年が過ぎた。仕事には慣れたが、任される仕事の幅や昇給について、考えるようになった。':s.work==='a'?'A型で働く日々が続く。賃金は最低賃金が基準で、一般就労との間にはまだ距離がある。':'B型で働く日々が続く。この地域の平均工賃の目安は月'+yen(s.muni.wageB)+'円。生活を支えるには足りないが、通う場所があることの意味は大きい。'},
+ ch:function(s){return (s.work==='general'||s.work==='regular')?[{l:'成果を示して昇給を相談する',h:'',f:function(s){return R(.6,{t:'上司が話を聞き、役割と給与が少し上がった。',fx:{d:6,m:3},set:{salary:Math.round(s.salary*1.1)},log:'昇給する'},{t:'「今のままで」と言われた。納得できず、モヤモヤが残った。',fx:{d:-3,m:-4},log:''})}},{l:'いまのまま、無理なく続ける',h:'',f:function(s){return{t:'安定した日々を優先し、自分のペースで働いた。',fx:{m:3,h:2},log:''}}}]:[{l:'工賃・賃金の高い作業に挑戦する',h:'',f:function(s){return R(.55,{t:'新しい作業を覚えて、工賃が少し増えた。自信も戻ってきた。',fx:{d:6,$:2,m:2},log:'新しい作業に挑戦'},{t:'作業が合わず、疲れて休みが増えた。',fx:{h:-3,m:-4},log:''})}},{l:'マイペースで通う',h:'',f:function(s){return{t:'通うこと自体を大切にして、生活のリズムを保った。',fx:{m:4,h:2},log:''}}}]}});
+
+ev('care65',{big:1,lo:65,hi:100,once:1,w:function(s){return s.disabled&&s.dx?5:0},must:function(s){return s.disabled&&s.dx&&s.age>=65},
+ k:'65歳',title:'65歳のとき',
+ t:function(s){return '65歳になると、障害福祉サービスのうち介護保険と同じ種類のものは、介護保険が優先される。使っているヘルパーや通所先、利用料が変わることがある。'},
+ data:'介護保険サービスが優先されるが、介護保険にない支援は障害福祉サービスで受けられる場合がある。',
+ ch:[{l:'地域包括支援センターに相談し、支援者同士をつなぐ',h:'ケアマネと相談支援専門員が連携する',f:function(s){return{t:'ケアマネと相談支援専門員が話し合い、これまでの暮らしを大きく変えずに移行できた。',fx:{h:4,m:4,so:2},use:['kaigo'],log:'介護保険へ円滑に移行'}}},
+  {l:'手続きを任せきりにする',h:'',f:function(s){return{t:'説明が理解しきれないまま切り替わり、使えるサービスが減ってしまった。',fx:{h:-8,m:-6,so:-3},miss:['kaigo'],log:'65歳でサービスが減る'}}}]});
+
+ev('late',{big:1,lo:68,hi:100,once:1,w:function(){return 4},
+ k:'老い',title:'年を重ねて',
+ t:function(s){return '体力が落ち、できないことが増えた。これからの暮らしの場をどうするか、考える時期になった。'},
+ ch:[{l:'在宅で、訪問のサービスを使い続ける',h:'',f:function(s){return{t:'見慣れた部屋で、訪問の人たちに支えられて暮らした。',fx:{d:5,m:3,h:-2},log:'住み慣れた家で暮らす'}}},
+  {l:'施設やグループホームに移る',h:'',f:function(s){return{t:'専門職の見守りのなかで、体調は安定した。新しい人間関係を築く時間が必要だった。',fx:{h:5,so:2,d:-2},set:{living:'facility'},log:'施設で暮らす'}}}]});
+
+
+/* ---- 家族の出来事 ---- */
+ev('famLoad',{lo:3,hi:17,once:1,w:function(s){return s.disabled&&parentsAlive(s)?3:0},
+ k:'家族',title:'親の毎日',
+ t:function(s){return '療育や通院の送迎、急な呼び出しで、親は仕事を減らして走り回っている。夜、疲れた声で「大丈夫」と言うのが聞こえた。'},
+ ch:[{l:'親の会・家族会に参加してもらう',h:'同じ立場の家族とつながる',f:function(s){return{t:'同じ立場の親たちと話せる場ができ、家族の表情が少し和らいだ。',fx:{so:4,m:3,d:2},use:['kazoku'],log:'家族が親の会につながる'}}},
+  {l:'短期入所(ショートステイ)を試してみる',if:function(s){return s.dx},h:'家族が休める時間をつくる',f:function(s){return R(.8,{t:'数日離れて過ごし、家族は休めた。初めての外泊は、本人にとって小さな冒険だった。',fx:{m:2,d:3,so:2},use:['tanki'],log:'短期入所を初めて利用'},{t:'環境の変化に戸惑い、帰宅後は落ち着かない日が続いた。それでも家族は休めた。',fx:{m:-2,d:1},use:['tanki'],log:'短期入所を初めて利用'})}},
+  {l:'家族だけで抱える',h:'',f:function(s){return{t:'頼れる先が見つからないまま、家族の疲れがたまっていった。',fx:{m:-4,so:-3},miss:['kazoku','tanki'],log:'家族だけで抱える日々'}}}]});
+
+ev('sibling',{lo:6,hi:24,once:1,w:function(s){return s.disabled&&parentsAlive(s)&&sibN(s)>0?3:0},
+ k:'家族',title:'きょうだいのこと',
+ t:function(s){return 'きょうだいが、友だちに家のことを話せずにいる。親の手がこちらに多くかかり、自分のことは後回しだと感じているようだ。'},
+ ch:[{l:'きょうだいと二人で過ごす時間をつくる',h:'',f:function(s){return{t:'二人で出かけた帰り道、「本当は寂しかった」と話してくれた。それから少し、距離が近づいた。',fx:{so:6,m:3,d:2},log:'きょうだいと向き合う'}}},
+  {l:'学校や相談窓口にきょうだいのことも相談する',h:'',f:function(s){return{t:'きょうだいの気持ちを聞いてくれる人が増え、家族みんなの肩の荷が少し軽くなった。',fx:{so:4,m:3},use:['young','soudan'],log:'家族全体の相談につながる'}}},
+  {l:'そのままにする',h:'',f:function(s){return{t:'きょうだいは何も言わなくなった。その沈黙が、家の中に残った。',fx:{so:-4,m:-2},miss:['young'],log:'きょうだいの気持ちに気づけなかった'}}}]});
+
+ev('sibWed',{lo:12,hi:55,w:function(s){return s.fam.sibs.some(function(x){return x.ask&&!x.dead})?20:0},must:function(s){return s.fam.sibs.some(function(x){return x.ask&&!x.dead})},
+ k:'家族',title:function(s){var x=s.fam.sibs.filter(function(x){return x.ask&&!x.dead})[0];return (x?x.nm:'きょうだい')+'の結婚式'},
+ onShow:function(s){var x=s.fam.sibs.filter(function(x){return x.ask&&!x.dead})[0];if(x){x.ask=false;s.fam.cur=x}},
+ t:function(s){var x=s.fam.cur;return (x?x.nm:'きょうだい')+'が結婚することになった。式への招待状が届き、相手の家族への紹介も控えている。'},
+ ch:[{l:'出席して、お祝いの言葉を伝える',h:'',f:function(s){return R(s.disabled?.8:.97,{t:(s.disabled?'席の配慮を頼み、短い時間でも式に参加できた。':'')+'写真の中に、笑顔の自分がいた。',fx:{so:8,d:6,m:5},log:'きょうだいの結婚式に出席'},{t:'人の多さと音に疲れ、途中で控室で休んだ。それでも、お祝いは伝えられた。',fx:{so:4,d:2,m:-2,h:-2},log:'きょうだいの結婚式に出席'})}},
+  {l:'都合がつかず、辞退する',h:'',f:function(s){return{t:'後でお祝いを送った。出られなかった悔しさが、少し残った。',fx:{so:-3,m:-2},log:'きょうだいの結婚式を欠席'}}}]});
+
+ev('parentCare',{big:1,lo:0,hi:100,w:function(s){return careParent(s)?30:0},must:function(s){return !!careParent(s)},
+ k:'家族',title:function(s){var p=careParent(s);return (p?p.rel:'親')+'が弱ってきた'},
+ onShow:function(s){s.fam.cur=careParent(s)},
+ t:function(s){var p=s.fam.cur;return (p&&s.living==='family'?'同居する':'離れて暮らす')+(p?p.rel:'親')+'が体調を崩し、日常の世話に手助けが必要になってきた。'+(s.disabled?'これまで本人を支えてきた親自身が、支えられる側になりつつある。':'子として、これからの関わり方を考える時期になった。')},
+ ch:function(s){if(s.disabled&&s.dx)return [{l:'地域包括支援センターと相談支援専門員につなぐ',h:'親の介護と本人の暮らしを一緒に組み直す',f:function(s){var p=s.fam.cur;return R(.8,{t:'親のケアマネと本人の相談支援専門員が顔を合わせ、二人の暮らしを一緒に組み直せた。',fx:{m:4,so:3,d:2},use:['soudan','tanki'],log:'親の介護が始まり、支援者がつながる',after:function(){if(p)p.care=true}},{t:'窓口が分かれていて調整に時間がかかったが、少しずつ体制ができていった。',fx:{m:-2,so:1},use:['soudan'],log:'親の介護が始まる',after:function(){if(p)p.care=true}})}},
+  {l:'家族だけで担う',h:'',f:function(s){var p=s.fam.cur;return{t:'誰にも頼れないまま、家族の疲れだけが積み重なっていった。',fx:{m:-8,h:-4,so:-3},miss:['soudan','tanki'],log:'親の介護を家族だけで抱える',after:function(){if(p)p.care=true}}}}];
+  return [{l:'地域包括支援センターに相談し、介護保険を申請する',h:'要介護認定を受けて、サービスを使う',f:function(s){var p=s.fam.cur;return{t:'要介護認定を受け、ケアマネジャーと一緒に、訪問介護や通所のサービスを組み合わせた。',fx:{m:-2,so:2},log:'親の介護が始まる(介護保険を利用)',after:function(){if(p)p.care=true}}}},
+  {l:'兄弟姉妹と分担して、家族で支える',if:function(s){return sibAlive(s)>0},h:'',f:function(s){var p=s.fam.cur;return{t:'通う日を分け合い、できる範囲で世話をした。疲れは出たが、話し合う時間が増えた。',fx:{m:-5,h:-3,so:2},log:'親の介護を家族で分担する',after:function(){if(p)p.care=true}}}},
+  {l:'介護サービスを増やし、仕事と両立する',if:function(s){return sibAlive(s)===0},h:'ひとりで抱えすぎない',f:function(s){var p=s.fam.cur;return{t:'ケアマネジャーと相談してサービスの回数を増やし、自分が通う日を絞った。ひとりで担う負担は大きく、休める日は少なかった。',fx:{m:-6,h:-4,so:-1},log:'親の介護を、ひとりで担いながら続ける',after:function(){if(p)p.care=true}}}}]},
+ });
+
+ev('parentDeath',{big:1,lo:0,hi:100,w:function(s){return s.fam.pend.length?40:0},must:function(s){return s.fam.pend.length>0},
+ k:'家族',title:function(s){var c=s.fam.cur;return (c?c.rel:'親')+'を見送る'},
+ onShow:function(s){s.fam.cur=s.fam.pend.shift()},
+ t:function(s){var c=s.fam.cur||{rel:'親',life:80,cause:''},other=(c.rel==='父'?s.fam.mother:s.fam.father);
+  var rest=other&&!other.dead?(c.rel==='父'?'母':'父')+'は健在だが、これからの暮らしを支え合う形が変わる。':'両親とも、もういない。';
+  if(s.age<18)return c.rel+'が亡くなった('+c.life+'歳・'+c.cause+')。突然の別れに、気持ちが追いつかない。'+rest+'葬儀の間も、周りの大人が慌ただしく動いている。';
+  return c.rel+'が亡くなった('+c.life+'歳・'+c.cause+')。長く支えてくれた'+c.rel+'を見送る。葬儀、年金や保険の手続き、そしてこれからの住まい。やることは多く、気持ちは追いつかない。'+rest},
+ ch:function(s){if(s.age<18)return [{l:'祖父母やおじ・おば、学校の先生に気持ちを話す',h:'',f:function(s){return{t:'そばにいてくれる大人に気持ちを話すと、少し泣けた。学校にも事情が伝わり、気にかけてもらえた。',fx:{m:-8,so:3,d:1},log:'親の死を、周りの大人に支えられて受け止める'}}},
+  {l:'平気なふりをして、ひとりで抱え込む',h:'',f:function(s){return{t:'泣かないように過ごすうち、気持ちを話せないまま時間が過ぎた。',fx:{m:-14,so:-4,h:-3},log:'親の死を、ひとりで抱え込む'}}}];
+  var sa=sibAlive(s)>0,who=sa?(s.disabled&&s.dx?'きょうだいや支援者':'きょうだい'):(s.disabled&&s.dx?'相談支援専門員など支援者':'役所の窓口や親族');return [{l:who+'と手続きを分担する',h:'',f:function(s){return{t:'手続きを'+who+'と分け合い、悲しむ時間も確保できた。',fx:{m:-6,so:4,d:2},use:s.disabled&&s.dx?['soudan']:[],log:s.fam.cur.rel+'を見送る'}}},
+  {l:'気持ちが追いつかず、動けない',h:'',f:function(s){return{t:'何も手につかない日が続いた。周りの人が気づいて声をかけてくれるまで、時間がかかった。',fx:{m:-12,so:-4,h:-4},log:s.fam.cur.rel+'を見送る'}}}]},
+ });
+
+ev('afterParent',{big:1,lo:20,hi:100,once:1,w:function(s){return s.disabled&&!parentsAlive(s)&&s.living==='family'?10:0},must:function(s){return s.disabled&&!parentsAlive(s)&&s.living==='family'&&s.fam.pend.length===0},
+ k:'住まい',title:'親のいない家で',
+ t:function(s){return '両親が亡くなり、これまで同居していた家で、誰とどう暮らすかを決めなければならなくなった。'},
+ ch:[{l:'グループホームに入る',if:function(s){return s.dx},h:'',f:function(s){return{t:'世話人や仲間と暮らす新しい生活が始まった。慣れるまでは、親の面影を探す日もあった。',fx:{so:5,m:-2,d:2},use:['gh'],set:{living:'group',livingSet:true},log:'グループホームで暮らし始める'}}},
+  {l:'ヘルパーを使って一人暮らしを続ける',if:function(s){return s.dx},h:'',f:function(s){return R(.65,{t:'ヘルパーや相談支援の力を借りて、同じ家で自分の暮らしをつくり直せた。',fx:{d:7,m:2},use:['kyotaku'],set:{living:'alone',livingSet:true},log:'一人暮らしに切り替える'},{t:'支援の時間が足りず、静かな夜が長く感じられた。それでも暮らしを続けた。',fx:{d:4,m:-6,h:-3},use:['kyotaku'],set:{living:'alone',livingSet:true},log:'一人暮らしに切り替える'})}},
+  {l:'親のいない家で、そのまま暮らす',h:'実家に住み続ける。家賃はかからない',f:function(s){return R(s.dx?.7:.55,{t:'親の遺した家で、ひとりの暮らしを続けた。家賃はかからず、思い出の残る部屋で毎日を過ごした。'+(s.dx?'必要なときは、支援者や近所の人に頼れた。':'頼れる先は少なかったが、近所の人が気にかけてくれた。'),fx:{d:7,m:1},set:{living:'alone',livingSet:true,ownHome:true},log:'親のいない家で暮らし続ける'},{t:'広い家の掃除や修繕、手続きに追われ、静けさが重くのしかかった。それでも住み慣れた家で暮らしを続けた。',fx:{d:4,m:-6,h:-2,so:-2},set:{living:'alone',livingSet:true,ownHome:true},log:'親のいない家で暮らし続ける'})}},
+  {l:'きょうだいの近くで暮らす',if:function(s){return sibAlive(s)>0},h:'',f:function(s){return{t:'きょうだいの家の近くに移り、顔を合わせながら、それぞれの暮らしを続けた。',fx:{so:5,m:2},set:{living:'alone',livingSet:true},log:'きょうだいの近くに移る'}}},
+  {l:'入所施設で暮らす',if:function(s){return s.dx},h:'',f:function(s){return{t:'24時間の見守りで体調は安定した。自由な時間は少なくなった。',fx:{h:4,d:-4},set:{living:'facility',livingSet:true},log:'入所施設で暮らし始める'}}}]});
+
+ev('partnerHelp',{lo:25,hi:95,w:function(s){return s.partner&&s.fam.ptIll?20:0},must:function(s){return !!(s.partner&&s.fam.ptIll)},
+ k:'家族',title:'パートナーの不調',
+ t:function(s){return '同居するパートナーが体調を崩し、家事や外出の分担を見直す必要が出てきた。お互いが支え合う暮らしの形が変わる。'},
+ ch:[{l:'ヘルパーも入れて、役割を見直す',if:function(s){return s.dx||!s.disabled},h:'',f:function(s){return{t:'ヘルパーに家事の一部を頼み、二人で過ごす時間を守れた。',fx:{so:4,m:3,d:2},use:s.disabled?['kyotaku']:[],log:'パートナーの病気で、役割を見直す',after:function(){s.fam.ptIll=false}}}},
+  {l:'お互いに無理をして頑張る',h:'',f:function(s){return{t:'どちらも無理を重ねて、小さな言い争いが増えた。',fx:{m:-6,h:-4,so:-2},log:'パートナーの病気を、二人で抱え込む',after:function(){s.fam.ptIll=false}}}}]});
+
+ev('marry',{big:1,lo:22,hi:70,onShow:function(s){s.fam.marryAsk=(s.fam.marryAsk||0)+1},w:function(s){var p=s.partner;return p&&p.status==='dating'&&(s.fam.marryAsk||0)<3&&s.age-p.since>=2?12:0},must:function(s){var p=s.partner;return !!(p&&p.status==='dating'&&(s.fam.marryAsk||0)<3&&s.age-p.since>=3)},
+ k:'人間関係',title:'これからの二人',
+ t:function(s){var y=s.age-s.partner.since;return '出会ってから'+y+'年。これからの暮らし方を、二人で話し合う時期になった。'+(s.disabled&&s.dx?'障害年金や福祉サービスのこと、暮らしの支え方も、話題になる。':'')},
+ ch:[{l:'結婚する(入籍する)',h:'',f:function(s){var p=s.partner;return R(.9,{t:'二人で役所に届を出し、小さなお祝いをした。'+(s.pension?'障害年金は、結婚しても受け取れる。':'')+'暮らしの形が、新しく始まった。',fx:{so:8,d:6,m:6},log:'結婚する',after:function(){p.status='married';p.liveSince=s.age;mergeSav(p);p.nm=p.same?'パートナー':(p.sex==='M'?'夫':'妻');s.fam.pstate='married'}},{t:'家族への挨拶に時間がかかったが、話し合いを重ねて結婚した。',fx:{so:4,d:3,m:-2},log:'結婚する',after:function(){p.status='married';p.liveSince=s.age;mergeSav(p);p.nm=p.same?'パートナー':(p.sex==='M'?'夫':'妻');s.fam.pstate='married'}})}},
+  {l:'一緒に暮らす(籍は入れない)',h:'',f:function(s){var p=s.partner;return{t:'同じ部屋で暮らし始めた。家事の分担や、お金の持ち方を決めた。',fx:{so:6,d:4,m:3},log:'パートナーと同居する',after:function(){p.status='cohab';p.liveSince=s.age;mergeSav(p);s.fam.pstate='cohab'}}}},
+  {l:'いまの距離のまま続ける',h:'',f:function(s){return{t:'それぞれの暮らしを大切にしながら、会う日を決めて過ごした。',fx:{so:2,m:1},log:'いまの関係を続ける'}}}]});
+
+ev('child',{big:1,lo:22,hi:44,w:function(s){var p=s.partner;if(!p||p.status==='dating'||p.same)return 0;var f=s.sexK==='F'?s.age:s.age+p.off;if(f>43)return 0;var K=s.fam.kids;if(K.length>=s.fam.desired)return 0;if(p.sub)return 0;if(K.length===0)return s.age-p.liveSince>=1?10:0;return s.age-K[K.length-1].born>=2?6:0},must:function(s){var p=s.partner;if(!p||p.status==='dating'||p.same||p.sub||s.fam.kids.length>=s.fam.desired)return false;var K=s.fam.kids,f=s.sexK==='F'?s.age:s.age+p.off;return f<=42&&(K.length?s.age-K[K.length-1].born>=2:s.age-p.liveSince>=1)},
+ k:'家族',title:'子どもが生まれる',
+ t:function(s){return '新しい命が生まれた。'+(s.disabled?'障害のある自分に、子育てができるのか。':'子育てと仕事を、両立できるだろうか。')+'不安と喜びが、同時に押し寄せてくる。'},
+ ch:[{l:'保育や子育て支援を使う',if:function(s){return s.disabled&&!s.dx},h:'',f:function(s){return R(.8,{t:'保育所やファミリーサポートに支えられ、子どもとの時間を楽しめた。',fx:{so:5,d:7,m:3},use:['kosodate'],log:'子どもが生まれる',after:function(){s.fam.kids.push(mkKid())}},{t:'手続きや調整に苦労したが、周りの支えで子育てが軌道に乗った。',fx:{so:3,d:4,m:-3},use:['kosodate'],log:'子どもが生まれる',after:function(){s.fam.kids.push(mkKid())}})}},
+  {l:'保育や子育て支援、ヘルパーの家事援助を使う',if:function(s){return s.dx||!s.disabled},h:'',f:function(s){return R(.85,{t:'保育所やファミリーサポート、家事のヘルパーに支えられ、子どもとの時間を楽しめた。',fx:{so:6,d:8,m:4},use:s.disabled?['kosodate','kyotaku']:['kosodate'],log:'子どもが生まれる',after:function(){s.fam.kids.push(mkKid())}},{t:'手続きや調整に苦労したが、周りの支えで子育てが軌道に乗った。',fx:{so:3,d:5,m:-2},use:['kosodate'],log:'子どもが生まれる',after:function(){s.fam.kids.push(mkKid())}})}},
+  {l:'夫婦と家族だけで頑張る',h:'',f:function(s){return{t:'睡眠が削られ、体調に響いた。かわいい日々の隣に、疲れもあった。',fx:{d:4,so:2,m:-6,h:-5},miss:['kosodate'],log:'子どもが生まれる',after:function(){s.fam.kids.push(mkKid())}}}}]});
+
+ev('preEdu',{big:1,lo:18,hi:19,once:1,w:function(s){return !s.disabled&&s.edu===null?10:0},must:function(s){return !s.disabled&&s.edu===null},
+ k:'進路',title:'高校を出たあと',
+ t:function(s){return '高校の卒業が近づいた。卒業後の進路を、そろそろ決める時期だ。'},
+ ch:[{l:'大学に進学する',h:'',f:function(s){return{t:'受験勉強を重ね、大学に進んだ。学費は、奨学金や家族の支えで工面した。',fx:{d:4,m:-2},set:{edu:'univ'},log:'大学に入学する'}}},
+  {l:'専門学校に進学する',h:'資格の取得を目指す',f:function(s){return R(.85,{t:'実習の多い毎日を乗り切り、資格試験に合格した。',fx:{d:5,m:-1},set:{edu:'senmon',qual:true},log:'専門学校に入学する'},{t:'実習は終えたが、資格試験には届かなかった。学んだ時間は残った。',fx:{d:1,m:-3},set:{edu:'senmon'},log:'専門学校に入学する'})}},
+  {l:'高校を卒業して、すぐに働く',h:'',f:function(s){return{t:'早く自分のお金で暮らしたいと考え、就職を選んだ。',fx:{d:3,so:1},set:{edu:'high'},log:'高校を卒業して就職を選ぶ'}}}]});
+
+ev('preJob',{big:1,lo:22,hi:32,once:1,w:function(s){return !s.disabled&&s.work===null?10:0},must:function(s){return !s.disabled&&s.work===null},
+ k:'しごと',title:'はたらきはじめる',
+ t:function(s){return '学校を出て、仕事を選ぶ時期になった。何を大切に選ぶかで、これからの毎日が変わる。'},
+ ch:[{l:'安定した大きな会社に就職する',h:'',f:function(s){return{t:'研修と配属を経て、毎月の給与が入るようになった。',fx:{d:3,m:-2,$:8},set:{work:'regular',salary:ri(320,480)},log:'大きな会社に就職する'}}},
+  {l:'地元の中小企業で働く',h:'',f:function(s){return{t:'顔の見える職場で、仕事を覚えていった。',fx:{d:4,so:3,$:4},set:{work:'regular',salary:ri(260,380)},log:'地元の会社に就職する'}}},
+  {l:'資格を生かせる仕事に就く',if:function(s){return s.qual},h:'取得した資格を使う',f:function(s){return{t:'学んできたことが仕事につながった。',fx:{d:6,m:1,$:6},set:{work:'regular',salary:ri(280,420)},log:'資格を生かして働き始める'}}}]});
+
+ev('holiday',{lo:8,hi:85,w:function(s){return s.disabled?2:0},
+ k:'親戚',title:'親戚の集まり',
+ t:function(s){return '正月、親戚が集まった。「もう少し頑張れないの?」「いい病院を探したら?」と、善意の言葉が次々にかかる。'},
+ ch:[{l:'落ち着いて、いまの状況を話す',h:'',f:function(s){return R(.6,{t:'丁寧に説明すると、伯父さんが「知らなかった」と頷いてくれた。',fx:{so:5,d:5,m:2},log:'親戚に自分の状況を話す'},{t:'うまく伝わらず、気まずい空気になった。それでも、話せたことは自信になった。',fx:{d:2,m:-4},log:''})}},
+  {l:'席を外して休む',h:'',f:function(s){return{t:'別室で静かに過ごした。心配する声が、遠くで聞こえた。',fx:{m:1,so:-3},log:''}}},
+  {l:'家族に間に入ってもらう',h:'',f:function(s){return{t:'家族がさりげなく話題を変えてくれて、その場を乗り切れた。',fx:{so:3,m:3},log:''}}}]});
+
+
+var EXPL={
+ early:[['児童発達支援(療育)','未就学の障害児が通う通所の支援。市区町村で通所受給者証を取って利用する。3〜5歳は幼児教育・保育の無償化で利用料がかからない。'],['乳幼児健診・育児相談','市区町村の保健センターが、発達の相談を受けて療育や医療機関につなぐ。']],
+ schoolpath:[['就学先の決定','就学前の相談・健診を経て、本人と保護者の意向を尊重しながら教育委員会が総合的に判断する。通常の学級、特別支援学級、通級による指導、特別支援学校から選ぶ。'],['合理的配慮','学校は、障害のある子が学べるよう、負担が重すぎない範囲で必要な調整(席、教材、支援員など)を行う。']],
+ houdei:[['放課後等デイサービス','6〜18歳の障害のある子が、放課後や休みの日に通う場所。通所受給者証が必要で、利用者負担は原則1割。世帯の所得に応じた月額の上限がある。']],
+ tokuji:[['特別児童扶養手当','20歳未満の障害のある子を育てる保護者に支給される国の手当。障害の程度で1級・2級に分かれ、所得制限がある。窓口は市区町村。']],
+ friend:[['交流及び共同学習','特別支援学級や特別支援学校の子が、通常の学級の子と一緒に活動する機会。学校が計画して行う。']],
+ path15:[['特別支援学校高等部','職業教育や企業での実習があり、卒業後の就労や福祉サービスにつなぐ進路指導を行う。'],['通信制・サポート校','自分のペースで学べる。高校での通級による指導が受けられる場合もある。']],
+ work_path:[['障害者雇用制度','事業主は、従業員の一定割合以上の障害者を雇う義務がある(法定雇用率)。ハローワークの専門窓口や、障害者就業・生活支援センターが就職を支える。'],['就労移行支援','一般企業への就職を目指す訓練。原則2年まで。'],['障害者雇用での応募','原則として障害者手帳(身体・療育・精神)をもつ人が対象。手帳がなくても、一般の求人には応募できる。'],['就労継続支援A型・B型','A型は雇用契約を結んで働く。B型は雇用契約がなく、体調に合わせて作業をして工賃を受け取る。手帳がなくても、医師の意見書などで利用できる場合がある。']],
+ jobshock:[['合理的配慮の提供義務','2024年4月から、民間事業者にも提供が義務になった。時短、配置転換、業務の見直しなどを話し合って決める。'],['傷病手当金','会社の健康保険の加入者が、病気やけがで働けないとき、条件を満たせば受け取れる。'],['地域障害者職業センター','職場での適応を支えるジョブコーチの支援などを行う。']],
+ pension:[['障害年金','初診日に入っていた年金制度で、障害基礎年金か障害厚生年金かが決まる。初診日、保険料の納付、障害の状態の3つの条件を満たす必要がある。1・2級の判定は日本年金機構が行い、手帳の等級とは別。']],
+ tokusho:[['特別障害者手当','20歳以上で、日常生活で常時特別な介護が必要な在宅の人に支給される。施設入所や長期入院中は対象外。所得制限がある。']],
+ living:[['居宅介護(ホームヘルプ)','自宅での入浴・排せつ・食事・家事などの支援。'],['共同生活援助(グループホーム)','地域のなかで、世話人の支援を受けながら共同生活を送る。'],['施設入所支援','夜間の介護や生活の支援を、入所施設で受ける。']],
+ medical:[['自立支援医療','更生医療・育成医療・精神通院医療などがあり、自己負担は原則1割。世帯の所得に応じた月額の上限がある。'],['重度障害者医療費助成','自治体が独自に行う制度。対象の等級や所得制限、助成の範囲は自治体ごとに違う。']],
+ techo_late:[['障害者手帳','身体障害者手帳、療育手帳、精神障害者保健福祉手帳の3種類。運賃割引、税の控除、各種助成の入口になる。取るかどうかは本人が決める。']],
+ taxi:[['運賃・有料道路の割引','手帳の種別や等級で、鉄道・バス・有料道路などの割引を受けられる場合がある。'],['福祉タクシー等の助成','自治体独自の制度。タクシーやガソリンの利用券、バス回数券などが支給される。対象や所得制限は自治体ごとに違う。']],
+ local:[['自治体独自の支援','住んでいる市区町村によって、手当、助成、住宅や自動車の改造費の補助などの内容が違う。窓口は障害福祉課など。']],
+ barrier:[['障害者差別解消法','障害を理由にした不当な差別を禁じ、合理的配慮の提供を求める法律。身近な相談窓口が自治体にある。'],['相談支援・ピアサポート','同じ立場の当事者や専門職に話を聞いてもらい、対処のしかたを一緒に考える。']],
+ burnout:[['相談支援・精神保健福祉センター','体調の波があるとき、休み方や使えるサービスを相談できる。'],['自立支援医療(精神通院)','通院の医療費の自己負担を原則1割に抑える。']],
+ joy:[['障害者スポーツ・文化芸術活動','障害者スポーツ協会や、障害者の文化芸術活動を支える取り組みが各地にある。作品展や大会への参加の入口になる。']],
+ love:[['相談支援・ピアサポート','パートナーや家族との関係、結婚・子育てについても、相談支援や当事者の集まりで話せる。']],
+ koujo:[['障害者控除','所得税の控除額は、障害者27万円、特別障害者40万円、同居特別障害者75万円。住民税は26万円・30万円・53万円。']],
+ soudan:[['計画相談支援','相談支援専門員が、本人の希望や生活の状況を聞いて「サービス等利用計画」をつくり、事業所との連絡調整を行う。']],
+ parent:[['成年後見制度','判断する力が十分でない人の財産管理や契約を、後見人が支える。'],['地域生活支援拠点等','緊急時の受け入れや相談など、親元を離れた暮らしを支える仕組み。'],['グループホーム','世話人の支援を受けながら共同生活を送る。']],
+ disaster:[['個別避難計画・避難行動要支援者名簿','支援が必要な人ごとに、避難先と支援者を決めておく。市町村が作成を進めている。'],['福祉避難所','高齢者や障害のある人など、一般の避難所での生活が難しい人のための避難所。']],
+ move:[['自治体ごとの違い','手帳は全国で使えるが、医療費助成、手当、タクシー助成などは自治体独自の制度で、転居先で申請し直す。']],
+ workplace:[['就労定着支援','一般就労した人を、最大3年、生活面から支える。'],['工賃向上計画','B型事業所が、工賃を上げるために都道府県と進める取り組み。']],
+ care65:[['介護保険の優先','65歳になると、介護保険と同じ種類の障害福祉サービスは、原則として介護保険が優先される。介護保険にない支援は、障害福祉サービスで受けられる場合がある。'],['共生型サービス','障害のある人も高齢の人も同じ事業所で使えるサービス。']],
+ late:[['介護保険サービス','在宅の訪問介護、通所介護、特別養護老人ホームなどの施設サービス。要介護認定を受けて利用する。'],['地域包括支援センター','高齢者の暮らし全般の相談窓口。']]
+};
+
+EXPL.famLoad=[['短期入所(ショートステイ)','家族の病気や休息の必要があるとき、障害のある人が施設に短期間泊まる障害福祉サービス。日中の預かりは、自治体の日中一時支援などがある。'],['親の会・家族会','同じ立場の家族が集まり、情報を交換し、支え合う。各地にあり、相談支援事業所や自治体の窓口で紹介を受けられる。']];
+EXPL.sibling=[['きょうだい・ヤングケアラーの支援','家族の世話を日常的に担う子どもの負担を減らすため、学校、自治体、こども家庭庁などが相談窓口や支援の取り組みを進めている。'],['相談支援','本人だけでなく家族全体の事情を聞いて、使えるサービスを一緒に考える。']];
+EXPL.sibWed=[['当日の配慮','会場の席、休憩できる部屋、付き添いなどは、家族や主催者に事前に伝えて調整する。必要な配慮は、民間事業者にも2024年4月から義務づけられている。']];
+EXPL.parentCare=[['地域包括支援センター','高齢の親の介護・健康・暮らしの相談窓口。要介護認定の申請やケアマネジャーの紹介につながる。'],['介護保険と障害福祉の連携','親は介護保険、本人は障害福祉と、制度が分かれる。ケアマネと相談支援専門員が情報を共有すると、暮らしを組み直しやすい。'],['短期入所(ショートステイ)','介護する家族の休息や、急な入院のときに使える。']];
+EXPL.parentDeath=[['成年後見制度','判断する力が十分でない人の財産管理や契約を、後見人が支える。親亡きあとの備えとして使われる。'],['相談支援専門員','死亡後の手続き、住まい、サービスの組み直しを一緒に考える。'],['地域生活支援拠点等','親元を離れた暮らしや緊急時の受け入れを支える、自治体の仕組み。']];
+EXPL.afterParent=[['共同生活援助(グループホーム)','世話人の支援を受けながら、地域で共同生活を送る。'],['居宅介護(ホームヘルプ)','自宅での入浴・排せつ・食事・家事などの支援。'],['施設入所支援','夜間の介護や生活の支援を、入所施設で受ける。']];
+EXPL.partnerHelp=[['居宅介護(家事援助)','調理・掃除・洗濯などの家事を、ヘルパーが手伝う。障害の程度や必要に応じて、支給決定を受ける。'],['相談支援','夫婦それぞれの状況を聞いて、サービスを組み合わせる。']];
+EXPL.child=[['子育て支援','保育所、ファミリー・サポート・センター、地域子育て支援拠点など。保育所の利用は、保護者の状況を市区町村が判断して決まる。'],['居宅介護(家事援助)','子育てと家事の負担を、ヘルパーの支援で減らす。支給の可否や時間は、市区町村の判断による。']];
+EXPL.holiday=[['障害の理解を広げる取り組み','自治体や当事者団体が、啓発の講座や交流の場をつくっている。身近な人に状況を伝えるきっかけにもなる。']];
+
+EXPL.parentDeath=[['遺族年金','国民年金・厚生年金の加入者だった親が亡くなると、18歳になった年度の末日までの子(障害等級1・2級なら20歳未満)に、遺族基礎年金が支給される。'],['成年後見制度','判断する力が十分でない人の財産管理や契約を、後見人が支える。親亡きあとの備えとして使われる。'],['相談支援専門員','死亡後の手続き、住まい、サービスの組み直しを一緒に考える。']];
+EXPL.sibWed=[['当日の配慮','会場の席、休憩できる部屋、付き添いなどは、家族や主催者に事前に伝えて調整する。必要な配慮は、民間事業者にも2024年4月から義務づけられている。']];
+EXPL.marry=[['結婚と障害年金','障害基礎年金は、結婚しても受け取れる。20歳前に障害になった人の年金は、本人の所得による支給制限がある。'],['住まいと福祉サービス','同居する家族がいるかどうかで、居宅介護などの支給量が調整されることがある。窓口で事情を伝えて相談する。']];
+EXPL.child=[['子育て支援','保育所、ファミリー・サポート・センター、地域子育て支援拠点など。保育所の利用は、保護者の状況を市区町村が判断して決まる。'],['居宅介護(家事援助)','子育てと家事の負担を、ヘルパーの支援で減らす。支給の可否や時間は、市区町村の判断による。']];
+EXPL.preEdu=[['高等学校等就学支援金・奨学金','高校の授業料を支える就学支援金と、大学などで使える日本学生支援機構の奨学金などがある。内容や所得の目安は年度で変わる。']];
+EXPL.preJob=[['ハローワーク(公共職業安定所)','求人の紹介や就職の相談を無料で受けられる。働き始めたあとに病気やけがで障害が生じても、職場に相談する道がある。']];
+EV.forEach(function(e){if(EXPL[e.id])e.sys=EXPL[e.id]});
+
+/* ---------- 進行 ---------- */
+function makeQueue(){
+  var ok=function(e){return e.lo<=S.age&&S.age<=e.hi&&!(e.once&&S.done.has(e.id))&&e.w(S)>0};
+  var el=EV.filter(ok),q=el.filter(function(e){return e.must&&e.must(S)}).slice(0,2);
+  var target=S.age<6?1:2,allowBig=!q.some(function(e){return e.big})&&Math.random()<.45,pool,pk;
+  while(q.length<target){
+    pool=el.filter(function(e){return q.indexOf(e)<0&&(e.big?allowBig:true)});
+    if(!pool.length)break;
+    pk=wpick(pool,function(e){return e.w(S)});
+    if(pk.big)allowBig=false;
+    q.push(pk);
+  }
+  return q;
+}
+function startLife(){
+  S=newLife(UI.mode);
+  S.age=0;
+  S.sexK=S.sex==='男性'?'M':'F';S.famFeed=[];S.fam=makeFamily();
+  S.log.push({age:0,t:S.muni.name+'で生まれる'});
+  UI.speed=UI.speed||1;UI.paused=false;UI.prog=0;
+  UI.screen='birth';render();
+}
+function triggerOnset(){
+  S.disabled=true;S.onsetAge=S.age;if(S.type==='body')S.dx=true;
+  S.health=clamp(S.health-(S.grade==='heavy'?14:S.grade==='mid'?5:0));
+  if(S.type==='mental')S.mind=clamp(S.mind-10);
+  var o=onsetEvent();o.big=1;o.onset=1;return o;
+}
+function onsetEvent(){
+  var s=S,sub=s.sub,t,cause;
+  var CA={'肢体不自由':['交通事故','脳卒中などの病気','転倒による大けが'],'内部障害':['心臓の病気','腎臓の病気','呼吸器の病気'],'聴覚・言語障害':['突然の聴力低下','中耳炎などの後遺症','加齢に伴う聴力の低下'],'視覚障害':['緑内障','糖尿病網膜症','網膜の病気']};
+  var MS={'気分障害(うつ・双極性障害)':'気分の落ち込みが何週間も続き、朝起きられなくなった。','不安・ストレス関連の障害':'強い不安とパニック発作で、電車に乗れなくなった。','統合失調症':'周囲の声や視線が気になり、眠れない日が続いた。','発達障害':'人との距離感や段取りが苦手で、集団のなかで疲れ切ってしまう。','てんかん':'発作が起き、検査でてんかんと分かった。','認知症':'物忘れが増え、日付や場所が分からなくなることが出てきた。','依存症など':'やめたくてもやめられないことが増え、生活が回らなくなった。'};
+  if(s.onset===0){
+    return {sys:[['乳幼児健診・育児相談','市区町村の保健センターが発達の相談を受けて、療育や医療につなぐ。'],['療育手帳・身体障害者手帳','診断や判定を受けて、必要に応じて取得する。']],k:'誕生',title:s.dx?s.sub+'とともに生まれる':'生まれる',t:s.sex+'として、'+s.muni.name+'で生まれた。'+(s.dx?'診断は生まれて間もなくついた。':'診断はまだない。ことばや動きの特性は、成長とともに少しずつ見えてくる。')+'日本の障害者のおよそ10人に1人。その一人としての人生が始まる。',
+      ch:[{l:'人生を始める',h:'',f:function(s){return{t:'家族は戸惑いながらも、小さな手を握った。',fx:{},log:s.dx?s.sub+'の診断を受ける':''}}}]};
+  }
+  if(s.type==='body'){
+    cause=pick(CA[sub]);
+    return {sys:[['身体障害者手帳','障害の種類と程度で1〜7級(手帳の対象は6級まで)。医師の診断書を添えて市区町村に申請する。'],['更生医療・リハビリ','障害を軽くしたり、機能を補ったりする医療の自己負担を抑える自立支援医療。']],k:s.onset+'歳',title:'その日',t:s.onset+'歳のとき、'+cause+'で、'+sub+'のある暮らしが始まった。入院、リハビリ、そして手帳や制度の説明。聞き慣れない言葉が続いた。',
+     ch:[{l:'リハビリと手帳の申請を進める',h:'',f:function(s){return{t:'専門職に支えられて、少しずつ体の使い方を覚えた。手帳が交付された。',fx:{h:4,m:-2,d:-2},use:['techo'],set:{techo:true},log:cause+'で'+sub+'に。手帳を取得'}}},
+      {l:'現実を受け止められず、しばらく何も手につかない',h:'',f:function(s){return{t:'日が経っても気持ちが追いつかず、手続きにも手が回らなかった。',fx:{m:-10,so:-4,d:-4},log:cause+'で'+sub+'に'}}}]};
+  }
+  if(s.type==='intel'){return null}
+  return {sys:[['自立支援医療(精神通院)','通院の医療費の自己負担を原則1割に抑える。所得に応じた月額の上限がある。'],['精神障害者保健福祉手帳','1〜3級。初診から6か月以上たって申請でき、2年ごとに更新する。']],k:s.onset+'歳',title:'最初のサイン',t:(MS[sub]||'')+(s.onset<15?'保護者は、病院を受診するかどうか迷っている。':'「気のせい」「甘え」と言われることもあり、受診をためらっている。'),
+   ch:[{l:'精神科・心療内科を受診する',h:'自立支援医療(精神通院)につながる場合がある',f:function(s){return{t:'診察で、診断名と治療の見通しを聞けた。通院にかかる医療費は、自立支援医療で自己負担が抑えられる。',fx:{h:4,m:4,d:-1},use:['jiritsu'],set:{dx:true},log:sub+'の診断を受ける'}}},
+    {l:'様子を見る',h:'',f:function(s){return{t:'受診を先延ばしにするうち、症状が重くなっていった。',fx:{h:-5,m:-8},log:sub+'の症状が出る'}}}]};
+}
+function causeOfDeath(age){
+  var p=[['悪性新生物(がん)',22],['心疾患',16],['脳血管疾患',9],['肺炎',9],['誤嚥性肺炎',age>=70?8:3],['不慮の事故(転倒・溺水など)',age>=75?6:4]];
+  if(S.sub==='認知症'||age>=85)p.push(['老衰',age>=88?34:18]);
+  if(S.sub==='内部障害'){p.push(['心疾患',14],['腎不全',16])}
+  if(S.sub==='肢体不自由'){p.push(['誤嚥性肺炎',6],['不慮の事故(転倒・溺水など)',4])}
+  if(S.sub==='認知症')p.push(['認知症の進行',16],['誤嚥性肺炎',10]);
+  if(S.sub==='依存症など')p.push(['肝疾患',16]);
+  if(S.sub==='てんかん')p.push(['てんかん発作に関連する事故',6]);
+  if(S.health<25)p.push(['心不全',10]);
+  return wchoice(p);
+}
+function deathScene(age,cause){
+  var F=S.fam,acc=/事故/.test(cause),place,who=null,kidsAlive=F.kids.filter(function(k){return !k.dead}).length,sibsAlive=F.sibs.filter(function(x){return !x.dead&&age+x.off>=0}).length,parAlive=[F.father,F.mother].filter(function(p){return !p.dead}),t;
+  if(acc)place=wchoice([['自宅',55],['外出先',45]]);
+  else if(S.living==='facility')place=wchoice([['入所していた施設',75],['病院',25]]);
+  else if(S.living==='group')place=wchoice([['グループホーム',70],['病院',30]]);
+  else if(cause==='老衰')place=wchoice([['自宅',65],['病院',35]]);
+  else place=wchoice([['病院',70],['自宅',26],['診療所',4]]);
+  if(age<20&&parAlive.length)who='家族(親)';
+  else if(S.partner&&!S.partner.dead)who=(S.partner.status==='dating'?'パートナー':(S.partner.nm||'パートナー'))+(kidsAlive?'や子どもたち':'');
+  else if(kidsAlive)who='子どもたち';
+  else if(sibsAlive)who='きょうだい';
+  else if(parAlive.length)who='親';
+  else if(place!=='自宅'&&place!=='外出先')who='医師や看護師、職員';
+  if(acc&&place==='外出先')t='外出先で、不慮の事故に遭い、居合わせた人が救急車を呼んだが、助からなかった。';
+  else if(acc)t='自宅で、不慮の事故(転倒・溺水など)が起こり、'+(who?who+'が気づいて救急車を呼んだが、':'発見が遅れ、')+'助からなかった。';
+  else t=place+'で、'+(who?who+'に見守られながら':'ひとりで最期を迎え')+'、'+cause+'のため亡くなった。';
+  if(!acc&&place==='自宅'&&!who)t='自宅で、ひとりで最期を迎え、後日発見された。死因は'+cause+'。';
+  if(S.health<30&&!acc)t+=' ここ数年は体調の波が大きかった。';
+  return{place:place,text:t};
+}
+function end(why,age){
+  S.age=age;S.endAge=age;S.why=why;S.log=S.log.filter(function(x){return x.age<=age});S.cause=causeOfDeath(age);
+  var sc=deathScene(age,S.cause);S.deathNote=sc.text;S.deathPlace=sc.place;
+  S.log.push({age:age,t:'死去('+sc.place+'・'+S.cause+')'});
+  UI.screen='end';render();
+}
+var STEP_MS=60000;
+function nextStepAge(){
+  var i,n=null;
+  for(i=0;i<AGES.length;i++){if(AGES[i]>S.age){n=AGES[i];break}}
+  if(!S.disabled&&S.onset>S.age&&(n===null||S.onset<n))n=S.onset;
+  return n;
+}
+function ordinaryLife(){
+  if(S.age>=6&&S.school===null)S.school='regular';
+  if(S.age>=20&&S.edu===null){S.edu='high';S.log.push({age:S.age,t:'高校を卒業して社会に出る'})}
+  if(S.age>=33&&S.work===null&&S.age<65){S.work='regular';S.salary=ri(300,460);S.log.push({age:S.age,t:'就職'})}
+  if(S.age>=22&&!S.livingSet){S.living=wchoice([['alone',60],['family',40]]);S.livingSet=true;if(S.living==='alone')S.log.push({age:S.age,t:'一人暮らしを始める'})}
+}
+function milestones(prev,nxt){
+  function sc(){return S.school}
+  function elemGrad(){return sc()==='special-school'?'特別支援学校 小学部を卒業':sc()==='special-class'?'小学校を卒業(特別支援学級)':'小学校を卒業'}
+  function midIn(){return sc()==='special-school'?'特別支援学校 中学部に入学':sc()==='special-class'?'中学校に入学(特別支援学級)':'中学校に入学'}
+  function midGrad(){return sc()==='special-school'?'特別支援学校 中学部を卒業':sc()==='special-class'?'中学校を卒業(特別支援学級)':'中学校を卒業'}
+  var M=[[6,function(){return '小学校に入学'},function(){return !S.disabled}],
+   [12,elemGrad,function(){return true}],[12,midIn,function(){return true}],
+   [15,midGrad,function(){return true}],[15,function(){return '高校に入学'},function(){return !S.disabled}],
+   [18,function(){return S.edu==='special'?'特別支援学校 高等部を卒業':'高校を卒業'},function(){return true}],
+   [18,function(){return '18歳になる(民法上の成年)'},function(){return true}],
+   [20,function(){return S.qual?'専門学校を卒業(資格を取得)':'専門学校を卒業'},function(){return S.edu==='senmon'}],
+   [20,function(){return '20歳になる(国民年金に加入する年齢)'},function(){return true}],
+   [22,function(){return '大学を卒業'},function(){return S.edu==='univ'}],
+   [40,function(){return '40歳になる(介護保険料の負担が始まる年齢)'},function(){return true}],
+   [65,function(){return '65歳になる(老齢年金・介護保険の対象)'},function(){return true}],
+   [75,function(){return '75歳になる(後期高齢者医療制度の対象)'},function(){return true}]];
+  M.forEach(function(m){if(prev<m[0]&&m[0]<=nxt&&m[2]())S.log.push({age:m[0],t:m[1]()})});
+}
+function fixPartnerYears(prev,nxt,rateWith){
+  if(S.ptLeft==null||nxt<=18)return;
+  var ya=nxt-Math.max(S.ptLeft,prev,18);if(ya<=0)return;
+  var adj=(parts().total-expenseMonth()-rateWith)*12*ya;
+  if(S.living==='family'&&rateWith<0)return;
+  S.money+=adj;
+}
+function advance(){
+  var nxt=nextStepAge(),prev=S.age,yrs,net=0,emp,pEnd;
+  if(nxt===null){var la=Math.min(110,Math.max(S.age,Math.floor(lifeAbs(S.sexK,S.age)/Math.max(1,deathMult()*.9+.1))));return end('長い人生を生き切った',la)}
+  var pdA=null;[S.fam.father,S.fam.mother,(S.partner&&!S.partner.dead?S.partner:null)].forEach(function(p){if(p&&!p.dead&&p.deathAge>prev&&p.deathAge<nxt&&(pdA===null||p.deathAge<pdA))pdA=p.deathAge});
+  if(pdA!==null)nxt=pdA;
+  yrs=nxt-prev;
+  emp=(S.work==='regular'||S.work==='general');
+  if(emp&&prev<65){S.workYrs+=Math.max(0,Math.min(nxt,65)-prev);S.lastSalary=S.salary}
+  var rateWith=parts().total-expenseMonth();S.ptLeft=null;
+  if(nxt>18){net=rateWith*12*(nxt-Math.max(prev,18))}
+  if(prev<18&&nxt>=18)S.money+=ri(100000,400000);
+  if(S.living==='family'&&net<0)net=0;
+  if(nxt>=65&&emp){S.work='none'}
+  S.money+=net;
+  S.note=net?('この'+yrs+'年の収支(目安): '+(net>=0?'+':'-')+Math.abs(Math.round(net/10000))+'万円'):'';
+  S.age=nxt;
+  milestones(prev,nxt);
+  if(!S.disabled)ordinaryLife();
+  if(S.living!=='family'&&S.money<-300000&&!S.hogo&&S.age>=18){S.hogo=true;S.money=0;S.used.add('hogo');S.log.push({age:S.age,t:'生活保護を受け始める'})}
+  else if(S.hogo&&parts().total-parts().hogo>expenseMonth()*1.3){S.hogo=false;S.log.push({age:S.age,t:'生活保護を終える'})}
+  if(S.money<-300000&&!S.hogo){S.mind=clamp(S.mind-4);S.note+=(S.note?'。':'')+'お金のやりくりが苦しくなっている'}
+  var dA=playerDeath(prev,nxt);
+  if(dA!=null){S.age=dA;famTick(prev,dA);fixPartnerYears(prev,dA,rateWith);return end(S.health<30?'体調の波のなかで、静かに':'穏やかに',dA)}
+  famTick(prev,nxt);fixPartnerYears(prev,nxt,rateWith);
+  S.queue=[];
+  if(!S.disabled&&S.onset===S.age)S.queue.push(triggerOnset());
+  S.queue=S.queue.concat(makeQueue());
+  S.feed=S.famFeed.splice(0);showNext();
+}
+/* 本人の死亡: 令和6年簡易生命表の生存率にもとづくハザード(障害による上乗せはゲーム上の仮定) */
+function deathMult(){
+  var m=1;
+  if(S.disabled){m=S.grade==='heavy'?1.9:S.grade==='mid'?1.5:1.2;if(S.type==='intel'||S.type==='mental')m+=.2}
+  if(S.health<15)m*=2;else if(S.health<30)m*=1.4;
+  return m;
+}
+function playerDeath(prev,nxt){
+  var k=S.sexK,m=deathMult(),h0=cumH(k,prev),pE,tg,x;
+  if(nxt===null)return null;
+  pE=1-Math.exp(-(cumH(k,nxt)-h0)*m);
+  if(!(Math.random()<pE))return null;
+  tg=h0-Math.log(1-Math.random()*pE)/m;
+  for(x=prev+1;x<nxt;x++){if(cumH(k,x)>=tg)return x}
+  return nxt;
+}
+function getChs(e){var c=typeof e.ch==='function'?e.ch(S):e.ch;return c.filter(function(x){return !x.if||x.if(S)})}
+function autoResolve(e){
+  var n0=S.log.length,chs=getChs(e),c=(chs.length>1&&Math.random()<.65)?chs[0]:pick(chs),r=c.f(S),chips=apply(r),title=typeof e.title==='function'?e.title(S):e.title;
+  if(!r.log&&r.t)S.log.push({age:S.age,t:(e.plain||!title?'':title+':')+r.t});
+  S.feed.push({k:e.k,title:e.plain?'':title,text:r.t,chips:chips,tl:markLog(n0)});
+  UI.cur=e;
+}
+function showNext(){
+  var e;
+  while((e=S.queue.shift())){
+    if(e.id==='local'&&!(S.muni.local&&S.muni.local.ok(S)))continue;
+    if(!e.onset&&e.w&&e.w(S)<=0)continue;
+    S.done.add(e.id);
+    if(e.onShow)e.onShow(S);
+    if(e.big){UI.cur=e;UI.chs=getChs(e);UI.screen='event';UI.res=null;render();return}
+    autoResolve(e);
+  }
+  if(S.fam.pend.length){S.queue.push(EV.filter(function(x){return x.id==='parentDeath'})[0]);return showNext()}
+  enterAuto();
+}
+function enterAuto(){
+  var un=S.log.filter(function(x){return !x.sh&&x.t}).sort(function(a,b){return a.age-b.age});
+  var isSch=function(x){return /^(小学校|中学校|高校|大学|専門学校|特別支援学校 ?(小学部|中学部|高等部)|通信制高校)/.test(x.t)&&/入学|卒業/.test(x.t)};
+  var sch=un.filter(isSch);un=un.filter(function(x){return !isSch(x)});
+  sch.forEach(function(x){S.feed.push({k:'学校',title:x.t,age:x.age,text:/卒業/.test(x.t)?'一つの区切りを迎え、次の場所へ向かう。':'新しい環境での毎日が始まった。',chips:[],tl:[]})});
+  if(un.length)S.feed.push({k:'年表',title:'年表に加わったこと',list:un.map(function(x){return{age:x.age,t:x.t}})});
+  S.log.forEach(function(x){x.sh=1});
+  UI.screen='auto';UI.prog=0;UI.res=null;render()}
+function choose(i){
+  var e=UI.cur,c=UI.chs[i],r=c.f(S),chips,n0=S.log.length;
+  if(!r.log&&!(e&&e.onset))r.log=c.l;
+  chips=apply(r);var tl0=markLog(n0);
+  UI.res={r:r,chips:chips,label:c.l,tl:tl0};UI.screen='result';render();
+}
+function proceed(){
+  if(!S.queue.length&&S.fam.pend.length){S.queue.push(EV.filter(function(e){return e.id==='parentDeath'})[0])}
+  if(S.queue.length)return showNext();
+  enterAuto();
+}
+
+/* ---------- 表示 ---------- */
+function esc(x){return String(x).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function ten(){
+  var out='<svg class="ten" viewBox="0 0 300 120" role="img" aria-label="10人のうち1人を示す図">',i,cx,cy;
+  for(i=0;i<10;i++){cx=30+60*(i%5);cy=i<5?30:90;
+    if(i===7){out+='<circle class="h" cx="'+cx+'" cy="'+cy+'" r="22"/><circle class="d" cx="'+cx+'" cy="'+cy+'" r="5"/>'}
+    else out+='<circle class="o" cx="'+cx+'" cy="'+cy+'" r="20"/>'}
+  return out+'</svg>';
+}
+function sourcesHTML(){return '<details><summary>データと出典</summary><ol class="srclist">'+SOURCES.map(function(x){return '<li><a href="'+x[1]+'" target="_blank" rel="noopener">'+esc(x[0])+'</a></li>'}).join('')+'</ol></details>'}
+function dataTable(){
+  return '<div class="tbl"><table><thead><tr><th>項目</th><th>このゲームでの使い方</th></tr></thead><tbody>'+
+  '<tr><td>障害種別の割合</td><td>令和8年版障害者白書の推計(身体約423万人・知的約126.8万人・精神約603万人。重複があり、国民の約9.3%)を比にして、身体37%・知的11%・精神52%で抽選。精神は医療機関を利用した患者数で、手帳のない人も含む</td></tr>'+
+  '<tr><td>画面上部の増加数・死者数</td><td>公式の実数ではなく、白書の数字から逆算した推計。純増は、2016・17年の約936.6万人から2022・23年の約1,153万人への増加を年数で割った約35万人/年。死者は、年齢構成と年齢別の死亡率を仮定した約20万人/年。増加数は純増と死者の合計の約55万人/年(死亡を補って加わる人を含む)。ページを開いてからの経過秒数にこの割合をかけて表示している</td></tr>'+
+  '<tr><td>発症の時期</td><td>身体障害者手帳所持者の71.2%が65歳以上という統計をふまえ、「データ準拠」では発症年齢も抽選。具体的な発症年齢の分布はゲーム用の仮定</td></tr>'+
+  '<tr><td>障害年金・手当</td><td>令和8年度の額(障害基礎年金2級 年額847,300円、特別障害者手当 月30,450円、特別児童扶養手当 1級58,450円/2級38,930円)</td></tr>'+
+  '<tr><td>はたらく</td><td>法定雇用率2.5%、実雇用率2.41%、達成企業46.0%(令和7年)。B型の平均工賃24,141円、A型の平均賃金91,451円(令和6年度)。工賃は一部の県の実績で補正</td></tr>'+
+  '<tr><td>自治体</td><td>出生地は令和2年国勢調査の都道府県別人口に比例して選び、県内に複数の市がある場合は人口の多い市ほど選ばれやすい(県の中の他の市町村は、代表する市で表している)。49の自治体(全国8地方すべて)の公開情報をもとに、医療費助成・タクシー助成・手当などを反映。「未反映」は制度がないという意味ではない</td></tr>'+
+  '<tr><td>収入と生活費</td><td>給与は令和5年度障害者雇用実態調査の平均賃金(月額:身体23.5万円・知的13.7万円・精神14.9万円・発達13.0万円)を参考に±20%で抽選。手取りは額面の80〜88%。生活費(月額)は実家4万円・一人暮らし15万円・グループホーム10万円・入所施設8万円を基本にした仮定で、2025年の家計調査の単身・勤労者世帯(約19.2万円)より控えめ。働いている人は交際費などを加算。障害年金・手当は令和8年度の額。貯えが-30万円を下回ると生活保護が始まる設定</td></tr>'+
+  '<tr><td>死亡の時期(本人・父母・きょうだい・パートナー・子)</td><td>令和6年簡易生命表(平均寿命 男81.09歳・女87.13歳)の生存率に合わせた男女別の生存曲線で、それぞれが別々に抽選される。父母は、本人が生まれたときの年齢(母は第1子の出産年齢約31歳、父は母より平均2歳ほど年上と仮定)から、その年齢まで生きた人が何歳まで生きるかで決まる。本人の死亡率は、障害の等級・体調による上乗せ(重度1.9倍・中度1.5倍・軽度1.2倍など)をゲーム上の仮定として加えている。死因は、日本の主な死因(がん・心疾患・老衰・肺炎・脳血管疾患など)を年齢帯ごとに重みづけした仮定。亡くなる場所(病院・自宅・施設など)は、日本では病院が最も多いという傾向を参考にした仮定。使っているデータは、すべて日本の統計・制度にもとづく</td></tr>'+
+  '<tr><td>パートナーの収入と貯え</td><td>パートナーの年収は国税庁の民間給与実態統計調査(令和5年分: 男性569万円・女性316万円)を目安に、個人差をつけて設定。65歳以降は厚生年金の平均月額(令和6年度末: 男17.0万円・女11.1万円)、働いていなかった人は老齢基礎年金のみ(平均5.6万円)。貯えは年齢に応じた目安で、結婚・同居の時点で合算し、離婚では半分に分ける(ゲーム上の仮定)</td></tr>'+
+  '<tr><td>結婚・出産・離婚</td><td>2024年の平均初婚年齢(夫31.1歳・妻29.8歳)、第1子出産時の母の平均年齢31.0歳、完結出生児数1.81、50歳時の未婚割合(男28.25%・女17.81%、2020年)、2024年の離婚約18.6万件(離婚率4.5‰)を参考にした。婚姻後の年ごとの離婚率(5年未満2.2%・10年未満1.8%・20年未満1.1%)、パートナーの年齢差、同性パートナー4%、子どもの人数の分布、きょうだいの結婚・出産の時期は、ゲーム用の仮定</td></tr>'+
+  '<tr><td>きょうだい・子の学校の困りごと</td><td>文部科学省の2022年調査で、通常の学級の小中学生の8.8%に、学習面や行動面で著しい困難を示す可能性があるとされる。子の出来事の起こる確率に使った。きょうだいの人数(1〜4人の4つのパターン)、介護が必要になる時期(亡くなる約3〜4年前)は仮定。健康寿命と平均寿命の差(2022年 男8.49年・女11.63年)を参考にした</td></tr>'+
+  '<tr><td>合否の確率・生活費・給与など</td><td>ゲーム用の仮定。実際の認定や審査の結果を示すものではない</td></tr>'+
+  '</tbody></table></div>';
+}
+function gauges(){
+  var items=[['体調',S.health],['心',S.mind],['つながり',S.social],['自分らしさ',S.dignity]];
+  return '<div class="gauges">'+items.map(function(x){return '<div class="g"><span>'+x[0]+'</span><div class="bar"><i style="width:'+x[1]+'%"></i></div><b>'+x[1]+'</b></div>'}).join('')+'</div>';
+}
+function fy(n){return Math.round(n).toLocaleString('ja-JP')+'円'}
+function moneyHTML(){
+  var p=parts(),ex=expenseMonth(),net=p.total-ex;
+  var det=[];
+  if(p.nenkin)det.push('障害基礎年金 '+fy(p.nenkin));
+  if(p.tokusho)det.push('特別障害者手当 '+fy(p.tokusho));
+  if(p.old)det.push('老齢年金 '+fy(p.old));
+  if(p.surv)det.push('遺族年金(目安) '+fy(p.surv));
+  if(p.hogo)det.push('生活保護(不足分) '+fy(p.hogo));
+  return '<div class="mny"><div class="mrow big"><span>貯え</span><b class="'+(S.money<0?'neg':'')+'">'+fy(S.money)+'</b></div>'+
+   '<div class="mrow"><span>収入(月)</span><b>'+fy(p.total)+'</b></div>'+
+   '<div class="mrow sub"><span>給与・工賃(手取り)</span><span>'+fy(p.wage+p.work)+'</span></div>'+
+   '<div class="mrow sub" title="'+esc(det.join(' / '))+'"><span>障害年金などの公的給付</span><span>'+fy(p.pub)+'</span></div>'+
+   (p.partner?'<div class="mrow sub"><span>パートナーの収入(手取り・年金)</span><span>'+fy(p.partner)+'</span></div>':'')+
+   '<div class="mrow"><span>生活費(月)</span><b>'+fy(ex)+'</b></div>'+
+   '<div class="mrow"><span>収支(月)</span><b class="'+(net<0?'neg':'')+'">'+(net>=0?'+':'-')+fy(Math.abs(net))+'</b></div>'+
+   (net<0&&S.living==='family'&&S.age>=18?'<p class="small muted">不足分は家族が補っている</p>':'')+
+   (det.length?'<p class="small muted">'+esc(det.join('・'))+'</p>':'')+'</div>';
+}
+function statusHTML(){
+  var wk={null:'—',regular:'一般の仕事',general:'企業(障害者雇用)',a:'A型',b:'B型',none:'働いていない'}[S.work];
+  return '<section class="card status" aria-label="いまの状態"><div class="age">'+S.age+'<small>歳</small></div>'+
+   '<div class="who"><span>'+esc(S.muni.name)+'('+esc(S.muni.pref)+')・'+esc(S.sex)+'</span><span>'+(S.disabled?(S.dx?esc(S.sub)+(S.techo?'・'+GRADE[S.type][S.grade]:'・手帳なし'):'診断前(困りごとあり)'):'障害なし')+'</span><span>仕事 '+wk+'</span></div>'+
+   gauges()+moneyHTML()+'</section>';
+}
+function logHTML(){return ''}
+function famHTML(){
+  var f=S.fam,pg=function(p){return p.dead?'享年'+Math.floor(p.life):('推定'+(S.age+p.off)+'歳'+(p.care?'・介護':''))};
+  var sb=f.sibs.filter(function(x){return S.age+x.off>=0}),sa=sb.filter(function(x){return !x.dead}).length;
+  var pt=S.partner,ps=pt?({dating:'交際中',cohab:'同居',married:'結婚'}[pt.status]+'・'+(S.age+pt.off)+'歳'+(f.ptIll?'・療養中':'')):(f.pstate==='widowed'?'死別':f.pstate==='divorced'?'離別':'なし');
+  var ks=f.kids,ka=ks.filter(function(k){return !k.dead});
+  var kt=ks.length?ka.length+'人(最年少'+Math.min.apply(null,ka.map(function(k){return S.age-k.born}).concat([99]))+'歳)':'なし';
+  if(ks.length&&!ka.length)kt='なし(亡くなった)';
+  return '<section class="card" aria-label="家族"><p class="kicker mono">家族</p><dl class="famdl"><dt>父</dt><dd>'+pg(f.father)+'</dd><dt>母</dt><dd>'+pg(f.mother)+'</dd><dt>兄弟姉妹</dt><dd>'+(sb.length?sa+'人':'いない')+'</dd><dt>子</dt><dd>'+kt+'</dd><dt>相手</dt><dd class="wide">'+ps+'</dd></dl></section>';
+}
+function tlHTML(){
+  var rows=S.log.filter(function(x){return x.t}).slice().reverse();
+  rows=rows.map(function(x,i){return{x:x,i:i}}).sort(function(a,b){return b.x.age-a.x.age||a.i-b.i}).map(function(o){return o.x});
+  return '<h2>人生の年表<small>新しい順</small></h2><ul class="tlist">'+(UI.screen==='end'?'':'<li class="now"><span>'+S.age+'歳</span><div>いまここ</div></li>')+
+   rows.map(function(x,i){return '<li'+(i===0&&UI.screen==='end'?' class="last"':'')+'><span>'+x.age+'歳</span><div>'+esc(x.t)+'</div></li>'}).join('')+'</ul>';
+}
+function sysHTML(e){
+  if(!e||!e.sys||!e.sys.length)return '';
+  return '<div class="sys"><p class="kicker mono">この場面の制度</p><ul>'+e.sys.map(function(x){return '<li><b>'+esc(x[0])+'</b>'+esc(x[1])+'</li>'}).join('')+'</ul></div>';
+}
+function sideHTML(){
+  var e=UI.cur,h='';
+  if(e&&(UI.screen==='event'||UI.screen==='result'||UI.screen==='auto')){h+=sysHTML(e);if(e.data)h+='<p class="data"><b>データ</b>'+esc(e.data)+'</p>'}
+  return h+'<section class="tlbox" id="tl">'+tlHTML()+'</section>';
+}
+function chipsHTML(chips){
+  if(!chips.length)return '';
+  return '<div class="chips" aria-label="変化">'+chips.map(function(c){var v=c[1];return '<span class="chip '+(v>0?'up':'down')+'">'+c[0]+' '+(v>0?'+':'')+v+c[2]+'</span>'}).join('')+'</div>';
+}
+function titleScreen(){
+  return '<section class="hero"><p class="kicker mono">LIFE SIMULATION</p><h1>10％の人生</h1>'+
+  '<p class="lead">日本の障害者は、国民のおよそ10人に1人。その一人として生まれたら、どんな人生になるだろう。</p>'+
+  '<div class="start"><div class="seg" role="group" aria-label="モード"><button id="m-birth" aria-pressed="'+(UI.mode==='birth')+'">生まれつき・幼少期から</button><button id="m-data" aria-pressed="'+(UI.mode==='data')+'">データ準拠(後天性を含む)</button></div>'+
+  '<p class="small muted">'+(UI.mode==='birth'?'生まれつき、または幼いころに障害が分かる人生が中心です。身体・知的・発達障害が出やすくなります。':'どの人生も0歳から始まります。障害種別の割合と発症の時期を統計に近づけるため、障害のない時期を経て、のちに障害が生じる人生も出ます。いつ・何が起きるかは、そのときまで分かりません。')+'</p>'+
+  '<button class="btn" id="go">サイコロを振る</button></div>'+ten()+'</section>'+
+  '<section class="card"><p class="kicker mono">遊び方</p><p class="small">サイコロで、生まれる自治体・障害の種類・等級が決まります。時間は自動で進み(基本は1分で1段階。一時停止と2倍・4倍・8倍の速さも選べます)、人生の大きな選択のときだけ止まります。選ぶと、体調・心・つながり・自分らしさ・お金が動き、家族にも出来事が起こります。選択のたびに、関係する制度の説明が右に出ます。右側(スマホでは画面下)には人生の年表が新しい順に常に表示されます。制度の内容と出典は、右上の「データと出典」から確認できます。フィクションです。実際の手続きは、お住まいの市区町村の窓口で確認してください。</p></section>';
+}
+function birthScreen(){
+  var m=S.muni;
+  return '<section class="card"><p class="kicker mono">うまれる</p><h2>あなたの人生手帳</h2>'+
+  '<dl class="techo"><dt>うまれ</dt><dd>'+esc(m.name)+'('+esc(m.pref)+')</dd><dt>性別</dt><dd>'+esc(S.sex)+'</dd>'+
+  '<dt>障害</dt><dd>'+(S.onset===0?esc(S.sub)+(S.type==='body'?'':'(診断はまだ)'):'まだ分からない')+'</dd>'+
+  '<dt>きっかけ</dt><dd>'+(S.onset===0?'生まれつき':'のちに生じる(いつ、何が起きるかは、そのときまで分からない)')+'</dd></dl>'+
+  '<p class="small muted">'+(S.onset>0?'人生は0歳から始まる。障害が生じるのは、あとになってからだ。':'')+'</p>'+
+  '<div class="body"><p>'+esc(m.name)+'の、公開されている制度の例:</p><ul class="facts">'+m.facts.map(function(f){return '<li>'+esc(f)+'</li>'}).join('')+'</ul><p class="small muted">B型の工賃の目安: 月'+yen(m.wageB)+'円('+esc(m.wageNote)+')</p></div>'+
+  '<button class="btn" id="begin">人生を始める</button></section>';
+}
+function eventScreen(){
+  var e=UI.cur,s=S,chs=UI.chs;
+  var title=typeof e.title==='function'?e.title(s):e.title;
+  return '<section class="card"><p class="kicker mono">'+esc(e.k||'')+' ・ '+s.age+'歳</p><h2>'+esc(title||'')+'</h2>'+
+  (s.note?'<p class="small muted">'+esc(s.note)+'</p>':'')+
+  '<div class="body"><p>'+esc(typeof e.t==='function'?e.t(s):e.t)+'</p></div>'+
+  '<div class="choices'+(chs.length>=5?' two':'')+'">'+chs.map(function(c,i){return '<button class="choice" data-i="'+i+'"><span class="l">'+esc(c.l)+'</span>'+(c.h?'<span class="h">'+esc(c.h)+'</span>':'')+'</button>'}).join('')+'</div></section>';
+}
+function resultScreen(){
+  var R_=UI.res,r=R_.r;
+  return '<section class="card"><p class="kicker mono">選んだこと ・ '+S.age+'歳</p><h2>'+esc(R_.label)+'</h2>'+
+  '<div class="body"><p>'+esc(r.t)+'</p></div>'+
+  (r.roll?'<p class="roll">判定 <b>'+(r.roll.hit?'うまくいった':'うまくいかなかった')+'</b>(確率 '+Math.round(r.roll.p*100)+'%・ゲーム上の設定)</p>':'')+
+  chipsHTML(R_.chips)+tlNote(R_.tl)+
+  '<button class="btn" id="next">つぎへ</button></section>';
+}
+function endScreen(){
+  var used=Array.from(S.used),miss_=Array.from(S.missed),d=S.dignity,so=S.social,m=Math.round(S.money),f=S.fam;
+  var line;
+  if(d>=65&&so>=55)line='自分の足で、あるいは誰かと一緒に、自分の暮らしをつくった人生だった。';
+  else if(d>=50)line='思うようにならない日も多かったが、自分の居場所を探し続けた人生だった。';
+  else line='制度や周りの理解に届かないまま過ぎた時間が、長かった人生だった。';
+  var tags=function(a,cl){return a.length?'<div class="tags">'+a.map(function(id){return '<span class="tag '+cl+'" title="'+esc(BEN[id][1])+'">'+esc(BEN[id][0])+'</span>'}).join('')+'</div>':'<p class="small muted">なし</p>'};
+  return '<section class="card"><p class="kicker mono">人生の肖像</p><h2>'+S.endAge+'歳、'+esc(S.cause)+'で幕を下ろした</h2>'+
+  '<p class="cause"><b>死因</b>'+esc(S.cause)+' <span class="small muted">(日本の主な死因を参考にしたゲーム上の仮定)</span></p>'+
+  '<p class="cause"><b>最期</b>'+esc(S.deathNote)+'</p>'+
+  '<div class="body"><p>'+esc(S.muni.name)+'で、'+(S.dx?esc(S.sub)+'とともに':esc(S.sub)+'にあたる困りごとを、診断のないまま抱えて')+'生きた。'+esc(line)+'</p></div>'+
+  gauges()+
+  '<p class="small muted">最後の貯え '+Math.round(m/10000)+'万円・仕事 '+({null:'なし',regular:'一般企業で働いた',general:'障害者雇用で働いた',a:'A型',b:'B型',none:'働かなかった'}[S.work])+'・きょうだい '+(f.sibs.length?f.sibs.length+'人':'なし')+'・パートナー '+(S.partner?'いた':(f.lastPartner?'いた(のちに別れ・死別)':'なし'))+'・子 '+(f.kids.length?f.kids.length+'人':'なし')+'</p>'+
+  '<h3 style="font-size:15px">届いた制度</h3>'+tags(used,'used')+
+  '<h3 style="font-size:15px">知らないまま、または使わないまま過ぎた制度</h3>'+tags(miss_,'miss')+
+  '<p class="small muted">制度は、知って、申請して、はじめて届く。10人に1人の人生を支える仕組みは、ここに挙げたよりずっと多い。</p>'+
+  '<button class="btn" id="again">別の人生を生きる</button></section>';
+}
+function autoScreen(){
+  var f=S.feed,n=nextStepAge();
+  var items=f.length?f.map(function(x){if(x.list)return '<div class="feed"><p class="kicker mono">'+esc(x.k)+' ・ '+esc(x.title)+'</p><ul class="tll">'+x.list.map(function(l){return '<li><b>'+l.age+'歳</b> '+esc(l.t)+'</li>'}).join('')+'</ul></div>';return '<div class="feed">'+(x.title?'<p class="kicker mono">'+(x.age!=null?x.age+'歳 ・ ':'')+esc(x.k||'')+' ・ '+esc(x.title)+'</p>':'')+'<p>'+esc(x.text)+'</p>'+chipsHTML(x.chips)+tlNote(x.tl,x.text)+'</div>'}).join(''):'<p>大きな出来事はなく、日々が過ぎていく。</p>';
+  return '<section class="card auto"><p class="kicker mono">'+S.age+'歳 ・ 日々のくらし</p><h2>時が流れる</h2>'+(S.note?'<p class="small muted">'+esc(S.note)+'</p>':'')+
+   '<div class="feeds">'+items+'</div>'+
+   '<div class="pg"><div class="bar"><i id="pg-fill" style="width:'+Math.min(100,UI.prog/STEP_MS*100)+'%"></i></div><p class="small muted"><span id="pg-left"></span>'+(n===null?'':'　つぎは'+n+'歳')+'</p></div>'+
+   '<button class="btn ghost" id="skip" type="button">いますぐ進める</button></section>';
+}
+function ctlHTML(){
+  var sp=[1,2,4,8].map(function(k){return '<button id="sp-'+k+'" type="button" aria-pressed="'+(UI.speed===k)+'">×'+k+'</button>'}).join('');
+  return '<section class="card" aria-label="時間の流れ"><p class="kicker mono">時間の流れ(基本は1分で1段階)</p><div class="seg sp"><button id="sp-pause" type="button" aria-pressed="'+UI.paused+'">'+(UI.paused?'再開':'停止')+'</button>'+sp+'</div></section>';
+}
+function updateAuto(){
+  var f=document.getElementById('pg-fill'),l=document.getElementById('pg-left');
+  if(f&&f.style)f.style.width=Math.min(100,UI.prog/STEP_MS*100)+'%';
+  if(l){var left=Math.max(0,Math.ceil((STEP_MS-UI.prog)/UI.speed/1000));l.textContent=UI.paused?'一時停止中':'あと'+left+'秒(×'+UI.speed+')'}
+}
+function bindCtl(){
+  var q=function(id){return document.getElementById(id)};
+  [1,2,4,8].forEach(function(k){var b=q('sp-'+k);if(b)b.onclick=function(){UI.speed=k;UI.paused=false;refreshCtl()}});
+  var p=q('sp-pause');if(p)p.onclick=function(){UI.paused=!UI.paused;refreshCtl()};
+}
+function refreshCtl(){var c=$('#ctl');if(c){c.innerHTML=ctlHTML();bindCtl()}updateAuto()}
+function bind(){
+  var q=function(id){return document.getElementById(id)};
+  if(q('m-birth'))q('m-birth').onclick=function(){UI.mode='birth';render()};
+  if(q('m-data'))q('m-data').onclick=function(){UI.mode='data';render()};
+  if(q('go'))q('go').onclick=startLife;
+  if(q('begin'))q('begin').onclick=function(){
+    S.queue=[];
+    if(S.onset===0)S.queue.push(triggerOnset());
+    S.queue=S.queue.concat(makeQueue());
+    S.feed=[];showNext();
+  };
+  if(q('skip'))q('skip').onclick=function(){advance()};
+  if(q('next'))q('next').onclick=proceed;
+  if(q('again'))q('again').onclick=function(){UI.screen='title';S=null;render()};
+  var btns=document.querySelectorAll('.choice');
+  Array.prototype.forEach.call(btns,function(b){b.onclick=function(){var i=+b.getAttribute('data-i');choose(i)}});
+}
+var MQ=window.matchMedia?window.matchMedia('(max-width:600px)'):null;
+function placeCtl(){var bar=document.getElementById('ctlbar'),a=document.getElementById('colA');
+  if(!bar||!a||!a.querySelector)return;
+  var inA=a.querySelector('#ctl');
+  if(MQ&&MQ.matches){if(inA){if(!bar.firstChild)bar.appendChild(inA);else if(inA.parentNode)inA.parentNode.removeChild(inA)}}
+  else{if(bar.firstChild&&bar.removeChild)bar.removeChild(bar.firstChild)}}
+if(MQ&&MQ.addListener)MQ.addListener(placeCtl);
+function render(){
+  var h='',title=(UI.screen==='title'||!S);
+  if(S&&S.fam)sanitize();
+  if(title)h=titleScreen();
+  else if(UI.screen==='birth')h=birthScreen();
+  else if(UI.screen==='auto')h=autoScreen();
+  else if(UI.screen==='event')h=eventScreen();
+  else if(UI.screen==='result')h=resultScreen();
+  else if(UI.screen==='end')h=endScreen();
+  $('#app').innerHTML=h;
+  $('#shell').className='app'+(title?' is-title':'');
+  $('#colA').hidden=title;$('#colC').hidden=title;$('#tlm').hidden=title;
+  if(title){var cb=document.getElementById('ctlbar');if(cb)cb.innerHTML=''}
+  if(!title){
+    $('#colA').innerHTML='<div id="ctl">'+ctlHTML()+'</div>'+statusHTML()+famHTML();placeCtl();
+    $('#colC').innerHTML=sideHTML();
+    $('#tlm').innerHTML=tlHTML();
+  }
+  bind();
+  if(!title)bindCtl();
+  updateAuto();
+  try{$('#app').scrollTop=0}catch(e){}
+}
+var lastT=Date.now();
+setInterval(function(){
+  var now=Date.now(),dt=Math.min(now-lastT,5000);lastT=now;
+  if(!S||UI.screen!=='auto'||UI.paused)return;
+  UI.prog+=dt*UI.speed;
+  if(UI.prog>=STEP_MS){advance();return}
+  updateAuto();
+},250);
+/* ---- ページを開いてからの推計カウンター ---- */
+var T0=Date.now(),YR=31557600,INC=550000,DEAD=200000;
+function tick(){
+  var t=(Date.now()-T0)/1000,inc=Math.floor(t*INC/YR),dead=Math.floor(t*DEAD/YR),m=Math.floor(t/60),sec=Math.floor(t%60);
+  var set=function(id,v){var el=document.getElementById(id);if(el)el.textContent=v};
+  set('c-time',m+':'+(sec<10?'0':'')+sec);
+  set('c-inc','+'+inc.toLocaleString('ja-JP'));
+  set('c-dead',dead.toLocaleString('ja-JP'));
+  set('c-net','+'+(inc-dead).toLocaleString('ja-JP'));
+}
+(function(){
+  var set=function(id,v){var el=document.getElementById(id);if(el)el.textContent=v};
+  set('c-inc-r','人(約'+Math.round(YR/INC)+'秒に1人)');
+  set('c-dead-r','人(約'+Math.round(YR/DEAD)+'秒に1人)');
+  tick();setInterval(tick,1000);
+  var ov=document.getElementById('ov'),ob=document.getElementById('ov-body');
+  if(ob)ob.innerHTML='<h2>このゲームのデータ</h2>'+dataTable()+sourcesHTML().replace('<details>','<details open>')+'<p class="foot">上部の増加数・死者数は、公式の実数ではなく、白書の数字から逆算した推計です。フィクションのシミュレーションです。制度の内容・金額・所得制限は調べた時点の公開情報の要約で、変更されることがあります。実際の手続きや相談は、お住まいの市区町村の障害福祉窓口で確認してください。</p>';
+  var b=document.getElementById('btn-data'),c=document.getElementById('ov-close');
+  if(b)b.addEventListener('click',function(){ov.hidden=false});
+  if(c)c.addEventListener('click',function(){ov.hidden=true});
+  if(ov)ov.addEventListener('click',function(ev){if(ev.target===ov)ov.hidden=true});
+})();
+render();
+})();
+</script>
+
+
+</body>
+</html>
