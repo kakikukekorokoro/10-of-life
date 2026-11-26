@@ -1,12 +1,10 @@
 <!doctype html>
 <html lang="ja">
 <head>
-<meta charset="utf-8">
-<meta name="google-site-verification" content="qyat-_kBybAJ13BnuzGUuIEL6qjKYr4OVQGzaVedQ04" />  
+<meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src data:; connect-src 'none'; base-uri 'none'; form-action 'none'"><meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="日本の障害者は、国民のおよそ10人に1人。その一人として生まれたら、どんな人生になるだろう。" > 
 <style>:root{color-scheme:light}html,body{margin:0}[hidden]{display:none!important}img{max-width:100%}</style>
-<title>10％の人生・日本の障害者の人生シミュレーションゲーム</title>
+<title>10％の人生</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -93,6 +91,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 .techo dt{font:12px var(--f-m);color:var(--ink2);letter-spacing:.1em;padding-top:3px}
 .techo dd{margin:0;font-weight:500}
 .techo .full{grid-column:1/-1}
+@media (min-width:601px){.techo{grid-template-columns:auto 1fr auto 1fr;padding:12px 16px;gap:4px 14px}.techo .k1{grid-column:1}.techo .k2{grid-column:2/-1}.techo{padding:8px 14px;gap:2px 14px}.techo dd{font-size:14.5px}.techo dt{padding-top:2px}}
 .facts{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:4px;font-size:14px}
 /* log */
 details{border-top:1px solid var(--line);padding-top:12px}
@@ -182,7 +181,7 @@ body{display:flex;flex-direction:column;font-size:15px;line-height:1.65;padding-
 /* ---- スマホ(幅600px以下): 年表を大きく、左側(状態・家族)を小さくしてスクロール ---- */
 @media (max-width:600px){
   body{padding-bottom:16px}
-  #colA{max-height:27vh;overflow:auto;gap:6px;border:1px solid var(--line);border-radius:6px;padding:4px;-webkit-overflow-scrolling:touch}
+  #colA{max-height:none;overflow:visible;gap:6px;padding:0}
   #colA .card{padding:7px 9px;gap:4px}
   #colA .age{font-size:28px}
   #colA .who{font-size:12px}
@@ -224,6 +223,55 @@ body{display:flex;flex-direction:column;font-size:15px;line-height:1.65;padding-
   #ctlbar{margin-top:4px}
 }
 
+/* ---- 結末カード ---- */
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px;margin:8px 0}
+.ccard{border:1.5px solid var(--ink);border-radius:5px;padding:8px 10px;display:flex;flex-direction:column;gap:3px;background:var(--card)}
+.ccard b{font-size:14.5px}.ccard span{font-size:12.5px;line-height:1.5}.ccard small{font-size:11px;opacity:.7}
+.ccard.lock{border-style:dashed;opacity:.65}.ccard.lock b{letter-spacing:.2em}
+.ccard .new{font-style:normal;font-size:10px;background:var(--tile);color:var(--tileink);border-radius:3px;padding:1px 5px;margin-left:4px}
+.btn.ghost{background:transparent;color:var(--ink)}
+button.link{background:none;border:0;padding:0;font:inherit;color:inherit;text-decoration:underline;cursor:pointer}
+
+/* ---- 年表の詳細 ---- */
+.tlhint{margin:0 0 4px;font-size:11px;color:var(--ink2)}
+.tlist li.tlc{cursor:pointer}
+.tlist li.tlc:hover div,.tlist li.tlc:focus-visible div{text-decoration:underline}
+.tlist li.tlc:focus-visible{outline:2px solid var(--ink);outline-offset:1px}
+#tlmodal{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;padding:16px}
+#tlmodal .tlbox{position:relative;background:var(--card);color:var(--ink);border:2px solid var(--ink);border-radius:8px;padding:18px 20px 16px;max-width:460px;width:100%;max-height:85vh;overflow:auto}
+#tlmodal h3{margin:2px 0 10px;font-size:17px;line-height:1.5}
+#tlmodal .tdl{margin:0 0 10px;font-size:14px;line-height:1.7}
+#tlmodal .tdl b{display:block;font:12px var(--f-m);letter-spacing:.1em;color:var(--ink2);margin-bottom:2px}
+#tlmodal .tlclose{position:absolute;top:6px;right:8px;background:none;border:0;font-size:22px;cursor:pointer;color:var(--ink);line-height:1}
+#tlmodal .tlok{margin-top:6px}
+
+/* ---- スマホ: 人生のあいだは人数表示を隠し、四つのグラフを横一行で常に表示 ---- */
+#gaugebar{display:none}
+@media (max-width:600px){
+  body.nocnt .counters{display:none}
+  #colA .gauges{display:none}
+  #gaugebar:not(:empty){display:block;margin-top:4px}
+  .gbar{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+  .gbar .gb{display:grid;grid-template-columns:1fr auto;align-items:center;gap:0 4px;min-width:0}
+  .gbar .gb span{font-size:10.5px;color:var(--ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .gbar .gb em{font:700 11px var(--f-m);font-style:normal;font-variant-numeric:tabular-nums}
+  .gbar .gb .bar{grid-column:1/-1;height:6px;background:var(--soft);border-radius:2px;overflow:hidden}
+  .gbar .gb .bar i{display:block;height:100%;background:var(--ink)}
+}
+
+/* ---- お金の詳細 ---- */
+.mny{cursor:pointer}
+.mhint{font-style:normal;font-size:10px;color:var(--ink2)}
+#tlmodal .mlist{list-style:none;margin:0 0 10px;padding:0;font-size:13px}
+#tlmodal .mlist li{display:flex;justify-content:space-between;gap:10px;padding:2px 0;border-top:1px solid var(--line)}
+#tlmodal .mlist li span:last-child{font-variant-numeric:tabular-nums;white-space:nowrap}
+#tlmodal .tlbox:has(.mtab){max-width:560px}
+.mtab{width:100%;border-collapse:collapse;font-size:12.5px;font-variant-numeric:tabular-nums}
+.mtab th,.mtab td{padding:3px 6px;text-align:right;border-top:1px solid var(--line)}
+.mtab th:first-child,.mtab td:first-child{text-align:left}
+.mtab th{font-weight:600;color:var(--ink2);position:sticky;top:0;background:var(--card)}
+.mtab .neg{color:#b3261e}
+
 /* ---- お金・自動進行 ---- */
 .mny{grid-column:1/-1;display:flex;flex-direction:column;gap:1px;border-top:1px solid var(--line);padding-top:6px;font-size:12.8px}
 .mrow{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
@@ -259,7 +307,7 @@ body{display:flex;flex-direction:column;font-size:15px;line-height:1.65;padding-
 <span class="ctr up"><small>障害者に加わった人</small><b id="c-inc">+0</b><small id="c-inc-r"></small></span>
 <span class="ctr"><small>亡くなった障害者</small><b id="c-dead">0</b><small id="c-dead-r"></small></span>
 <span class="ctr"><small>差し引き</small><b id="c-net">+0</b></span></div>
-<button class="top-btn" id="btn-data" type="button">データと出典</button></header><div id="ctlbar"></div></div>
+<button class="top-btn" id="btn-data" type="button">データと出典</button></header><div id="ctlbar"></div><div id="gaugebar"></div></div>
 <div class="grid"><aside class="col" id="colA" hidden></aside><main class="col" id="app"></main><aside class="col" id="colC" hidden></aside></div>
 </div>
 <div id="tlm" hidden aria-label="人生の年表"></div>
@@ -418,6 +466,11 @@ var BEN={
  gh:['グループホーム','地域で共同生活を送る'],
  seinen:['成年後見制度','財産管理や契約を支える'],
  kaigo:['介護保険と障害福祉の調整','65歳以降は介護保険が優先。ケアマネと相談支援専門員の連携が鍵'],
+ schoolaid:['就学援助','経済的に困っている家庭の小中学生に、学用品費などを市区町村が援助する'],
+ shobyo:['傷病手当金','病気やけがで仕事を休み給与が出ないとき、健康保険から支給(通算1年6か月まで)'],
+ kogaku:['高額療養費制度','医療費の自己負担が月の上限をこえたとき、こえた分が払い戻される'],
+ koyou:['雇用保険の基本手当','仕事を失ったとき、条件を満たすと、求職活動中に受け取れる'],
+ jobsup:['障害者就業・生活支援センター','職場での悩みや、生活面の相談を受けられる'],
  hinan:['個別避難計画・福祉避難所','災害時の避難を事前に決めておく'],
  local:['自治体独自の支援','住んでいる自治体ごとに内容が異なる'],
  tanki:['短期入所(ショートステイ)','家族の休息や急な事情を支える'],
@@ -536,10 +589,45 @@ var SOURCES=[
  ['税関係の減免(那覇市)','https://www.city.naha.okinawa.jp/fukusi/syougaifukushi/1007400/1003241/1003243.html'],
  ['NHK放送受信料の免除・公営住宅への優先入居(那覇市)','https://www.city.naha.okinawa.jp/fukusi/syougaifukushi/1007400/1003241/1003245.html'],
  ['障害年金・手当等(那覇市)','https://www.city.naha.okinawa.jp/fukusi/syougaifukushi/1007400/1003261.html'],
+ ['子どもの貧困率11.5%(2022年 国民生活基礎調査・厚生労働省)','https://www.mhlw.go.jp/toukei/saikin/hw/k-tyosa/k-tyosa22/dl/13.pdf'],
+ ['個別避難計画の作成が市町村の努力義務に(令和3年版防災白書・内閣府)','https://www.bousai.go.jp/kaigirep/hakusho/r03/honbun/0b_2s_01_02.html'],
+ ['就学援助の実施状況(文部科学省)','https://www.mext.go.jp/a_menu/shotou/career/05010502/1412177_00003.htm'],
+ ['傷病手当金(全国健康保険協会)','https://www.kyoukaikenpo.or.jp/benefit/injury_and_sickness_allowance/index.html'],
  ['通常学級の児童生徒8.8%(文部科学省 2022年調査・東洋経済オンライン)','https://toyokeizai.net/articles/-/701625?display=b']
 ];
 
-function wageFor(s){var m=s.type==='body'?23.5:s.type==='intel'?13.7:(s.sub==='発達障害'?13.0:14.9);return Math.round(m*12*rnd(.8,1.2))}
+
+/* ---------- 障害の種類・程度の細分化(分類は法令・手帳の区分に基づく。影響の大きさはゲーム上の仮定) ---------- */
+var DETS={
+'肢体不自由':[['下肢(車いすを使う)','hm',1,3,0,.9,'a'],['下肢(杖や装具で歩く)','ml',1,1,0,.95,'a'],['上肢(腕や手が動かしにくい)','hml',1,1,0,.95,'a'],['体幹(姿勢を保ちにくい)','hm',1,4,0,.85,'a'],['脳性まひ(全身に及ぶ)','hm',1,5,0,.85,'e'],['切断(手や足を失った)','ml',1,2,0,.95,'l']],
+'内部障害':[['心臓の機能','hml',0,6,-2,.85,'a'],['腎臓の機能(人工透析が必要)','hm',0,7,-2,.8,'a'],['呼吸器の機能','hm',0,6,-2,.85,'a'],['ぼうこう・直腸の機能(ストーマ)','ml',0,2,-3,1,'a'],['小腸の機能','h',0,6,-2,.8,'l'],['肝臓の機能','hm',0,5,-2,.85,'l'],['免疫の機能(HIV)','ml',0,3,-4,1,'l']],
+'聴覚・言語障害':[['聴覚(ほとんど聞こえない)','h',0,0,-5,1,'a'],['聴覚(補聴器があれば聞こえる)','ml',0,0,-3,1,'a'],['平衡機能(ふらつき・めまい)','ml',0,1,-2,.95,'a'],['音声・言語機能(話しにくい)','ml',0,0,-4,.95,'a']],
+'視覚障害':[['全盲(ほとんど見えない)','h',1,0,-2,.8,'a'],['ロービジョン(見えにくい)','ml',0,0,-2,.9,'a'],['視野の障害(見える範囲がせまい)','ml',0,0,-2,.9,'a']]};
+var MDET={'気分障害(うつ・双極性障害)':['うつ状態が長く続く','躁状態とうつ状態をくり返す'],'不安・ストレス関連の障害':['不安やパニックが強く出る','強いストレスのあとの心の不調(PTSDなど)'],'統合失調症':['幻覚や妄想が出る時期がある','意欲の低下や疲れやすさが目立つ'],'発達障害':['自閉スペクトラム症','注意欠如・多動症(ADHD)','学習障害(読み書きなど)'],'てんかん':['発作が月に数回ある','発作が年に数回ある'],'認知症':['アルツハイマー型','血管性','レビー小体型'],'依存症など':['アルコール','薬物・ギャンブルなど']};
+var IDET={heavy:['話しことばが少なく、絵や身ぶりで気持ちを伝える','日常生活の全般に見守りと介助が必要'],mid:['身の回りのことはできるが、お金や手続きには支援が必要','ことばのやりとりはできるが、複雑なことの理解に時間がかかる'],light:['会話はできるが、契約や手続きなどの複雑な判断に困る','読み書きや計算がむずかしく、仕事の覚えに時間がかかる']};
+var IND=['日常生活は、おおむね自立している','日常生活の一部に、支援が必要','日常生活に、ほぼ常に支援が必要'];
+function pickDet(type,sub,grade,onset){
+  var g=grade==='heavy'?'h':grade==='mid'?'m':'l',early=onset<=5,r={det:'',vis:0,comp:null,ind:0,hd:0,sd:0,wf:1},c,i;
+  if(type==='body'){
+    var L=DETS[sub].filter(function(d){return d[1].indexOf(g)>=0&&(d[6]==='a'||(early?d[6]==='e':d[6]==='l'))});
+    if(!L.length)L=DETS[sub].filter(function(d){return d[1].indexOf(g)>=0});
+    if(!L.length)L=DETS[sub];
+    c=L[Math.floor(Math.random()*L.length)];r.det=c[0];r.vis=c[2];r.hd=c[3];r.sd=c[4];r.wf=c[5];
+  }else if(type==='intel'){
+    r.det=pick(IDET[grade]);r.vis=grade==='heavy'?1:0;r.sd=-2;r.wf=.95;
+    c=wchoice([[null,55],['自閉スペクトラム症を併せ持つ',25],['てんかんを併せ持つ',10],['身体障害を併せ持つ(重複障害)',10]]);
+    r.comp=c;if(c&&c.indexOf('てんかん')>=0)r.hd=1;if(c&&c.indexOf('身体')>=0){r.hd=3;r.vis=1}
+  }else{
+    r.det=pick(MDET[sub]||['']);r.sd=sub==='認知症'?0:-3;r.wf=.95;r.hd=sub==='てんかん'?2:sub==='認知症'?4:0;
+    if(sub!=='認知症'&&sub!=='てんかん'&&Math.random()<.15){r.comp='身体の病気を併せ持つ';r.hd+=3}
+  }
+  r.ind=grade==='heavy'?(Math.random()<.7?2:1):grade==='mid'?wchoice([[1,80],[0,10],[2,10]]):(Math.random()<.7?0:1);
+  if(r.ind===2)r.hd+=2;
+  return r;
+}
+function shortDet(s){return (s.det||'').replace(/\(.*$/,'')}
+function detLabel(s){return s.sub+(s.det?'・'+shortDet(s):'')}
+function wageFor(s){var m=s.type==='body'?23.5:s.type==='intel'?13.7:(s.sub==='発達障害'?13.0:14.9);return Math.round(m*(s.wf||1)*12*rnd(.8,1.2))}
 function regularWage(s){return s.disabled?Math.round(wageFor(s)*1.15):ri(300,460)}
 function techoP(s){return s.type==='mental'&&s.grade==='light'?.65:.92}
 function sample(a,n){var b=a.slice(),i,j,t;for(i=b.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));t=b[i];b[i]=b[j];b[j]=t}return b.slice(0,n)}
@@ -570,14 +658,16 @@ function newLife(mode){
     sex=Math.random()<.4?'男性':'女性';
   }
   var grade=wchoice([['heavy',35],['mid',35],['light',30]]);
+  var dd=pickDet(type,sub,grade,onset);
   var muni=nextMuni();
   var s={mode:mode,type:type,sub:sub,onset:onset,sex:sex,grade:grade,muni:muni,age:0,
-    health:clamp(76+ri(-5,5)),
+    health:clamp(76+ri(-5,5)-(onset===0?dd.hd:0)),
     mind:clamp(68+ri(-5,5)),
-    social:clamp(56+ri(-8,8)),dignity:clamp(60+ri(-6,6)),
+    social:clamp(56+ri(-8,8)+(onset===0?dd.sd:0)),dignity:clamp(60+ri(-6,6)),
     money:0,work:null,salary:0,living:'family',livingSet:false,school:null,edu:null,
     ownHome:false,qual:false,dx:(type==='body'&&onset===0),dxTry:0,dxAsk:-99,techo:false,pension:false,tokusho:false,severe2:grade==='heavy'&&Math.random()<.35,pTry:0,
     partner:false,disabled:false,onsetAge:-1,workYrs:0,lastSalary:0,hogo:false,techoAsk:-99,feed:[],used:new Set(),missed:new Set(),done:new Set(),log:[],queue:[],ev:null,note:''};
+  s.det=dd.det;s.vis=dd.vis;s.comp=dd.comp;s.ind=dd.ind;s.hd=dd.hd;s.sd=dd.sd;s.wf=dd.wf;
   s.birthYear=2026-ri(0,0);
   return s;
 }
@@ -590,8 +680,8 @@ function partnerMonthly(){
   return p.works?(p.sex==='M'?169967:111413):56337;
 }
 function mergeSav(p){
-  if(!p.savIn){p.savIn=true;S.money+=p.sav*10000;S.log.push({age:S.age,t:'お互いの貯えを合わせる(パートナーの貯え 約'+p.sav+'万円)'})}
-  if(S.living==='family'&&Math.random()<.8){S.living='alone';S.livingSet=true;S.log.push({age:S.age,t:'二人で新しい住まいを借りる'})}
+  if(!p.savIn){p.savIn=true;S.money+=p.sav*10000;lp({age:S.age,t:'お互いの貯えを合わせる(パートナーの貯え 約'+p.sav+'万円)'})}
+  if(S.living==='family'&&Math.random()<.8){S.living='alone';S.livingSet=true;lp({age:S.age,t:'二人で新しい住まいを借りる'})}
 }
 function parts(){
   var p={wage:0,work:0,nenkin:0,tokusho:0,old:0,hogo:0},emp=(S.work==='regular'||S.work==='general')&&S.age<65;
@@ -612,35 +702,44 @@ function parts(){
   p.total=sum+p.hogo;
   return p;
 }
-function expenseMonth(){
-  if(S.age<18)return 0;
-  var base={family:40000,alone:150000,group:100000,facility:80000}[S.living]||40000;
+function expenseList(){
+  if(S.age<18)return [];
+  var L=[],liv=S.living,lab={family:'実家での生活費(食費・光熱費など)',alone:'一人暮らしの生活費(家賃・食費・光熱費など)',group:'グループホームの利用料・生活費',facility:'施設代(入所施設の利用料・食費・光熱水費など)'}[liv]||'実家での生活費(食費・光熱費など)';
+  var tot=({family:40000,alone:150000,group:100000,facility:90000}[liv])||40000;
+  L.push([lab,tot]);
+  var add=function(l,v){if(v){L.push([l,v]);tot+=v}};
   var emp=(S.work==='regular'||S.work==='general')&&S.age<65;
   var netW=emp?Math.round(S.salary*10000*(S.salary<200?.88:.8)/12):0;
-  if(emp&&S.living==='alone'&&netW>=200000)base+=40000;
-  if(emp&&S.living==='family')base+=20000;
-  if(S.ownHome&&S.living==='alone')base-=50000;
-  if(pHouse()){if(S.living==='family')base+=25000;else if(S.living!=='facility')base=Math.round(base*1.6)}
-  if(S.disabled)base+=5000;
-  var hhW=netW+partnerMonthly();if(hhW>base)base+=Math.round((hhW-base)*.7);
-  S.fam.kids.forEach(function(k){if(!k.dead&&S.age-k.born<=21)base+=(k.withMe?30000:20000)});
-  return base;
+  if(emp&&liv==='alone'&&netW>=200000)add('収入に応じた生活水準の上乗せ',40000);
+  if(emp&&liv==='family')add('家に入れるお金',20000);
+  if(S.ownHome&&liv==='alone')add('持ち家で家賃がかからない分',-50000);
+  if(pHouse()){if(liv==='family')add('パートナーの分',25000);else if(liv!=='facility')add('二人暮らしの上乗せ',Math.round(tot*1.6)-tot)}
+  if(S.disabled)add('障害に関わる出費(通院・日用品など)',5000);
+  var hhW=netW+partnerMonthly();if(hhW>tot)add('世帯の収入に応じた上乗せ',Math.round((hhW-tot)*.7));
+  var kd=0;S.fam.kids.forEach(function(k){if(!k.dead&&S.age-k.born<=21)kd+=(k.withMe?30000:20000)});
+  add('子どもの養育費',kd);
+  return L;
 }
+function expenseMonth(){var t=0;expenseList().forEach(function(x){t+=x[1]});return t}
 function income(){var p=parts();return (p.total-p.partner)*12/10000}
 function incomeHH(){return parts().total*12/10000}
-var DXFREE=['jidoh','gouri','hinan','kosodate','waribiki','young','kazoku','hogo'];
+var DXFREE=['schoolaid','shobyo','kogaku','koyou','jidoh','gouri','hinan','kosodate','waribiki','young','kazoku','hogo'];
 function markLog(n){var o=[];for(var i=n;i<S.log.length;i++){S.log[i].sh=1;if(S.log[i].t)o.push({age:S.log[i].age,t:S.log[i].t})}return o}
 function tlNote(a,txt){a=(a||[]).filter(function(x){return !(txt&&x.t.indexOf(txt)>=0)});return a.length?'<p class="small muted tlnote">年表に追加: '+a.map(function(x){return esc(x.age+'歳 '+x.t)}).join(' / ')+'</p>':''}
+var CTX=null;
+function lp(o){try{o.sn={mu:S.muni?S.muni.name:'',mo:Math.round((S.money||0)/10000)}}catch(e){}S.log.push(o)}
+function logD(r){return CTX?{ti:CTX.title||'',s:CTX.s||'',c:CTX.c||'',t:r.t||''}:{t:r.t||''}}
+function sceneText(e){try{var t=typeof e.t==='function'?e.t(S):e.t;return typeof t==='string'?t:''}catch(x){return ''}}
 function use(id){S.used.add(id);S.missed.delete(id)}
 function miss(id){if(!S.used.has(id))S.missed.add(id)}
 function apply(r){
-  var d=r.fx||{},chips=[],map={h:['体調','health'],m:['心','mind'],so:['つながり','social'],d:['自分らしさ','dignity']},k;
+  var d=r.fx||{},chips=[],map={h:['体調','health'],m:['心','mind'],so:['つながり','social'],d:['個性','dignity']},k;
   for(k in map){if(d[k]){S[map[k][1]]=clamp(S[map[k][1]]+d[k]);chips.push([map[k][0],d[k],''])}}
   if(d.$){S.money+=d.$*10000;chips.push(['貯え',d.$,'万円'])}
   (r.use||[]).forEach(function(id){if(S.dx||!S.disabled||DXFREE.indexOf(id)>=0)use(id)});(r.miss||[]).forEach(miss);
   if(r.set)Object.keys(r.set).forEach(function(key){S[key]=r.set[key]});
   if(r.after)r.after();
-  if(r.log)S.log.push({age:r.logAge!=null?r.logAge:S.age,t:r.log});
+  if(r.log)lp({age:r.logAge!=null?r.logAge:S.age,t:r.log,d:logD(r)});
   return chips;
 }
 function R(p,ok,ng){var hit=Math.random()<p;var o=hit?ok:ng;o.roll={p:p,hit:hit};return o}
@@ -724,7 +823,7 @@ function sibN(s){return s.fam.sibs.filter(function(x){return !x.dead&&s.age+x.of
 function kidsAliveN(s){return s.fam.kids.filter(function(k){return !k.dead}).length}
 function careParent(s){var r=null;[s.fam.father,s.fam.mother].forEach(function(p){if(!p.dead&&!p.care&&p.careAt!=null&&s.age>=p.careAt&&!r)r=p});return r}
 function pushFam(age,title,t,fx,log){
-  var n0=S.log.length,r={t:t,fx:fx||{},log:log,logAge:age},chips=apply(r),tl0=markLog(n0);
+  var n0=S.log.length,r={t:t,fx:fx||{},log:log,logAge:age};CTX={title:title,s:'',c:''};var chips=apply(r),tl0=markLog(n0);CTX=null;
   S.famFeed.push({k:'家族',title:title,text:t,chips:chips,age:age,tl:tl0});
 }
 function famTick(prev,lim){
@@ -787,7 +886,7 @@ function famFire(e){
   case 'pDeath':
     p.dead=true;p.care=false;cause=causeAt(Math.floor(p.life));
     F.pend.push({rel:p.rel,age:e.age,life:Math.floor(p.life),cause:cause});
-    S.log.push({age:e.age,t:p.rel+'が亡くなる(享年'+Math.floor(p.life)+'歳・'+cause+')'});
+    lp({age:e.age,t:p.rel+'が亡くなる(享年'+Math.floor(p.life)+'歳・'+cause+')',d:{t:p.rel+'が、'+Math.floor(p.life)+'歳で亡くなった。死因は、'+cause+'。'}});
     break;
   case 'pIll':
     pushFam(e.age,p.rel+'の入院',p.rel+'が入院した。見舞いに通い、病室で話す時間が増えた。年を重ねた親の体調が、少しずつ気がかりになってきた。',{m:-3,so:1},p.rel+'が入院');
@@ -823,7 +922,7 @@ function famFire(e){
     break;
   case 'ptIll':
     F.ptIll=true;F.ptIllN++;
-    S.log.push({age:e.age,t:'パートナーが病気になる'});
+    lp({age:e.age,t:'パートナーが病気になる'});
     break;
   case 'divorce':
     var splitNote='';if(S.money>0&&p.savIn){S.money=Math.round(S.money/2);splitNote='貯えは財産分与で分け合った。'}
@@ -838,7 +937,7 @@ function famFire(e){
   case 'ptDeath':
     p.dead=true;cause=causeAt(Math.floor(p.life));
     F.ptLoss={age:e.age,life:Math.floor(p.life),cause:cause,works:p.works,married:p.status==='married'};F.lastPartner=p;F.pstate='widowed';S.partner=null;
-    S.log.push({age:e.age,t:(p.status==='dating'?'パートナー':(p.nm||'パートナー'))+'が亡くなる(享年'+Math.floor(p.life)+'歳・'+cause+')'});
+    lp({age:e.age,t:(p.status==='dating'?'パートナー':(p.nm||'パートナー'))+'が亡くなる(享年'+Math.floor(p.life)+'歳・'+cause+')'});
     break;
   case 'kIn':
     pushFam(e.age,kn+'の入園',kn+'が保育園に通い始めた(3歳)。'+(dis?'園には自分の障害のことを伝え、送迎や連絡の方法を相談した。':'')+'朝の支度に追われながらも、小さな成長を毎日見つけた。',{so:2,m:2},kn+'が入園');
@@ -1222,18 +1321,123 @@ ev('parentDeath',{big:1,lo:0,hi:100,w:function(s){return s.fam.pend.length?40:0}
   return c.rel+'が亡くなった('+c.life+'歳・'+c.cause+')。長く支えてくれた'+c.rel+'を見送る。葬儀、年金や保険の手続き、そしてこれからの住まい。やることは多く、気持ちは追いつかない。'+rest},
  ch:function(s){if(s.age<18)return [{l:'祖父母やおじ・おば、学校の先生に気持ちを話す',h:'',f:function(s){return{t:'そばにいてくれる大人に気持ちを話すと、少し泣けた。学校にも事情が伝わり、気にかけてもらえた。',fx:{m:-8,so:3,d:1},log:'親の死を、周りの大人に支えられて受け止める'}}},
   {l:'平気なふりをして、ひとりで抱え込む',h:'',f:function(s){return{t:'泣かないように過ごすうち、気持ちを話せないまま時間が過ぎた。',fx:{m:-14,so:-4,h:-3},log:'親の死を、ひとりで抱え込む'}}}];
-  var sa=sibAlive(s)>0,who=sa?(s.disabled&&s.dx?'きょうだいや支援者':'きょうだい'):(s.disabled&&s.dx?'相談支援専門員など支援者':'役所の窓口や親族');return [{l:who+'と手続きを分担する',h:'',f:function(s){return{t:'手続きを'+who+'と分け合い、悲しむ時間も確保できた。',fx:{m:-6,so:4,d:2},use:s.disabled&&s.dx?['soudan']:[],log:s.fam.cur.rel+'を見送る'}}},
-  {l:'気持ちが追いつかず、動けない',h:'',f:function(s){return{t:'何も手につかない日が続いた。周りの人が気づいて声をかけてくれるまで、時間がかかった。',fx:{m:-12,so:-4,h:-4},log:s.fam.cur.rel+'を見送る'}}}]},
+  var wrapInh=function(a){return a.map(function(c){return{l:c.l,h:c.h,f:function(s){var r=c.f(s),inh=inheritFor(s);if(inh>0){r.fx=r.fx||{};r.fx.$=(r.fx.$||0)+inh;r.t+=' 親の遺したものを受け取った(約'+inh+'万円)。'}return r}}})};
+  var sa=sibAlive(s)>0,who=sa?(s.disabled&&s.dx?'きょうだいや支援者':'きょうだい'):(s.disabled&&s.dx?'相談支援専門員など支援者':'役所の窓口や親族');return wrapInh([{l:who+'と手続きを分担する',h:'',f:function(s){return{t:'手続きを'+who+'と分け合い、悲しむ時間も確保できた。',fx:{m:-6,so:4,d:2},use:s.disabled&&s.dx?['soudan']:[],log:s.fam.cur.rel+'を見送る'}}},
+  {l:'気持ちが追いつかず、動けない',h:'',f:function(s){return{t:'何も手につかない日が続いた。周りの人が気づいて声をかけてくれるまで、時間がかかった。',fx:{m:-12,so:-4,h:-4},log:s.fam.cur.rel+'を見送る'}}}])},
  });
+
+
+/* ---------- 人生を変える出来事(起きるかどうか・起きる順番は、人生ごとに変わる) ---------- */
+var REGION_DIS={'北海道':['地震','記録的な大雪'],'東北':['地震','津波の警報'],'関東':['大きな地震','台風'],'中部':['地震','大雨'],'近畿':['台風','大雨'],'中国・四国':['豪雨','台風'],'九州・沖縄':['豪雨','台風']};
+function disasterKind(s){return pick(REGION_DIS[REG[s.muni.pref]]||['地震'])}
+function aliveParents(s){return [s.fam.father,s.fam.mother].filter(function(p){return !p.dead})}
+function workingNow(s){return s.work==='regular'||s.work==='general'}
+
+ev('disaster',{big:1,lo:3,hi:100,w:function(s){return (s.dis||0)<2&&s.age-(s.disAt||-99)>=15?1.1:0},
+ k:'災害',title:function(s){return (s.disK||'災害')+'が起きた'},
+ onShow:function(s){s.disK=disasterKind(s);s.dis=(s.dis||0)+1;s.disAt=s.age},
+ t:function(s){return s.disK+'があり、住んでいる地域に避難の情報が出た。'+(s.disabled&&s.dx?'動きにくさや、情報の受け取りにくさを抱えたまま、どこへ、どうやって避難するかを決めなければならない。':'何を持って、どこへ避難するかを決めなければならない。')},
+ data:'自力での避難が難しい人ごとの「個別避難計画」をつくることは、2021年の災害対策基本法の改正で、市町村の努力義務になった(内閣府)。',
+ ch:function(s){var a=[
+  {l:'近くの避難所へ向かう',h:'',f:function(s){return R(.8,{t:'避難所で数日を過ごした。人が多く眠りにくかったが、配られる食事と情報で乗り切った。',fx:{h:-4,m:-6,so:3},log:s.disK+'で避難所に身を寄せる'},{t:'段差やトイレ、人の多さが負担になり、体調をくずした。',fx:{h:-9,m:-10},log:s.disK+'で避難所に身を寄せ、体調をくずす'})}},
+  {l:'個別避難計画や福祉避難所を使う',if:function(s){return s.disabled&&s.dx},h:'配慮の必要な人のための避難先',f:function(s){return R(s.used.has('hinan')?.9:.6,{t:'事前の計画や自治体の案内にそって、配慮のある避難先に移れた。',fx:{h:-2,m:-3,so:3},use:['hinan'],log:s.disK+'で、配慮のある避難先に移る'},{t:'計画がなく、連絡も届くのが遅れた。結局、一般の避難所で過ごすことになった。',fx:{h:-8,m:-9},miss:['hinan'],log:s.disK+'で避難先を探し、苦労する'})}},
+  {l:'近くの親戚の家に身を寄せる',if:function(s){return s.kin==='near'&&aliveParents(s).length+s.fam.sibs.length>=0},h:'',f:function(s){return{t:'近くに住む親戚が迎えてくれた。気をつかったが、安心して眠れた。',fx:{h:-2,m:-3,so:4},log:s.disK+'で、親戚の家に身を寄せる'}}},
+  {l:'自宅にとどまって様子を見る',h:'',f:function(s){return R(.7,{t:'被害は小さく、数日で日常にもどった。',fx:{m:-4},log:s.disK+'を、自宅で乗り切る'},{t:'住まいに被害が出て、片づけと修繕に追われた。費用もかかった。',fx:{h:-6,m:-9,$:-ri(10,40)},log:s.disK+'で住まいが被害を受ける'})}}];
+  return a}});
+
+ev('accident',{lo:3,hi:100,w:function(s){return (s.acc||0)<2&&s.age-(s.accAt||-99)>=10?.1:0},
+ k:'けが',title:'思わぬけが',
+ onShow:function(s){s.acc=(s.acc||0)+1;s.accAt=s.age},
+ ch:[{l:'けが',f:function(s){
+  var a=s.age,t,l,hd=ri(5,12),use=['kogaku'],ex='';
+  if(a<16){t='外で遊んでいて転び、腕を骨折した。しばらくは、ギプスをつけて過ごした。';l='骨折して、しばらく通院する'}
+  else if(a>=70){t='自宅で転んで、足の付け根を骨折した。入院とリハビリが続いた。';l='転んで骨折し、入院・リハビリをする';hd=ri(9,16)}
+  else{t=pick(['雨の日に自転車で転び、足の骨を折って入院した。','階段で足をすべらせ、手首を骨折した。','交通事故にあい、数週間入院することになった。']);l='けがで入院する'}
+  if(workingNow(s)&&a>=18&&a<65){use.push('shobyo');ex='仕事は休むことになったが、健康保険の傷病手当金が給与の代わりになった。'}
+  else ex='医療費は、高額療養費制度で自己負担の上限が決まる。';
+  return{t:t+ex,fx:{h:-hd,m:-4,so:-2},use:use,log:l}}}]});
+
+ev('workMeet',{lo:20,hi:64,w:function(s){return (s.work==='regular'||s.work==='general'||s.work==='a'||s.work==='b')?1:0},
+ k:'しごと',title:'仕事での出会い',
+ ch:[{l:'出会い',f:function(s){
+  var o=wchoice([['mate',40],['offer',workingNow(s)?25:0],['sup',s.disabled&&s.dx&&workingNow(s)?20:0],['friend',20]]);
+  if(o==='mate')return{t:'職場の先輩が、困りごとに気づいて、仕事の進め方を一緒に考えてくれた。',fx:{so:5,d:3,m:2},log:'職場で、理解のある人と出会う'};
+  if(o==='offer'){s.salary=Math.round(s.salary*1.08);return{t:'取引先の人から声がかかり、条件のよい仕事の話をもらった。給与が上がった。',fx:{so:2,d:3},log:'仕事での出会いから、条件のよい話をもらう'}}
+  if(o==='sup')return{t:'障害者就業・生活支援センターの支援員と出会い、職場での困りごとを相談できるようになった。',fx:{so:3,d:3,m:3},use:['jobsup'],log:'就業・生活支援センターの支援員と出会う'};
+  return{t:'同じ職場の同世代と、仕事帰りに話すようになった。気軽に話せる相手が、ひとり増えた。',fx:{so:5,m:2},log:'職場で、気の合う仲間ができる'}}}]});
+
+ev('jobLoss',{big:1,lo:24,hi:60,once:1,w:function(s){return workingNow(s)&&s.workYrs>=1?2.5:0},
+ k:'しごと',title:'職場を離れることになった',
+ t:function(s){return s.disabled&&s.dx?'勤め先の事業が縮小され、障害者雇用の枠もなくなることになった。':'勤め先の業績が悪化し、契約が更新されないことになった。'},
+ data:'仕事を失ったときは、雇用保険の基本手当(条件あり)が受け取れる。ハローワークで求人の紹介や相談もできる。',
+ ch:function(s){return [
+  {l:'ハローワークで仕事を探す',h:'',f:function(s){return R(.7,{t:'雇用保険の手続きをしながら、求職活動を続け、再就職先が決まった。給与は少し下がった。',fx:{m:-3,d:1},use:['koyou'],set:{work:s.disabled&&s.dx?'general':'regular',salary:Math.max(150,Math.round(s.salary*.9))},log:'職場を離れ、ハローワークを通じて再就職する'},{t:'応募を重ねたが、決まらない時間が続いた。雇用保険の給付で、なんとか生活をつないだ。',fx:{m:-9,d:-3,so:-3},use:['koyou'],set:{work:null,salary:0},log:'職場を離れ、仕事の決まらない時期が続く'})}},
+  {l:'就労移行支援を使って、次の仕事を探す',if:function(s){return s.disabled&&s.dx},h:'障害のある人向けの訓練・就職支援',f:function(s){return R(.75,{t:'支援員と一緒に、自分に合う条件を整理し直した。通ううちに、次の職場が決まった。',fx:{m:-1,d:3,so:3},use:['shuro','koyou'],set:{work:'general',salary:Math.max(150,Math.round(s.salary*.9))},log:'就労移行支援を通じて、再就職する'},{t:'訓練には通えたが、条件の合う求人に出会えないまま時間が過ぎた。',fx:{m:-5,so:2},use:['shuro','koyou'],set:{work:null,salary:0},log:'就労移行支援に通うが、仕事は決まらない'})}},
+  {l:'しばらく休んで、これからを考える',h:'',f:function(s){return{t:'焦る気持ちを置いて、体を休めることにした。収入は減ったが、生活を見直す時間になった。',fx:{h:4,m:3,d:-1},use:['koyou'],set:{work:null,salary:0},log:'職場を離れ、しばらく休む'}}}]}});
+
+ev('peer',{lo:14,hi:75,once:1,w:function(s){return s.disabled&&s.dx?.9:0},
+ k:'つながり',title:'同じ経験をもつ人との出会い',
+ ch:[{l:'出会い',f:function(s){return{t:'同じような経験をもつ人たちが集まる場で、「自分だけではなかった」と感じた。工夫や制度の情報を、互いに分け合えた。',fx:{so:8,d:5,m:3},use:['soudan'],log:'同じ経験をもつ仲間と出会う'}}}]});
+
+ev('teacher',{lo:6,hi:17,once:1,w:function(){return 1},
+ k:'学校',title:'ひとりの先生との出会い',
+ ch:[{l:'出会い',f:function(s){return{t:s.disabled&&s.dx?'ひとりの先生が、得意なことと苦手なことを一緒に整理してくれた。「できる方法」を探す姿勢が、心に残った。':'ひとりの先生が、授業のあとも話を聞いてくれた。大人に認められた経験が、自信になった。',fx:{so:4,d:5,m:3},log:'心に残る先生と出会う'}}}]});
+
+ev('kinHelp',{lo:0,hi:12,once:1,w:function(s){return s.kin==='near'?1.5:0},
+ k:'家族',title:'近くに住む祖父母',
+ ch:[{l:'手助け',f:function(s){return{t:s.disabled&&s.dx?'近くに住む祖父母が、通院や療育の送り迎えを手伝ってくれた。両親にも、ひと息つける時間ができた。':'近くに住む祖父母が、親の仕事の日は預かってくれた。祖父母の家は、もうひとつの居場所になった。',fx:{so:4,m:2},log:'近くの祖父母に支えられる'}}}]});
+
+ev('schoolAid',{lo:6,hi:15,once:1,w:function(s){return s.home==='tight'?4:0},
+ k:'家計',title:'学校にかかるお金',
+ data:'経済的に困っている家庭の小中学生には、学用品費などを市区町村が援助する「就学援助」がある(文部科学省)。',
+ ch:[{l:'学校のお金',f:function(s){return R(.8,{t:'学校からの案内で、就学援助の申請をした。学用品費などの負担が軽くなった。',fx:{so:1,m:2},use:['schoolaid'],log:'就学援助を受ける'},{t:'制度があることを知らないまま、学用品や行事のお金のやりくりに親が悩んでいた。',fx:{m:-3,so:-2},miss:['schoolaid'],log:'学校にかかるお金で、家計が苦しくなる'})}}]});
+
+ev('parentTransfer',{big:1,lo:3,hi:15,once:1,w:function(s){return jobParent(s,['会社員','公務員'])?1:0},
+ k:'家族',title:'親の転勤',
+ onShow:function(s){s.tfp=jobParent(s,['会社員','公務員'])},
+ t:function(s){var p=s.tfp||{rel:'親'};return p.rel+'の転勤が決まった。遠くの街への異動で、家族で行くのか、'+p.rel+'だけが行くのかを決めることになった。'},
+ data:'自治体独自の医療費助成・手当などは、転居すると転居先の制度で申請し直す。',
+ ch:function(s){return [
+  {l:'家族みんなで引っ越す',h:'転居先の窓口で、手続きし直す',f:function(s){var o=MUNIS.filter(function(m){return m.id!==s.muni.id&&m.pref!==s.muni.pref}),n=pick(o.length?o:MUNIS.filter(function(m){return m.id!==s.muni.id}));s.done.delete('medical');s.done.delete('taxi');s.done.delete('local');s.used.delete('iryo');s.used.delete('taxi');s.used.delete('local');return{t:n.name+'('+n.pref+')に引っ越した。新しい学校になじむまで、時間がかかった。'+(s.disabled&&s.dx?'支援や制度も、新しい窓口で確かめ直すことになった。':''),fx:{so:-5,m:-3},set:{muni:n},log:s.tfp.rel+'の転勤で、'+n.name+'に転居する'}}},
+  {l:s.tfp.rel+'だけが単身で赴任する',h:'',f:function(s){return{t:s.tfp.rel+'は遠くで暮らし、会えるのは休みの日だけになった。家のことは、残った家族で支え合った。',fx:{m:-3,so:-1},log:s.tfp.rel+'が単身赴任する'}}}]}});
+
+ev('parentJobLoss',{lo:5,hi:24,once:1,w:function(s){return jobParent(s,['会社員','自営業','パート・アルバイト'])?.2:0},
+ k:'家計',title:'親の仕事が不安定になる',
+ data:'生活に困ったときは、市区町村の自立相談支援窓口(生活困窮者自立支援制度)で相談できる。',
+ ch:[{l:'家計',f:function(s){var p=jobParent(s,['会社員','自営業','パート・アルバイト'])||s.fam.father;var worse=Math.random()<.5;if(worse)s.home='tight';return{t:p.rel+'の仕事が不安定になり、'+(worse?'家計が苦しくなった。家の中の空気が重く、外食や習いごとが減った。':'貯えを切りくずして、なんとか乗り切った。家の中には、不安な空気が流れた。'),fx:{m:-4,so:-2},log:p.rel+'の仕事が不安定になる'}}}]});
+
+ev('parentDivorce',{lo:4,hi:17,once:1,w:function(s){return aliveParents(s).length===2&&!s.fam.divorce?.5:0},
+ k:'家族',title:'両親の別れ',
+ data:'ひとり親家庭には、児童扶養手当などの支援がある。',
+ ch:[{l:'別れ',f:function(s){var w=wchoice([['母',85],['父',15]]);s.fam.divorce={who:w};if(Math.random()<.5)s.home='tight';return{t:'両親が離婚し、'+w+'と暮らすことになった。生活はあわただしく変わり、' +(w==='母'?'母':'父')+'は仕事と家のことで、毎日いっぱいだった。',fx:{m:-6,so:-3},log:'両親が離婚する'}}}]});
+
+ev('parentSick',{big:1,lo:22,hi:64,w:function(s){return (s.psick||0)<2&&aliveParents(s).some(function(p){return s.age+p.off>=55&&!p.care})?2:0},
+ k:'家族',title:'親の入院',
+ onShow:function(s){var l=aliveParents(s).filter(function(p){return s.age+p.off>=55&&!p.care});s.sickP=l.length?l[0]:aliveParents(s)[0];s.psick=(s.psick||0)+1},
+ t:function(s){var p=s.sickP||{rel:'親'};return p.rel+'が病気で入院した。仕事や自分の暮らしを続けながら、どう関わるかを決めなければならない。'},
+ data:'介護や看病で仕事を休むときは、介護休業や介護休暇などの制度がある。',
+ ch:function(s){var a=[{l:'病院に通って、付き添う',h:'',f:function(s){return{t:'仕事や予定をやりくりして、病院に通った。疲れはたまったが、'+s.sickP.rel+'の顔を見て話せる時間は大切だった。',fx:{so:2,m:-4,h:-3},log:s.sickP.rel+'の入院に付き添う'}}}];
+  if(sibAlive(s)>0||s.kin==='near')a.push({l:sibAlive(s)>0?'きょうだいや親戚と分担する':'近くの親戚と分担する',h:'',f:function(s){return{t:(sibAlive(s)>0?'きょうだいや親戚':'近くの親戚')+'と、通う日を決めて分け合った。ひとりで抱えずに済んだ。',fx:{so:3,m:-2},log:s.sickP.rel+'の入院を、家族で分担して支える'}}});
+  a.push({l:'電話やオンラインで見守る',h:'',f:function(s){return{t:'なかなか会いに行けず、電話で様子を聞く日が続いた。気がかりと申しわけなさが残った。',fx:{m:-4,so:-2},log:s.sickP.rel+'の入院を、離れて見守る'}}});
+  return a}});
+
+ev('familyBiz',{big:1,lo:18,hi:30,once:1,w:function(s){return s.work===null&&(!s.disabled||s.grade!=='heavy')&&s.bizOffer&&jobParent(s,['自営業','農林漁業'])?8:0},
+ must:function(s){return s.bizOffer&&s.age>=18&&s.work===null&&(!s.disabled||s.grade!=='heavy')&&!!jobParent(s,['自営業','農林漁業'])},
+ k:'しごと',title:'家業を手伝う話',
+ onShow:function(s){s.bizP=jobParent(s,['自営業','農林漁業'])},
+ t:function(s){var p=s.bizP||{rel:'親',job:'自営業'};return p.rel+'の仕事('+p.job+')を手伝わないか、と声をかけられた。慣れた人たちのなかで働く道もあれば、外で仕事を探す道もある。'},
+ ch:function(s){return [
+  {l:'家業を手伝いながら働く',h:'',f:function(s){return{t:'朝から家の仕事を手伝うようになった。収入は多くないが、体調や事情に合わせやすい。',fx:{d:4,so:3,$:3},set:{work:'regular',salary:ri(180,280)},log:'家業を手伝いはじめる'}}},
+  {l:'家業は継がず、別の道を探す',h:'',f:function(s){return{t:'手伝いはせず、自分の道を探すことにした。家族は残念そうだったが、応援してくれた。',fx:{d:3,so:-1},log:'家業は継がない道を選ぶ'}}}]}});
 
 ev('afterParent',{big:1,lo:20,hi:100,once:1,w:function(s){return s.disabled&&!parentsAlive(s)&&s.living==='family'?10:0},must:function(s){return s.disabled&&!parentsAlive(s)&&s.living==='family'&&s.fam.pend.length===0},
  k:'住まい',title:'親のいない家で',
  t:function(s){return '両親が亡くなり、これまで同居していた家で、誰とどう暮らすかを決めなければならなくなった。'},
- ch:[{l:'グループホームに入る',if:function(s){return s.dx},h:'',f:function(s){return{t:'世話人や仲間と暮らす新しい生活が始まった。慣れるまでは、親の面影を探す日もあった。',fx:{so:5,m:-2,d:2},use:['gh'],set:{living:'group',livingSet:true},log:'グループホームで暮らし始める'}}},
+ ch:function(s){var pt=pHouse();return [{l:'グループホームに入る',if:function(s){return s.dx},h:'',f:function(s){return{t:'世話人や仲間と暮らす新しい生活が始まった。慣れるまでは、親の面影を探す日もあった。',fx:{so:5,m:-2,d:2},use:['gh'],set:{living:'group',livingSet:true},log:'グループホームで暮らし始める'}}},
   {l:'ヘルパーを使って一人暮らしを続ける',if:function(s){return s.dx},h:'',f:function(s){return R(.65,{t:'ヘルパーや相談支援の力を借りて、同じ家で自分の暮らしをつくり直せた。',fx:{d:7,m:2},use:['kyotaku'],set:{living:'alone',livingSet:true},log:'一人暮らしに切り替える'},{t:'支援の時間が足りず、静かな夜が長く感じられた。それでも暮らしを続けた。',fx:{d:4,m:-6,h:-3},use:['kyotaku'],set:{living:'alone',livingSet:true},log:'一人暮らしに切り替える'})}},
-  {l:'親のいない家で、そのまま暮らす',h:'実家に住み続ける。家賃はかからない',f:function(s){return R(s.dx?.7:.55,{t:'親の遺した家で、ひとりの暮らしを続けた。家賃はかからず、思い出の残る部屋で毎日を過ごした。'+(s.dx?'必要なときは、支援者や近所の人に頼れた。':'頼れる先は少なかったが、近所の人が気にかけてくれた。'),fx:{d:7,m:1},set:{living:'alone',livingSet:true,ownHome:true},log:'親のいない家で暮らし続ける'},{t:'広い家の掃除や修繕、手続きに追われ、静けさが重くのしかかった。それでも住み慣れた家で暮らしを続けた。',fx:{d:4,m:-6,h:-2,so:-2},set:{living:'alone',livingSet:true,ownHome:true},log:'親のいない家で暮らし続ける'})}},
+  {l:pt?'実家で、パートナーと暮らし続ける':'親のいない家で、そのまま暮らす',h:'実家に住み続ける。家賃はかからない',f:function(s){var pt=pHouse(),lg=pt?'実家で、パートナーと暮らし続ける':'親のいない家で暮らし続ける';return R(s.dx?.7:.55,{t:pt?'親の遺した家で、パートナーと二人の暮らしを続けた。家賃はかからず、思い出の残る部屋で毎日を過ごした。'+(s.dx?'必要なときは、パートナーや支援者、近所の人に頼れた。':'二人で支え合い、近所の人も気にかけてくれた。'):'親の遺した家で、ひとりの暮らしを続けた。家賃はかからず、思い出の残る部屋で毎日を過ごした。'+(s.dx?'必要なときは、支援者や近所の人に頼れた。':'頼れる先は少なかったが、近所の人が気にかけてくれた。'),fx:{d:7,m:1},set:{living:'alone',livingSet:true,ownHome:true},log:lg},{t:pt?'広い家の掃除や修繕、手続きに追われた。それでも、パートナーと一緒に、住み慣れた家で暮らしを続けた。':'広い家の掃除や修繕、手続きに追われ、静けさが重くのしかかった。それでも住み慣れた家で暮らしを続けた。',fx:pt?{d:4,m:-4,h:-2}:{d:4,m:-6,h:-2,so:-2},set:{living:'alone',livingSet:true,ownHome:true},log:lg})}},
   {l:'きょうだいの近くで暮らす',if:function(s){return sibAlive(s)>0},h:'',f:function(s){return{t:'きょうだいの家の近くに移り、顔を合わせながら、それぞれの暮らしを続けた。',fx:{so:5,m:2},set:{living:'alone',livingSet:true},log:'きょうだいの近くに移る'}}},
-  {l:'入所施設で暮らす',if:function(s){return s.dx},h:'',f:function(s){return{t:'24時間の見守りで体調は安定した。自由な時間は少なくなった。',fx:{h:4,d:-4},set:{living:'facility',livingSet:true},log:'入所施設で暮らし始める'}}}]});
+  {l:'入所施設で暮らす',if:function(s){return s.dx},h:'',f:function(s){return{t:'24時間の見守りで体調は安定した。自由な時間は少なくなった。',fx:{h:4,d:-4},set:{living:'facility',livingSet:true},log:'入所施設で暮らし始める'}}}]}});
 
 ev('partnerHelp',{lo:25,hi:95,w:function(s){return s.partner&&s.fam.ptIll?20:0},must:function(s){return !!(s.partner&&s.fam.ptIll)},
  k:'家族',title:'パートナーの不調',
@@ -1258,7 +1462,7 @@ ev('child',{big:1,lo:22,hi:44,w:function(s){var p=s.partner;if(!p||p.status==='d
 ev('preEdu',{big:1,lo:18,hi:19,once:1,w:function(s){return !s.disabled&&s.edu===null?10:0},must:function(s){return !s.disabled&&s.edu===null},
  k:'進路',title:'高校を出たあと',
  t:function(s){return '高校の卒業が近づいた。卒業後の進路を、そろそろ決める時期だ。'},
- ch:[{l:'大学に進学する',h:'',f:function(s){return{t:'受験勉強を重ね、大学に進んだ。学費は、奨学金や家族の支えで工面した。',fx:{d:4,m:-2},set:{edu:'univ'},log:'大学に入学する'}}},
+ ch:[{l:'大学に進学する',h:'',f:function(s){return{t:'受験勉強を重ね、大学に進んだ。'+(s.home==='tight'?'家計に余裕がなく、奨学金とアルバイトを組み合わせて学費を工面した。卒業後の返済も頭にある。':s.home==='ok'?'学費は、家族の支えで工面できた。':'学費は、奨学金や家族の支えで工面した。'),fx:{d:4,m:s.home==='tight'?-5:-2},set:{edu:'univ'},log:'大学に入学する'}}},
   {l:'専門学校に進学する',h:'資格の取得を目指す',f:function(s){return R(.85,{t:'実習の多い毎日を乗り切り、資格試験に合格した。',fx:{d:5,m:-1},set:{edu:'senmon',qual:true},log:'専門学校に入学する'},{t:'実習は終えたが、資格試験には届かなかった。学んだ時間は残った。',fx:{d:1,m:-3},set:{edu:'senmon'},log:'専門学校に入学する'})}},
   {l:'高校を卒業して、すぐに働く',h:'',f:function(s){return{t:'早く自分のお金で暮らしたいと考え、就職を選んだ。',fx:{d:3,so:1},set:{edu:'high'},log:'高校を卒業して就職を選ぶ'}}}]});
 
@@ -1339,11 +1543,33 @@ function makeQueue(){
   }
   return q;
 }
+
+/* ---------- 生まれと環境(家庭の経済・親の仕事・近くに頼れる人) ---------- */
+var HOMEL={tight:'ゆとりが少ない',mid:'ふつう',ok:'ゆとりがある'};
+var KINL={near:'親戚が近くにいる',far:'親戚は遠くにいる',none:'頼れる親戚は近くにいない'};
+function makeEnv(s){
+  var t=function(){return s.home==='tight'};
+  s.home=wchoice([['tight',15],['mid',60],['ok',25]]);
+  s.home0=s.home;s.bizOffer=Math.random()<.5;
+  s.kin=wchoice([['near',45],['far',40],['none',15]]);
+  var f=s.fam;
+  f.father.job=wchoice([['会社員',40],['公務員',t()?1:6],['自営業',10],['農林漁業',3],['パート・アルバイト',6+(t()?10:0)],['医療・介護の仕事',5],['教員',4],['その他の仕事',20]]);
+  f.mother.job=wchoice([['会社員',26],['公務員',t()?1:5],['自営業',5],['農林漁業',3],['パート・アルバイト',26+(t()?10:0)],['医療・介護の仕事',13],['教員',4],['専業主婦',s.home==='ok'?14:9],['その他の仕事',10]]);
+  s.social=clamp(s.social+(s.kin==='near'?4:s.kin==='none'?-4:0)-(s.home==='tight'?2:0));
+}
+function jobsOf(s){return [s.fam.father,s.fam.mother]}
+function jobParent(s,jobs){var r=jobsOf(s).filter(function(p){return !p.dead&&jobs.indexOf(p.job)>=0});return r.length?r[0]:null}
+function inheritFor(s){
+  if(s.age<20)return 0;
+  if(s.home==='ok')return ri(80,500);
+  if(s.home==='mid')return Math.random()<.6?ri(0,150):0;
+  return 0;
+}
 function startLife(){
   S=newLife(UI.mode);
   S.age=0;
-  S.sexK=S.sex==='男性'?'M':'F';S.famFeed=[];S.fam=makeFamily();
-  S.log.push({age:0,t:S.muni.name+'で生まれる'});
+  S.sexK=S.sex==='男性'?'M':'F';S.famFeed=[];S.fam=makeFamily();makeEnv(S);
+  lp({age:0,t:S.muni.name+'で生まれる'});
   UI.speed=UI.speed||1;UI.paused=false;UI.prog=0;
   UI.screen='birth';render();
 }
@@ -1351,6 +1577,7 @@ function triggerOnset(){
   S.disabled=true;S.onsetAge=S.age;if(S.type==='body')S.dx=true;
   S.health=clamp(S.health-(S.grade==='heavy'?14:S.grade==='mid'?5:0));
   if(S.type==='mental')S.mind=clamp(S.mind-10);
+  if(S.onset>0){S.health=clamp(S.health-(S.hd||0));S.social=clamp(S.social+(S.sd||0))}
   var o=onsetEvent();o.big=1;o.onset=1;return o;
 }
 function onsetEvent(){
@@ -1376,6 +1603,9 @@ function causeOfDeath(age){
   var p=[['悪性新生物(がん)',22],['心疾患',16],['脳血管疾患',9],['肺炎',9],['誤嚥性肺炎',age>=70?8:3],['不慮の事故(転倒・溺水など)',age>=75?6:4]];
   if(S.sub==='認知症'||age>=85)p.push(['老衰',age>=88?34:18]);
   if(S.sub==='内部障害'){p.push(['心疾患',14],['腎不全',16])}
+  if(/腎臓/.test(S.det||''))p.push(['腎不全',22]);
+  if(/心臓/.test(S.det||''))p.push(['心疾患',20]);
+  if(/呼吸器/.test(S.det||''))p.push(['肺炎',18]);
   if(S.sub==='肢体不自由'){p.push(['誤嚥性肺炎',6],['不慮の事故(転倒・溺水など)',4])}
   if(S.sub==='認知症')p.push(['認知症の進行',16],['誤嚥性肺炎',10]);
   if(S.sub==='依存症など')p.push(['肝疾患',16]);
@@ -1385,7 +1615,7 @@ function causeOfDeath(age){
 }
 function deathScene(age,cause){
   var F=S.fam,acc=/事故/.test(cause),place,who=null,kidsAlive=F.kids.filter(function(k){return !k.dead}).length,sibsAlive=F.sibs.filter(function(x){return !x.dead&&age+x.off>=0}).length,parAlive=[F.father,F.mother].filter(function(p){return !p.dead}),t;
-  if(acc)place=wchoice([['自宅',55],['外出先',45]]);
+  if(acc)place=S.living==='facility'?wchoice([['入所していた施設',70],['外出先',30]]):S.living==='group'?wchoice([['グループホーム',70],['外出先',30]]):wchoice([['自宅',55],['外出先',45]]);
   else if(S.living==='facility')place=wchoice([['入所していた施設',75],['病院',25]]);
   else if(S.living==='group')place=wchoice([['グループホーム',70],['病院',30]]);
   else if(cause==='老衰')place=wchoice([['自宅',65],['病院',35]]);
@@ -1397,7 +1627,7 @@ function deathScene(age,cause){
   else if(parAlive.length)who='親';
   else if(place!=='自宅'&&place!=='外出先')who='医師や看護師、職員';
   if(acc&&place==='外出先')t='外出先で、不慮の事故に遭い、居合わせた人が救急車を呼んだが、助からなかった。';
-  else if(acc)t='自宅で、不慮の事故(転倒・溺水など)が起こり、'+(who?who+'が気づいて救急車を呼んだが、':'発見が遅れ、')+'助からなかった。';
+  else if(acc)t=place+'で、不慮の事故(転倒・溺水など)が起こり、'+(who?who+'が気づいて救急車を呼んだが、':'発見が遅れ、')+'助からなかった。';
   else t=place+'で、'+(who?who+'に見守られながら':'ひとりで最期を迎え')+'、'+cause+'のため亡くなった。';
   if(!acc&&place==='自宅'&&!who)t='自宅で、ひとりで最期を迎え、後日発見された。死因は'+cause+'。';
   if(S.health<30&&!acc)t+=' ここ数年は体調の波が大きかった。';
@@ -1406,7 +1636,8 @@ function deathScene(age,cause){
 function end(why,age){
   S.age=age;S.endAge=age;S.why=why;S.log=S.log.filter(function(x){return x.age<=age});S.cause=causeOfDeath(age);
   var sc=deathScene(age,S.cause);S.deathNote=sc.text;S.deathPlace=sc.place;
-  S.log.push({age:age,t:'死去('+sc.place+'・'+S.cause+')'});
+  lp({age:age,t:'死去('+sc.place+'・'+S.cause+')',d:{t:S.deathNote||''}});
+  try{S.cardsGot=earnCards()}catch(e){S.cardsGot=[]}
   UI.screen='end';render();
 }
 var STEP_MS=60000;
@@ -1418,9 +1649,9 @@ function nextStepAge(){
 }
 function ordinaryLife(){
   if(S.age>=6&&S.school===null)S.school='regular';
-  if(S.age>=20&&S.edu===null){S.edu='high';S.log.push({age:S.age,t:'高校を卒業して社会に出る'})}
-  if(S.age>=33&&S.work===null&&S.age<65){S.work='regular';S.salary=ri(300,460);S.log.push({age:S.age,t:'就職'})}
-  if(S.age>=22&&!S.livingSet){S.living=wchoice([['alone',60],['family',40]]);S.livingSet=true;if(S.living==='alone')S.log.push({age:S.age,t:'一人暮らしを始める'})}
+  if(S.age>=20&&S.edu===null){S.edu='high';lp({age:S.age,t:'高校を卒業して社会に出る'})}
+  if(S.age>=33&&S.work===null&&S.age<65){S.work='regular';S.salary=ri(300,460);lp({age:S.age,t:'就職'})}
+  if(S.age>=22&&!S.livingSet){S.living=wchoice([['alone',60],['family',40]]);S.livingSet=true;if(S.living==='alone')lp({age:S.age,t:'一人暮らしを始める'})}
 }
 function milestones(prev,nxt){
   function sc(){return S.school}
@@ -1438,7 +1669,7 @@ function milestones(prev,nxt){
    [40,function(){return '40歳になる(介護保険料の負担が始まる年齢)'},function(){return true}],
    [65,function(){return '65歳になる(老齢年金・介護保険の対象)'},function(){return true}],
    [75,function(){return '75歳になる(後期高齢者医療制度の対象)'},function(){return true}]];
-  M.forEach(function(m){if(prev<m[0]&&m[0]<=nxt&&m[2]())S.log.push({age:m[0],t:m[1]()})});
+  M.forEach(function(m){if(prev<m[0]&&m[0]<=nxt&&m[2]())lp({age:m[0],t:m[1]()})});
 }
 function fixPartnerYears(prev,nxt,rateWith){
   if(S.ptLeft==null||nxt<=18)return;
@@ -1455,9 +1686,10 @@ function advance(){
   yrs=nxt-prev;
   emp=(S.work==='regular'||S.work==='general');
   if(emp&&prev<65){S.workYrs+=Math.max(0,Math.min(nxt,65)-prev);S.lastSalary=S.salary}
+  var P0=parts(),E0=expenseList(),mStart=S.money,bonus=0;
   var rateWith=parts().total-expenseMonth();S.ptLeft=null;
   if(nxt>18){net=rateWith*12*(nxt-Math.max(prev,18))}
-  if(prev<18&&nxt>=18)S.money+=ri(100000,400000);
+  if(prev<18&&nxt>=18){bonus=ri(100000,400000);S.money+=bonus}
   if(S.living==='family'&&net<0)net=0;
   if(nxt>=65&&emp){S.work='none'}
   S.money+=net;
@@ -1465,8 +1697,9 @@ function advance(){
   S.age=nxt;
   milestones(prev,nxt);
   if(!S.disabled)ordinaryLife();
-  if(S.living!=='family'&&S.money<-300000&&!S.hogo&&S.age>=18){S.hogo=true;S.money=0;S.used.add('hogo');S.log.push({age:S.age,t:'生活保護を受け始める'})}
-  else if(S.hogo&&parts().total-parts().hogo>expenseMonth()*1.3){S.hogo=false;S.log.push({age:S.age,t:'生活保護を終える'})}
+  if(S.living!=='family'&&S.money<-300000&&!S.hogo&&S.age>=18){S.hogo=true;S.money=0;S.used.add('hogo');lp({age:S.age,t:'生活保護を受け始める'})}
+  else if(S.hogo&&parts().total-parts().hogo>expenseMonth()*1.3){S.hogo=false;lp({age:S.age,t:'生活保護を終える'})}
+  recHist(prev,nxt,P0,E0,mStart,net,bonus);
   if(S.money<-300000&&!S.hogo){S.mind=clamp(S.mind-4);S.note+=(S.note?'。':'')+'お金のやりくりが苦しくなっている'}
   var dA=playerDeath(prev,nxt);
   if(dA!=null){S.age=dA;famTick(prev,dA);fixPartnerYears(prev,dA,rateWith);return end(S.health<30?'体調の波のなかで、静かに':'穏やかに',dA)}
@@ -1494,8 +1727,9 @@ function playerDeath(prev,nxt){
 }
 function getChs(e){var c=typeof e.ch==='function'?e.ch(S):e.ch;return c.filter(function(x){return !x.if||x.if(S)})}
 function autoResolve(e){
-  var n0=S.log.length,chs=getChs(e),c=(chs.length>1&&Math.random()<.65)?chs[0]:pick(chs),r=c.f(S),chips=apply(r),title=typeof e.title==='function'?e.title(S):e.title;
-  if(!r.log&&r.t)S.log.push({age:S.age,t:(e.plain||!title?'':title+':')+r.t});
+  var n0=S.log.length,chs=getChs(e),c=(chs.length>1&&Math.random()<.65)?chs[0]:pick(chs),r=c.f(S),title=typeof e.title==='function'?e.title(S):e.title;
+  CTX={title:e.plain?'':title,s:sceneText(e),c:chs.length>1?c.l:''};var chips=apply(r);
+  if(!r.log&&r.t)lp({age:S.age,t:(e.plain||!title?'':title+':')+r.t,d:logD(r)});CTX=null;
   S.feed.push({k:e.k,title:e.plain?'':title,text:r.t,chips:chips,tl:markLog(n0)});
   UI.cur=e;
 }
@@ -1523,7 +1757,8 @@ function enterAuto(){
 function choose(i){
   var e=UI.cur,c=UI.chs[i],r=c.f(S),chips,n0=S.log.length;
   if(!r.log&&!(e&&e.onset))r.log=c.l;
-  chips=apply(r);var tl0=markLog(n0);
+  CTX={title:(e&&(typeof e.title==='function'?e.title(S):e.title))||'',s:e?sceneText(e):'',c:c.l};
+  chips=apply(r);CTX=null;var tl0=markLog(n0);
   UI.res={r:r,chips:chips,label:c.l,tl:tl0};UI.screen='result';render();
 }
 function proceed(){
@@ -1541,7 +1776,7 @@ function ten(){
     else out+='<circle class="o" cx="'+cx+'" cy="'+cy+'" r="20"/>'}
   return out+'</svg>';
 }
-function sourcesHTML(){return '<details><summary>データと出典</summary><ol class="srclist">'+SOURCES.map(function(x){return '<li><a href="'+x[1]+'" target="_blank" rel="noopener">'+esc(x[0])+'</a></li>'}).join('')+'</ol></details>'}
+function sourcesHTML(){return '<details><summary>データと出典</summary><ol class="srclist">'+SOURCES.map(function(x){return '<li><a href="'+x[1]+'" target="_blank" rel="noopener noreferrer">'+esc(x[0])+'</a></li>'}).join('')+'</ol></details>'}
 function dataTable(){
   return '<div class="tbl"><table><thead><tr><th>項目</th><th>このゲームでの使い方</th></tr></thead><tbody>'+
   '<tr><td>障害種別の割合</td><td>令和8年版障害者白書の推計(身体約423万人・知的約126.8万人・精神約603万人。重複があり、国民の約9.3%)を比にして、身体37%・知的11%・精神52%で抽選。精神は医療機関を利用した患者数で、手帳のない人も含む</td></tr>'+
@@ -1555,14 +1790,52 @@ function dataTable(){
   '<tr><td>パートナーの収入と貯え</td><td>パートナーの年収は国税庁の民間給与実態統計調査(令和5年分: 男性569万円・女性316万円)を目安に、個人差をつけて設定。65歳以降は厚生年金の平均月額(令和6年度末: 男17.0万円・女11.1万円)、働いていなかった人は老齢基礎年金のみ(平均5.6万円)。貯えは年齢に応じた目安で、結婚・同居の時点で合算し、離婚では半分に分ける(ゲーム上の仮定)</td></tr>'+
   '<tr><td>結婚・出産・離婚</td><td>2024年の平均初婚年齢(夫31.1歳・妻29.8歳)、第1子出産時の母の平均年齢31.0歳、完結出生児数1.81、50歳時の未婚割合(男28.25%・女17.81%、2020年)、2024年の離婚約18.6万件(離婚率4.5‰)を参考にした。婚姻後の年ごとの離婚率(5年未満2.2%・10年未満1.8%・20年未満1.1%)、パートナーの年齢差、同性パートナー4%、子どもの人数の分布、きょうだいの結婚・出産の時期は、ゲーム用の仮定</td></tr>'+
   '<tr><td>きょうだい・子の学校の困りごと</td><td>文部科学省の2022年調査で、通常の学級の小中学生の8.8%に、学習面や行動面で著しい困難を示す可能性があるとされる。子の出来事の起こる確率に使った。きょうだいの人数(1〜4人の4つのパターン)、介護が必要になる時期(亡くなる約3〜4年前)は仮定。健康寿命と平均寿命の差(2022年 男8.49年・女11.63年)を参考にした</td></tr>'+
+  '<tr><td>生まれと環境・人生を変える出来事</td><td>家庭の経済(ゆとりが少ない15%・ふつう60%・ゆとりがある25%)は、2021年の子どもの貧困率11.5%(2022年国民生活基礎調査)をふまえた仮定。親の仕事、近くに頼れる人、災害・転勤・けが・失業・親の病気などの起こりやすさは、ゲーム用の仮定。災害の種類は、地方ごとに起こりやすいものにしてある。制度の名称と内容は公的な案内にもとづく</td></tr>'+
   '<tr><td>合否の確率・生活費・給与など</td><td>ゲーム用の仮定。実際の認定や審査の結果を示すものではない</td></tr>'+
   '</tbody></table></div>';
 }
+function gaugeBarHTML(){
+  var items=[['体調',S.health],['心',S.mind],['つながり',S.social],['個性',S.dignity]];
+  return '<div class="gbar" aria-label="体調・心・つながり・個性">'+items.map(function(x){return '<div class="gb"><span>'+x[0]+'</span><em>'+x[1]+'</em><div class="bar"><i style="width:'+x[1]+'%"></i></div></div>'}).join('')+'</div>';
+}
 function gauges(){
-  var items=[['体調',S.health],['心',S.mind],['つながり',S.social],['自分らしさ',S.dignity]];
+  var items=[['体調',S.health],['心',S.mind],['つながり',S.social],['個性',S.dignity]];
   return '<div class="gauges">'+items.map(function(x){return '<div class="g"><span>'+x[0]+'</span><div class="bar"><i style="width:'+x[1]+'%"></i></div><b>'+x[1]+'</b></div>'}).join('')+'</div>';
 }
 function fy(n){return Math.round(n).toLocaleString('ja-JP')+'円'}
+
+/* ---------- お金の記録(1年ごと)と詳細 ---------- */
+function recHist(a0,a1,P,E,mStart,net,bonus){
+  var h=S.mh=S.mh||[],last=h.length?h[h.length-1]:null;
+  var other=last?mStart-last.mEnd:0;
+  var adults=Math.max(0,a1-Math.max(a0,18)),ann=adults>0?net/adults:0;
+  var inc=P.total*12,exp=0;E.forEach(function(x){exp+=x[1]});exp*=12;
+  var rows=[],m=mStart,by=bonus>0?((a0<=17&&17<a1)?17:a1-1):-1;
+  for(var y=a0;y<a1;y++){
+    var yn=y>=18?ann:0,o=(y===a0?other:0)+(y===by?bonus:0);
+    m+=yn+(y===by?bonus:0);
+    rows.push({age:y,inc:y>=18?inc:0,exp:y>=18?exp:0,net:yn,oth:o,m:m});
+  }
+  if(rows.length){var lr=rows[rows.length-1],res=S.money-m;if(Math.abs(res)>=1){lr.oth+=res;lr.m=S.money}}
+  h.push({a0:a0,a1:a1,rows:rows,mEnd:S.money});
+}
+function mw(n){var v=Math.round(n/10000);return (v>0?'+':'')+v}
+function mwp(n){return Math.round(n/10000).toLocaleString('ja-JP')}
+function moneyDetailHTML(){
+  var p=parts(),ex=expenseList(),exT=expenseMonth(),h='<p class="kicker mono">お金の詳細</p><h3>貯え '+fy(S.money)+'</h3>';
+  var inc=[['給与(手取り)',p.wage],['工賃・A型の賃金',p.work],['障害基礎年金',p.nenkin],['特別障害者手当',p.tokusho],['老齢年金',p.old],['遺族年金(目安)',p.surv||0],['パートナーの収入',p.partner],['生活保護(不足分)',p.hogo]].filter(function(x){return x[1]>0});
+  h+='<p class="tdl"><b>いまの収入(月) '+fy(p.total)+'</b></p><ul class="mlist">'+(inc.length?inc.map(function(x){return '<li><span>'+esc(x[0])+'</span><span>'+fy(x[1])+'</span></li>'}).join(''):'<li><span>収入なし</span><span>0円</span></li>')+'</ul>';
+  h+='<p class="tdl"><b>いまの生活費(月) '+fy(exT)+'</b></p><ul class="mlist">'+(ex.length?ex.map(function(x){return '<li><span>'+esc(x[0])+'</span><span>'+(x[1]<0?'-':'')+fy(Math.abs(x[1]))+'</span></li>'}).join(''):'<li><span>18歳になるまでは、家計に含めません</span><span></span></li>')+'</ul>';
+  var net=p.total-exT;
+  h+='<p class="tdl"><b>収支(月)</b>'+(net>=0?'+':'-')+fy(Math.abs(net))+(S.living==='family'&&net<0&&S.age>=18?'(不足分は家族が補っている)':'')+'</p>';
+  var rows=[];(S.mh||[]).forEach(function(r){r.rows.forEach(function(x){if(x.age>=18&&(S.endAge==null||x.age<=S.endAge))rows.push(x)})});
+  rows.reverse();
+  h+='<p class="tdl"><b>1年ごとの記録(単位: 万円)</b></p>';
+  if(!rows.length)h+='<p class="small muted">18歳になると、記録がはじまります。</p>';
+  else h+='<table class="mtab"><thead><tr><th>歳</th><th>収入</th><th>生活費</th><th>収支</th><th>その他</th><th>貯え</th></tr></thead><tbody>'+rows.map(function(x){return '<tr><td>'+x.age+'</td><td>'+mwp(x.inc)+'</td><td>'+mwp(x.exp)+'</td><td class="'+(x.net<0?'neg':'')+'">'+mw(x.net)+'</td><td>'+(x.oth?mw(x.oth):'')+'</td><td class="'+(x.m<0?'neg':'')+'">'+mwp(x.m)+'</td></tr>'}).join('')+'</tbody></table><p class="small muted">「その他」は、出来事で増減したお金や、生活保護による調整などです。金額はすべて目安(ゲーム上の仮定)です。</p>';
+  return h;
+}
+function openMoneyModal(){if(S)openModal(moneyDetailHTML())}
 function moneyHTML(){
   var p=parts(),ex=expenseMonth(),net=p.total-ex;
   var det=[];
@@ -1571,12 +1844,13 @@ function moneyHTML(){
   if(p.old)det.push('老齢年金 '+fy(p.old));
   if(p.surv)det.push('遺族年金(目安) '+fy(p.surv));
   if(p.hogo)det.push('生活保護(不足分) '+fy(p.hogo));
-  return '<div class="mny"><div class="mrow big"><span>貯え</span><b class="'+(S.money<0?'neg':'')+'">'+fy(S.money)+'</b></div>'+
+  return '<div class="mny" tabindex="0" role="button" aria-label="お金の詳細を見る" title="押すと、お金の詳細が見られます"><div class="mrow big"><span>貯え <i class="mhint">(押すと詳細)</i></span><b class="'+(S.money<0?'neg':'')+'">'+fy(S.money)+'</b></div>'+
    '<div class="mrow"><span>収入(月)</span><b>'+fy(p.total)+'</b></div>'+
    '<div class="mrow sub"><span>給与・工賃(手取り)</span><span>'+fy(p.wage+p.work)+'</span></div>'+
    '<div class="mrow sub" title="'+esc(det.join(' / '))+'"><span>障害年金などの公的給付</span><span>'+fy(p.pub)+'</span></div>'+
    (p.partner?'<div class="mrow sub"><span>パートナーの収入(手取り・年金)</span><span>'+fy(p.partner)+'</span></div>':'')+
    '<div class="mrow"><span>生活費(月)</span><b>'+fy(ex)+'</b></div>'+
+   (S.living==='facility'&&S.age>=18?'<div class="mrow sub"><span>うち施設代(貯えや収入から支払い)</span><span>'+fy(expenseList()[0][1])+'</span></div>':'')+
    '<div class="mrow"><span>収支(月)</span><b class="'+(net<0?'neg':'')+'">'+(net>=0?'+':'-')+fy(Math.abs(net))+'</b></div>'+
    (net<0&&S.living==='family'&&S.age>=18?'<p class="small muted">不足分は家族が補っている</p>':'')+
    (det.length?'<p class="small muted">'+esc(det.join('・'))+'</p>':'')+'</div>';
@@ -1584,7 +1858,7 @@ function moneyHTML(){
 function statusHTML(){
   var wk={null:'—',regular:'一般の仕事',general:'企業(障害者雇用)',a:'A型',b:'B型',none:'働いていない'}[S.work];
   return '<section class="card status" aria-label="いまの状態"><div class="age">'+S.age+'<small>歳</small></div>'+
-   '<div class="who"><span>'+esc(S.muni.name)+'('+esc(S.muni.pref)+')・'+esc(S.sex)+'</span><span>'+(S.disabled?(S.dx?esc(S.sub)+(S.techo?'・'+GRADE[S.type][S.grade]:'・手帳なし'):'診断前(困りごとあり)'):'障害なし')+'</span><span>仕事 '+wk+'</span></div>'+
+   '<div class="who"><span>'+esc(S.muni.name)+'('+esc(S.muni.pref)+')・'+esc(S.sex)+'</span><span>'+(S.disabled?(S.dx?esc(detLabel(S))+(S.techo?'・'+GRADE[S.type][S.grade]:'・手帳なし'):'診断前(困りごとあり)'):'障害なし')+'</span><span>仕事 '+wk+'</span></div>'+
    gauges()+moneyHTML()+'</section>';
 }
 function logHTML(){return ''}
@@ -1597,11 +1871,69 @@ function famHTML(){
   if(ks.length&&!ka.length)kt='なし(亡くなった)';
   return '<section class="card" aria-label="家族"><p class="kicker mono">家族</p><dl class="famdl"><dt>父</dt><dd>'+pg(f.father)+'</dd><dt>母</dt><dd>'+pg(f.mother)+'</dd><dt>兄弟姉妹</dt><dd>'+(sb.length?sa+'人':'いない')+'</dd><dt>子</dt><dd>'+kt+'</dd><dt>相手</dt><dd class="wide">'+ps+'</dd></dl></section>';
 }
+
+/* ---------- 年表の出来事を押すと、そのときの内容を表示 ---------- */
+function fbDetail(t){
+  if(/入学/.test(t))return '新しい学校での毎日が始まった。';
+  if(/卒業/.test(t))return '学校生活に、ひとつの区切りがついた。';
+  if(/^18歳/.test(t))return '民法上の成年になった。親の同意なしに、契約などができるようになる。';
+  if(/^20歳/.test(t))return '国民年金に加入する年齢になった。';
+  if(/^40歳/.test(t))return '介護保険料の負担が始まる年齢になった。';
+  if(/^65歳/.test(t))return '老齢年金や介護保険の対象になる年齢になった。';
+  if(/^75歳/.test(t))return '後期高齢者医療制度の対象になった。';
+  if(/で生まれる$/.test(t))return 'この街で生まれ、人生が始まった。';
+  if(/一人暮らし/.test(t))return '親元を離れ、ひとりで暮らしはじめた。';
+  if(/二人で新しい住まい/.test(t))return 'パートナーと、新しい住まいで暮らしはじめた。';
+  if(/貯えを合わせる/.test(t))return '二人の貯えを合わせて、暮らしの土台にした。';
+  if(/^就職/.test(t))return '働きはじめた。収入を得る暮らしが始まった。';
+  if(/生活保護を受け始める/.test(t))return '貯えが尽き、生活保護を受けはじめた。';
+  if(/生活保護を終える/.test(t))return '収入が増え、生活保護を受けなくても暮らせるようになった。';
+  if(/パートナーが病気/.test(t))return 'パートナーが病気になり、二人の暮らしにも影響が出た。';
+  return 'この年の出来事として、年表に記録された。';
+}
+function tlDetailHTML(i){
+  var x=S.log[i];if(!x)return '';
+  var d=x.d||{},h='<p class="kicker mono">'+x.age+'歳</p><h3>'+esc(x.t)+'</h3>';
+  var hasCtx=!!(d.s||d.c);
+  if(d.ti&&x.t.indexOf(d.ti)<0)h+='<p class="small muted">'+esc(d.ti)+'</p>';
+  if(d.s)h+='<p class="tdl"><b>そのときの状況</b>'+esc(d.s)+'</p>';
+  if(d.c)h+='<p class="tdl"><b>選んだこと</b>'+esc(d.c)+'</p>';
+  var body=d.t||fbDetail(x.t);
+  h+='<p class="tdl"><b>'+(hasCtx?'その結果':'できごと')+'</b>'+esc(body)+'</p>';
+  if(x.sn){var parts=[];if(x.sn.mu)parts.push(x.sn.mu+'で暮らしていた');if(x.age>=18&&isFinite(x.sn.mo))parts.push('貯えは約'+x.sn.mo+'万円');if(parts.length)h+='<p class="small muted">このころ: '+esc(parts.join('・'))+'</p>'}
+  return h;
+}
+var TLPAUSE=null;
+function closeTlModal(){
+  var m=document.getElementById('tlmodal');if(m&&m.parentNode)m.parentNode.removeChild(m);
+  if(TLPAUSE!==null){UI.paused=TLPAUSE;TLPAUSE=null;if(typeof refreshCtl==='function')try{refreshCtl()}catch(e){}}
+}
+function openTlModal(i){if(!S)return;var h=tlDetailHTML(i);if(h)openModal(h)}
+function openModal(h){
+  closeTlModal();
+  TLPAUSE=!!UI.paused;UI.paused=true;if(typeof refreshCtl==='function')try{refreshCtl()}catch(e){}
+  var m=document.createElement('div');m.id='tlmodal';m.setAttribute('role','dialog');m.setAttribute('aria-modal','true');
+  m.innerHTML='<div class="tlbox"><button type="button" class="tlclose" aria-label="閉じる">×</button>'+h+'<button type="button" class="btn tlok">閉じる</button></div>';
+  m.addEventListener('click',function(ev){if(ev.target===m||(ev.target.classList&&(ev.target.classList.contains('tlclose')||ev.target.classList.contains('tlok'))))closeTlModal()});
+  document.body.appendChild(m);
+  var b=m.querySelector('.tlok');if(b&&b.focus)b.focus();
+}
+document.addEventListener('click',function(ev){
+  var mn=ev.target.closest?ev.target.closest('.mny'):null;
+  if(mn){openMoneyModal();return}
+  var li=ev.target.closest?ev.target.closest('.tlist li.tlc'):null;
+  if(li&&li.getAttribute('data-i')!=null)openTlModal(+li.getAttribute('data-i'));
+});
+document.addEventListener('keydown',function(ev){
+  if(ev.key==='Escape'){closeTlModal();return}
+  if((ev.key==='Enter'||ev.key===' ')&&ev.target&&ev.target.classList&&ev.target.classList.contains('mny')){ev.preventDefault();openMoneyModal();return}
+  if((ev.key==='Enter'||ev.key===' ')&&ev.target&&ev.target.classList&&ev.target.classList.contains('tlc')){ev.preventDefault();openTlModal(+ev.target.getAttribute('data-i'))}
+});
 function tlHTML(){
   var rows=S.log.filter(function(x){return x.t}).slice().reverse();
   rows=rows.map(function(x,i){return{x:x,i:i}}).sort(function(a,b){return b.x.age-a.x.age||a.i-b.i}).map(function(o){return o.x});
-  return '<h2>人生の年表<small>新しい順</small></h2><ul class="tlist">'+(UI.screen==='end'?'':'<li class="now"><span>'+S.age+'歳</span><div>いまここ</div></li>')+
-   rows.map(function(x,i){return '<li'+(i===0&&UI.screen==='end'?' class="last"':'')+'><span>'+x.age+'歳</span><div>'+esc(x.t)+'</div></li>'}).join('')+'</ul>';
+  return '<h2>人生の年表<small>新しい順</small></h2><p class="tlhint">出来事を押すと、そのときの内容が見られます</p><ul class="tlist">'+(UI.screen==='end'?'':'<li class="now"><span>'+S.age+'歳</span><div>いまここ</div></li>')+
+   rows.map(function(x,i){return '<li'+(i===0&&UI.screen==='end'?' class="last tlc"':' class="tlc"')+' data-i="'+S.log.indexOf(x)+'" tabindex="0" role="button" aria-label="'+x.age+'歳 '+esc(x.t)+' の内容を見る"><span>'+x.age+'歳</span><div>'+esc(x.t)+'</div></li>'}).join('')+'</ul>';
 }
 function sysHTML(e){
   if(!e||!e.sys||!e.sys.length)return '';
@@ -1621,16 +1953,19 @@ function titleScreen(){
   '<p class="lead">日本の障害者は、国民のおよそ10人に1人。その一人として生まれたら、どんな人生になるだろう。</p>'+
   '<div class="start"><div class="seg" role="group" aria-label="モード"><button id="m-birth" aria-pressed="'+(UI.mode==='birth')+'">生まれつき・幼少期から</button><button id="m-data" aria-pressed="'+(UI.mode==='data')+'">データ準拠(後天性を含む)</button></div>'+
   '<p class="small muted">'+(UI.mode==='birth'?'生まれつき、または幼いころに障害が分かる人生が中心です。身体・知的・発達障害が出やすくなります。':'どの人生も0歳から始まります。障害種別の割合と発症の時期を統計に近づけるため、障害のない時期を経て、のちに障害が生じる人生も出ます。いつ・何が起きるかは、そのときまで分かりません。')+'</p>'+
-  '<button class="btn" id="go">サイコロを振る</button></div>'+ten()+'</section>'+
-  '<section class="card"><p class="kicker mono">遊び方</p><p class="small">サイコロで、生まれる自治体・障害の種類・等級が決まります。時間は自動で進み(基本は1分で1段階。一時停止と2倍・4倍・8倍の速さも選べます)、人生の大きな選択のときだけ止まります。選ぶと、体調・心・つながり・自分らしさ・お金が動き、家族にも出来事が起こります。選択のたびに、関係する制度の説明が右に出ます。右側(スマホでは画面下)には人生の年表が新しい順に常に表示されます。制度の内容と出典は、右上の「データと出典」から確認できます。フィクションです。実際の手続きは、お住まいの市区町村の窓口で確認してください。</p></section>';
+  '<button class="btn" id="go">サイコロを振る</button> <button class="btn ghost" id="cards-open" type="button">結末カード '+cardCount()+' / '+CTOTAL+'</button></div>'+ten()+'</section>'+
+  '<section class="card"><p class="kicker mono">遊び方</p><p class="small">サイコロで、生まれる自治体・障害の種類・等級が決まります。時間は自動で進み(基本は1分で1段階。一時停止と2倍・4倍・8倍の速さも選べます)、人生の大きな選択のときだけ止まります。選ぶと、体調・心・つながり・個性・お金が動き、家族にも出来事が起こります。選択のたびに、関係する制度の説明が右に出ます。右側(スマホでは画面下)には人生の年表が新しい順に常に表示されます。制度の内容と出典は、右上の「データと出典」から確認できます。フィクションです。実際の手続きは、お住まいの市区町村の窓口で確認してください。</p></section>';
 }
 function birthScreen(){
   var m=S.muni;
   return '<section class="card"><p class="kicker mono">うまれる</p><h2>あなたの人生手帳</h2>'+
   '<dl class="techo"><dt>うまれ</dt><dd>'+esc(m.name)+'('+esc(m.pref)+')</dd><dt>性別</dt><dd>'+esc(S.sex)+'</dd>'+
   '<dt>障害</dt><dd>'+(S.onset===0?esc(S.sub)+(S.type==='body'?'':'(診断はまだ)'):'まだ分からない')+'</dd>'+
-  '<dt>きっかけ</dt><dd>'+(S.onset===0?'生まれつき':'のちに生じる(いつ、何が起きるかは、そのときまで分からない)')+'</dd></dl>'+
-  '<p class="small muted">'+(S.onset>0?'人生は0歳から始まる。障害が生じるのは、あとになってからだ。':'')+'</p>'+
+  '<dt class="k1">家庭</dt><dd class="k2">経済 '+HOMEL[S.home]+' ・ 父 '+esc(S.fam.father.job)+' ・ 母 '+esc(S.fam.mother.job)+'</dd>'+
+  '<dt class="k1">身近な人</dt><dd class="k2">きょうだい '+(S.fam.sibs.filter(function(x){return x.off>=0}).length?S.fam.sibs.filter(function(x){return x.off>=0}).length+'人':'まだいない')+' ・ '+KINL[S.kin]+'</dd>'+
+  (S.onset===0?'<dt>詳しい状態</dt><dd>'+esc(S.det)+'</dd><dt>日常生活</dt><dd>'+IND[S.ind]+'</dd><dt>見た目</dt><dd>'+(S.vis?'外見から分かりやすい':'外見からは分かりにくい')+'</dd>'+(S.comp?'<dt class="k1">あわせ持つ</dt><dd class="k2">'+esc(S.comp)+'</dd>':''):'')+
+  '<dt class="k1">きっかけ</dt><dd class="k2">'+(S.onset===0?'生まれつき':'のちに生じる(いつ、何が起きるかは、そのときまで分からない)')+'</dd></dl>'+
+  '<p class="small muted">'+(S.onset>0?'人生は0歳から始まる。障害が生じるのは、あとになってからだ。':'障害の分類は、身体障害者手帳などの区分にならっています。生活への影響の大きさは、ゲーム上の仮定です。')+'</p>'+
   '<div class="body"><p>'+esc(m.name)+'の、公開されている制度の例:</p><ul class="facts">'+m.facts.map(function(f){return '<li>'+esc(f)+'</li>'}).join('')+'</ul><p class="small muted">B型の工賃の目安: 月'+yen(m.wageB)+'円('+esc(m.wageNote)+')</p></div>'+
   '<button class="btn" id="begin">人生を始める</button></section>';
 }
@@ -1650,6 +1985,109 @@ function resultScreen(){
   chipsHTML(R_.chips)+tlNote(R_.tl)+
   '<button class="btn" id="next">つぎへ</button></section>';
 }
+
+/* ---------- 結末カード(集めた記録は、このブラウザに保存されます) ---------- */
+var CK='life10pct-cards-v1',MEMC=null;
+function loadCards(){
+  var d=null;
+  try{var t=window.localStorage.getItem(CK);if(t)d=JSON.parse(t)}catch(e){}
+  if(!d)d=MEMC;
+  if(!d||typeof d!=='object')d={lives:0,got:{}};
+  if(!d.got)d.got={};
+  return d;
+}
+function saveCards(d){MEMC=d;try{window.localStorage.setItem(CK,JSON.stringify(d))}catch(e){}}
+var REG={};
+[['北海道',['北海道']],['東北',['青森県','岩手県','宮城県','秋田県','山形県','福島県']],['関東',['茨城県','栃木県','群馬県','埼玉県','千葉県','東京都','神奈川県']],['中部',['新潟県','富山県','石川県','福井県','山梨県','長野県','岐阜県','静岡県','愛知県']],['近畿',['三重県','滋賀県','京都府','大阪府','兵庫県','奈良県','和歌山県']],['中国・四国',['鳥取県','島根県','岡山県','広島県','山口県','徳島県','香川県','愛媛県','高知県']],['九州・沖縄',['福岡県','佐賀県','長崎県','熊本県','大分県','宮崎県','鹿児島県','沖縄県']]].forEach(function(r){r[1].forEach(function(p){REG[p]=r[0]})});
+function Lg(re){return S.log.some(function(x){return re.test(x.t)})}
+var CARDS=[
+ ['born','生まれつきの人生','生まれたときから、障害とともにあった。','生まれつきの障害で生きる',function(){return S.onset===0}],
+ ['late','人生の途中で','大人になってから、障害が生じた。','のちに障害が生じる人生を生きる',function(){return S.onset>=18}],
+ ['body','身体障害のある人生','身体障害者手帳の対象になる障害とともに生きた。','身体障害の人生を生きる',function(){return S.type==='body'}],
+ ['intel','知的障害のある人生','知的障害とともに、自分のペースで生きた。','知的障害の人生を生きる',function(){return S.type==='intel'}],
+ ['mental','精神障害のある人生','心や脳の障害とともに生きた。','精神障害の人生を生きる',function(){return S.type==='mental'}],
+ ['wheel','車いすとともに','移動の中心に、車いすがあった。','車いすを使う人生を生きる',function(){return /車いす/.test(S.det||'')}],
+ ['dial','透析とともに','人工透析が、暮らしのリズムをつくった。','人工透析が必要な人生を生きる',function(){return /透析/.test(S.det||'')}],
+ ['blind','見えない世界で','見えにくさや見えない世界で、暮らしを組み立てた。','視覚障害の人生を生きる',function(){return S.sub==='視覚障害'}],
+ ['deaf','聞こえない世界で','聞こえにくさや静けさのなかで、人と関わった。','聴覚・言語障害の人生を生きる',function(){return S.sub==='聴覚・言語障害'}],
+ ['inv','見えにくい障害','外見からは分かりにくく、理解されにくさと向き合った。','外見から分かりにくい障害の人生を生きる',function(){return S.disabled&&!S.vis}],
+ ['multi','重なる困りごと','複数の障害や病気を、同時に抱えて生きた。','障害をあわせ持つ人生を生きる',function(){return !!S.comp}],
+ ['dem','ゆっくり薄れていく日々','認知症とともに、最期のときを迎えた。','認知症の人生を生きる',function(){return S.sub==='認知症'}],
+ ['nodx','診断のないまま','診断を受けないまま、困りごとを抱えて生きた。','診断を受けないまま生きる',function(){return !S.dx}],
+ ['techo','手帳とともに','障害者手帳が、制度への入り口になった。','手帳を取得して生きる',function(){return !!S.techo}],
+ ['pen','年金に支えられて','障害年金が、暮らしを支えた。','障害年金を受けて生きる',function(){return !!S.pension}],
+ ['hogo','生活保護を受けた','生活保護が、暮らしの土台になる時期があった。','生活保護を受ける',function(){return !!S.hogo||Lg(/生活保護を受け/)}],
+ ['use','制度を使いこなした','たくさんの制度を知り、申請して使った。','多くの制度に届く',function(){return S.used.size>=10}],
+ ['miss','届かなかった制度','使える制度に、たどりつけないことが多かった。','制度を知らないまま過ごす',function(){return S.missed.size>=8}],
+ ['reg','一般企業で働いた','一般の企業で、働く時間を重ねた。','一般企業で働く',function(){return S.work==='regular'}],
+ ['gen','障害者雇用で働いた','障害者雇用の枠で、仕事を続けた。','障害者雇用で働く',function(){return S.work==='general'}],
+ ['ab','福祉の事業所で','A型・B型の事業所で、仕事と居場所を得た。','A型・B型の事業所に通う',function(){return S.work==='a'||S.work==='b'}],
+ ['long','働き続けた','30年以上、働き続けた人生だった。','30年以上働く',function(){return S.workYrs>=30}],
+ ['study','学び続けた','大学や専門学校で、学びを深めた。','大学や専門学校に進む',function(){return S.edu==='univ'||S.edu==='senmon'}],
+ ['spec','特別支援教育のなかで','特別支援学級や特別支援学校で学んだ。','特別支援教育を受ける',function(){return S.school==='special-class'||S.school==='special-school'}],
+ ['rich','蓄えを残した','2000万円以上の貯えを残して、幕を下ろした。','貯えを2000万円以上にする',function(){return S.money>=20000000}],
+ ['thin','ゆとりの少ない晩年','65歳を過ぎても、お金に余裕はあまりなかった。','貯えが少ないまま65歳をこえる',function(){return S.endAge>=65&&S.money<1000000}],
+ ['home','自分の家','自分の家を持って暮らした。','持ち家を得る',function(){return !!S.ownHome}],
+ ['solo','ひとり暮らしを貫いた','パートナーも同居もなく、ひとりの暮らしを続けた。','ひとり暮らしで生きる',function(){return S.living==='alone'&&!S.partner&&S.endAge>=30}],
+ ['gh','グループホームで','仲間や職員とともに、共同の暮らしをした。','グループホームで暮らす',function(){return S.deathPlace==='グループホーム'}],
+ ['fac','施設で見送られて','入所した施設で、最期のときを迎えた。','施設で最期を迎える',function(){return S.deathPlace==='入所していた施設'}],
+ ['hm','住み慣れた家で','自宅で、最期のときを迎えた。','自宅で最期を迎える(70歳以上)',function(){return S.deathPlace==='自宅'&&S.endAge>=70}],
+ ['pt','ともに歩いた人','パートナーとともに生きた時間があった。','パートナーと生きる',function(){return !!S.partner||!!S.fam.lastPartner}],
+ ['kid','子を育てた','子どもを育て、親になった。','子どもを持つ',function(){return S.fam.kids.length>=1}],
+ ['kid3','にぎやかな家','3人以上の子どもに恵まれた。','3人以上の子どもを持つ',function(){return S.fam.kids.length>=3}],
+ ['gk','孫のいる人生','孫の笑い声が、家に増えた。','孫ができる',function(){return Lg(/孫/)}],
+ ['sib','きょうだいとともに','3人以上のきょうだいのなかで育った。','3人以上のきょうだいがいる',function(){return S.fam.sibs.length>=3}],
+ ['dig','個性を貫いた','自分の選択を、大切にして生きた。','「個性」を高く保つ',function(){return S.dignity>=80}],
+ ['lone','孤立のなかで','つながりが細くなる時間が、長かった。','「つながり」が低いまま過ごす',function(){return S.social<30}],
+ ['acc','突然の別れ','思いがけない事故で、人生の幕が下りた。','不慮の事故で亡くなる',function(){return /事故/.test(S.cause)}],
+ ['c90','90歳を超えて','90歳を超えて、長く生きた。','90歳以上まで生きる',function(){return S.endAge>=90}],
+ ['tight','家計の苦しい家に生まれて','ゆとりの少ない家で育った。','家計に余裕のない家に生まれる',function(){return S.home0==='tight'}],
+ ['okh','ゆとりのある家に生まれて','経済的にゆとりのある家で育った。','ゆとりのある家に生まれる',function(){return S.home0==='ok'}],
+ ['biz','家業のある家','親が自営業や農林漁業の家に生まれた。','自営業・農林漁業の家に生まれる',function(){return [S.fam.father.job,S.fam.mother.job].some(function(j){return j==='自営業'||j==='農林漁業'})}],
+ ['kinN','頼れる親戚が近くにいない','近くに頼れる親戚がいない環境で育った。','近くに頼れる親戚がいない家に生まれる',function(){return S.kin==='none'}],
+ ['dis','災害を生きぬいた','地震や豪雨などの災害を、経験した。','災害を経験する',function(){return (S.dis||0)>=1}],
+ ['xfer','転勤で街が変わる','親の転勤で、住む街が変わった。','親の転勤で転居する',function(){return Lg(/転勤で.*に転居/)}],
+ ['jl','職場を離れる日','仕事を失う経験をした。','職場を離れる経験をする',function(){return Lg(/職場を離れ/)}],
+ ['peerc','仲間との出会い','同じ経験をもつ仲間と出会った。','同じ経験をもつ仲間と出会う',function(){return Lg(/同じ経験をもつ仲間/)}],
+ ['divc','両親の別れを経験して','子どものころ、両親が離れて暮らすことになった。','子どものころに両親が離婚する',function(){return Lg(/両親が離婚/)}],
+ ['c40','駆け抜けた時間','40歳になる前に、幕を下ろした。','40歳になる前に亡くなる',function(){return S.endAge<40}]
+];
+['北海道','東北','関東','中部','近畿','中国・四国','九州・沖縄'].forEach(function(r){
+  CARDS.push(['r_'+r,r+'の人生',r+'で生まれ、その地域の制度のなかで生きた。',r+'に生まれる',function(){return REG[S.muni.pref]===r}]);
+});
+var CTOTAL=CARDS.length;
+function earnCards(){
+  var d=loadCards(),got=[];
+  d.lives=(d.lives||0)+1;
+  CARDS.forEach(function(c){
+    var ok=false;try{ok=!!c[4]()}catch(e){}
+    if(!ok)return;
+    var e=d.got[c[0]],isNew=!e;
+    if(!e)e=d.got[c[0]]={n:0,first:d.lives};
+    e.n++;
+    got.push({id:c[0],isNew:isNew});
+  });
+  saveCards(d);
+  return got;
+}
+function cardCount(){return CARDS.filter(function(c){return loadCards().got[c[0]]}).length}
+function cardHTML(c,e,isNew){
+  if(!e)return '<div class="ccard lock"><b>? ? ?</b><span>'+esc(c[3])+'</span></div>';
+  return '<div class="ccard"><b>'+esc(c[1])+(isNew?' <i class="new">NEW</i>':'')+'</b><span>'+esc(c[2])+'</span><small>'+(Math.floor(Number(e.n))||0)+'回</small></div>';
+}
+function endCardsHTML(){
+  var got=S.cardsGot||[],d=loadCards(),n=cardCount();
+  if(!got.length)return '';
+  return '<h3 style="font-size:15px">今回の結末カード</h3><div class="cgrid">'+got.map(function(g){var c=CARDS.filter(function(x){return x[0]===g.id})[0];return cardHTML(c,d.got[g.id],g.isNew)}).join('')+'</div>'+
+    '<p class="small muted">集めたカード '+n+' / '+CTOTAL+'。<button class="link" id="cards-open-end" type="button">すべてのカードを見る</button></p>';
+}
+function cardsScreen(){
+  var d=loadCards(),n=cardCount();
+  return '<section class="card"><p class="kicker mono">結末カード</p><h2>集めたカード '+n+' / '+CTOTAL+'</h2>'+
+   '<p class="small muted">人生の終わりに、その人生にあてはまるカードが1枚ずつ集まります。これまでに '+(Math.floor(Number(d.lives))||0)+' つの人生を生きました。まだ見つけていないカードには、手がかりが書いてあります。</p>'+
+   '<div class="cgrid">'+CARDS.map(function(c){return cardHTML(c,d.got[c[0]],false)}).join('')+'</div>'+
+   '<button class="btn" id="cards-back">もどる</button></section>';
+}
 function endScreen(){
   var used=Array.from(S.used),miss_=Array.from(S.missed),d=S.dignity,so=S.social,m=Math.round(S.money),f=S.fam;
   var line;
@@ -1660,12 +2098,13 @@ function endScreen(){
   return '<section class="card"><p class="kicker mono">人生の肖像</p><h2>'+S.endAge+'歳、'+esc(S.cause)+'で幕を下ろした</h2>'+
   '<p class="cause"><b>死因</b>'+esc(S.cause)+' <span class="small muted">(日本の主な死因を参考にしたゲーム上の仮定)</span></p>'+
   '<p class="cause"><b>最期</b>'+esc(S.deathNote)+'</p>'+
-  '<div class="body"><p>'+esc(S.muni.name)+'で、'+(S.dx?esc(S.sub)+'とともに':esc(S.sub)+'にあたる困りごとを、診断のないまま抱えて')+'生きた。'+esc(line)+'</p></div>'+
+  '<div class="body"><p>'+esc(S.muni.name)+'で、'+(S.dx?esc(S.sub)+(S.det?'('+esc(S.det)+')':'')+'とともに':esc(S.sub)+'にあたる困りごとを、診断のないまま抱えて')+'生きた。'+esc(line)+'</p></div>'+
   gauges()+
   '<p class="small muted">最後の貯え '+Math.round(m/10000)+'万円・仕事 '+({null:'なし',regular:'一般企業で働いた',general:'障害者雇用で働いた',a:'A型',b:'B型',none:'働かなかった'}[S.work])+'・きょうだい '+(f.sibs.length?f.sibs.length+'人':'なし')+'・パートナー '+(S.partner?'いた':(f.lastPartner?'いた(のちに別れ・死別)':'なし'))+'・子 '+(f.kids.length?f.kids.length+'人':'なし')+'</p>'+
   '<h3 style="font-size:15px">届いた制度</h3>'+tags(used,'used')+
   '<h3 style="font-size:15px">知らないまま、または使わないまま過ぎた制度</h3>'+tags(miss_,'miss')+
   '<p class="small muted">制度は、知って、申請して、はじめて届く。10人に1人の人生を支える仕組みは、ここに挙げたよりずっと多い。</p>'+
+  endCardsHTML()+
   '<button class="btn" id="again">別の人生を生きる</button></section>';
 }
 function autoScreen(){
@@ -1705,6 +2144,9 @@ function bind(){
   if(q('skip'))q('skip').onclick=function(){advance()};
   if(q('next'))q('next').onclick=proceed;
   if(q('again'))q('again').onclick=function(){UI.screen='title';S=null;render()};
+  if(q('cards-open'))q('cards-open').onclick=function(){UI.back='title';UI.screen='cards';render()};
+  if(q('cards-open-end'))q('cards-open-end').onclick=function(){UI.back='end';UI.screen='cards';render()};
+  if(q('cards-back'))q('cards-back').onclick=function(){UI.screen=(UI.back==='end'&&S)?'end':'title';render()};
   var btns=document.querySelectorAll('.choice');
   Array.prototype.forEach.call(btns,function(b){b.onclick=function(){var i=+b.getAttribute('data-i');choose(i)}});
 }
@@ -1718,7 +2160,8 @@ if(MQ&&MQ.addListener)MQ.addListener(placeCtl);
 function render(){
   var h='',title=(UI.screen==='title'||!S);
   if(S&&S.fam)sanitize();
-  if(title)h=titleScreen();
+  if(UI.screen==='cards')h=cardsScreen();
+  else if(title)h=titleScreen();
   else if(UI.screen==='birth')h=birthScreen();
   else if(UI.screen==='auto')h=autoScreen();
   else if(UI.screen==='event')h=eventScreen();
@@ -1726,10 +2169,12 @@ function render(){
   else if(UI.screen==='end')h=endScreen();
   $('#app').innerHTML=h;
   $('#shell').className='app'+(title?' is-title':'');
+  try{var inlife=!!S&&['event','result','auto'].indexOf(UI.screen)>=0;if(document.body&&document.body.classList)document.body.classList.toggle('nocnt',inlife)}catch(e){}
   $('#colA').hidden=title;$('#colC').hidden=title;$('#tlm').hidden=title;
-  if(title){var cb=document.getElementById('ctlbar');if(cb)cb.innerHTML=''}
+  if(title){var cb=document.getElementById('ctlbar');if(cb)cb.innerHTML='';var gb0=document.getElementById('gaugebar');if(gb0)gb0.innerHTML=''}
   if(!title){
     $('#colA').innerHTML='<div id="ctl">'+ctlHTML()+'</div>'+statusHTML()+famHTML();placeCtl();
+    var gbx=document.getElementById('gaugebar');if(gbx)gbx.innerHTML=gaugeBarHTML();
     $('#colC').innerHTML=sideHTML();
     $('#tlm').innerHTML=tlHTML();
   }
@@ -1737,6 +2182,19 @@ function render(){
   if(!title)bindCtl();
   updateAuto();
   try{$('#app').scrollTop=0}catch(e){}
+  try{
+    var key=UI.screen+'|'+(UI.cur&&UI.cur.id||'')+'|'+(S?S.age:'')+'|'+(UI.chs?UI.chs.length:'');
+    if(key!==UI._sk){UI._sk=key;
+      if(window.matchMedia&&window.matchMedia('(max-width:600px)').matches&&S&&(UI.screen==='event'||UI.screen==='result'||UI.screen==='birth')){
+        setTimeout(function(){
+          var c=document.querySelector('#app .card');if(!c)return;
+          var st=document.getElementById('stick'),sh=st?st.getBoundingClientRect().height:0,r=c.getBoundingClientRect(),vh=window.innerHeight,avail=vh-sh;
+          var top=r.height>=avail-16?r.top+window.pageYOffset-sh-8:r.top+window.pageYOffset-sh-(avail-r.height)/2;
+          window.scrollTo({top:Math.max(0,top),behavior:'smooth'});
+        },60);
+      }
+    }
+  }catch(e){}
 }
 var lastT=Date.now();
 setInterval(function(){
